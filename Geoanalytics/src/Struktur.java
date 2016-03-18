@@ -31,7 +31,7 @@ public class Struktur {
 	
 	public String getCoordinates() {
 		
-		
+		//test
 		return Coordinates;
 	}
 	

@@ -34,7 +34,7 @@ public class AbfrageDienst {
 	
 	//DL/Service wird abgefragt und man erhält eine "externe Adresse"
 	public String AbfServiceOSM (String rawAdress) {
-		extAdress = rawAdress + ",extern";
+		extAdress = "strasse , 1, Ort, 1234, CH, lat: 35.12378, long: 5.78735";
 		return extAdress;
 	}
 	

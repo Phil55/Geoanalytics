@@ -8,13 +8,14 @@ public class Harmonisierung {
 	private String adressOrt;
 	private String adressPLZ; //string wegen split
 	private String adressLand;
-	private String CoordinateLat;
-	private String CoordinateLong;
+	private String coordinateLat;
+	private String coordinateLong;
 	private ArrayList <String> structAdress;
 	
 	
 	public Harmonisierung(String extAdress) {
 		this.extAdress = extAdress;
+		this.structAdress = new ArrayList<String>();
 		align(extAdress);
 	}
 	public String getExtAdress() {
@@ -66,19 +67,19 @@ public class Harmonisierung {
 	}
 
 	public String getCoordinateLat() {
-		return CoordinateLat;
+		return coordinateLat;
 	}
 
 	public void setCoordinateLat(String coordinateLat) {
-		CoordinateLat = coordinateLat;
+		this.coordinateLat = coordinateLat;
 	}
 
 	public String getCoordinateLong() {
-		return CoordinateLong;
+		return coordinateLong;
 	}
 
 	public void setCoordinateLong(String coordinateLong) {
-		CoordinateLong = coordinateLong;
+		this.coordinateLong = coordinateLong;
 	}
 	
 	public ArrayList<String> getStructAdress() {
@@ -97,37 +98,36 @@ public class Harmonisierung {
 		for (String i: listextAdr){
 			if (adressName == null){
 				setAdressName(i);
-				System.out.println("AdressName: " + i); //test-code
-				//structAdress.add(i);
+				structAdress.add(i);
 			}
 			else if (adressNummer == null){
 				setAdressNummer(i);
-				System.out.println("AdressNummer: " + i); //test-code
-				//structAdress.add(i);
+				structAdress.add(i);
 			}
 			else if (adressOrt == null){
 				setAdressOrt(i);
-				System.out.println("AdressOrt: " + i); //test-code
-				//structAdress.add(i);
+				structAdress.add(i);
 			}
 			else if (adressPLZ == null){
 				setAdressPLZ(i);
-				System.out.println("AdressPLZ: " + i); //test-code
-				//structAdress.add(i);
+				structAdress.add(i);
+			}
+			else if (adressLand == null){
+				setAdressLand(i);
+				structAdress.add(i);
+			}
+			else if (coordinateLat == null){
+				setCoordinateLat(i);
+				structAdress.add(i);
+			}
+			else if (coordinateLong == null){
+				setCoordinateLong(i);
+				structAdress.add(i);
 			}
 			else {
-				System.out.println("else: " + i); //test-code
-				//structAdress.add(i);
+				structAdress.add(i);
 			}
-		}
-		//multiple Strings in a list
-		String[] provList = { getAdressName(), getAdressNummer(), getAdressOrt(), getAdressPLZ()};
-		for(int a = 0; a < provList.length; a++){
-			//structAdress.add(provList[a]);
-			System.out.println("testliste: " + a + provList[a]); //test-code
-		}
-		
-		
+		}		
 		
 		return structAdress;
 	}

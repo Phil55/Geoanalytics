@@ -45,8 +45,6 @@ public class Struktur {
 		//Durchführung der Strukturierung der Adresse
 		Harmonisierung l = new Harmonisierung(m.getExtAdress());
 		System.out.println("StructAdress : " + l.getStructAdress()); //test-code
-		
-		System.out.println("EndestartAbfrage"); //test-code
 		return m.getExtAdress();
 	}
 	

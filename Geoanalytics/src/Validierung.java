@@ -9,7 +9,6 @@ public class Validierung {
 		this.rawAdress = rawAdress;
 		this.extAdress = extAdress;
 		pruefen(rawAdress, extAdress);
-		
 	}
 
 	public int getScore() {
@@ -40,13 +39,13 @@ public class Validierung {
 		if (rawAdress.equals(extAdress) == true){
 			setScore(100);
 		}
-		
 		if (rawAdress.equalsIgnoreCase(extAdress) == true){
 			setScore(75);
 		}
 		else {
 			setScore(30);
 		}
+		
 		System.out.println("Ende pruefen: score " + score); //test-code
 		return score;
 	}

@@ -29,6 +29,12 @@ public class Struktur {
 	//die Abfrage nach einer Adresse wird gestartet
 	public String startAbfrage(String adress) {
 		System.out.println("BeginnstartAbfrage: " + adress); //test-code
+		
+		//MysqlDataSource dataSource = new MysqlDataSource();
+		//dataSource.setUser("scott");
+		//dataSource.setPassword("tiger");
+		//dataSource.setServerName("myDBHost.example.org");
+		
 		Abfrage m = new Abfrage(getAdress());
 		
 		//Prüfung der neu gewonnenen Adresse starten

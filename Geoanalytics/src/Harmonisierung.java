@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class Harmonisierung {
 
-	private String extAdress;
+	private String extAdressHarm;
 	private String adressName;
 	private String adressNummer; //string wegen split
 	private String adressOrt;
@@ -14,16 +14,16 @@ public class Harmonisierung {
 	
 	
 	public Harmonisierung(String extAdress) {
-		this.extAdress = extAdress;
+		this.extAdressHarm = extAdress;
 		this.structAdress = new ArrayList<String>();
 		align(extAdress);
 	}
-	public String getExtAdress() {
-		return extAdress;
+	public String getExtAdressHarm() {
+		return extAdressHarm;
 	}
 
-	public void setExtAdress(String extAdress) {
-		this.extAdress = extAdress;
+	public void setExtAdressHarm(String extAdressHarm) {
+		this.extAdressHarm = extAdressHarm;
 	}
 
 	public String getAdressName() {

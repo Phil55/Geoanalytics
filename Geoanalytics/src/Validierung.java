@@ -2,12 +2,12 @@
 public class Validierung {
 
 	private int score;
-	private String rawAdress;
-	private String extAdress;
+	private String rawAdressVal;
+	private String extAdressVal;
 	
 	public Validierung(String rawAdress, String extAdress) {
-		this.rawAdress = rawAdress;
-		this.extAdress = extAdress;
+		this.rawAdressVal = rawAdress;
+		this.extAdressVal = extAdress;
 		pruefen(rawAdress, extAdress);
 	}
 
@@ -19,20 +19,20 @@ public class Validierung {
 		this.score = score;
 	}
 
-	public String getRawAdress() {
-		return rawAdress;
+	public String getRawAdressVal() {
+		return rawAdressVal;
 	}
 
-	public void setRawAdress(String rawAdress) {
-		this.rawAdress = rawAdress;
+	public void setRawAdressVal(String rawAdressVal) {
+		this.rawAdressVal = rawAdressVal;
 	}
 
-	public String getExtAdress() {
-		return extAdress;
+	public String getExtAdressVal() {
+		return extAdressVal;
 	}
 
-	public void setExtAdress(String extAdress) {
-		this.extAdress = extAdress;
+	public void setExtAdressVal(String extAdressVal) {
+		this.extAdressVal = extAdressVal;
 	}
 	
 	public int pruefen(String rawAdress, String extAdress){

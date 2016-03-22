@@ -1,31 +1,22 @@
 
 public class Abfrage {
 
-	private String rawAdress;
-	private String structAdress;
+	private String rawAddressAbfr;
 	private int dienstID; //evt. Array
-	private String extAdress; //evt. Array
+	private String extAddress; //evt. Array
 	
-	public Abfrage(String rawAdress) {
+	public Abfrage(String rawAddress) {
 		//super();
-		this.rawAdress = rawAdress;
-		abfrage(rawAdress);
+		this.rawAddressAbfr = rawAddress;
+		abfrage(rawAddress);
 	}
 
-	public String getRawAdress() {
-		return rawAdress;
+	public String getRawAddressAbfr() {
+		return rawAddressAbfr;
 	}
 
-	public void setRawAdress(String rawAdress) {
-		this.rawAdress = rawAdress;
-	}
-
-	public String getStructAdress() {
-		return structAdress;
-	}
-
-	public void setStructAdress(String structAdress) {
-		this.structAdress = structAdress;
+	public void setRawAddressAbfr(String rawAddressAbfr) {
+		this.rawAddressAbfr = rawAddressAbfr;
 	}
 
 	public int getDienstID() {
@@ -36,33 +27,38 @@ public class Abfrage {
 		this.dienstID = dienstID;
 	}
 
-	public String getExtAdress() {
-		return extAdress;
+	public String getExtAddress() {
+		return extAddress;
 	}
 
-	public void setExtAdress(String extAdress) {
-		this.extAdress = extAdress;
+	public void setExtAddress(String extAddress) {
+		this.extAddress = extAddress;
 	}
 	
 	//je nach Gegebenheit der Adresse werden jeweils andere Services angefragt
 	//Reihenfolge und Bedingungen können sich noch ändern
-	public String abfrage(String rawAdress) {
-		System.out.println("Beginn abfrage: rawAdress " + rawAdress); //test-code
-		if (rawAdress.contains("strasse") == true) {
+	public String abfrage(String rawAddress) {
+		System.out.println("Beginn abfrage: rawAddress " + rawAddress); //test-code
+		if (rawAddress.contains("strasse") == true) {
 			AbfrageDienst n = new AbfrageDienst(1);
-			String newAdress = n.AbfServiceOSM(rawAdress);
-			setExtAdress(newAdress);
-			System.out.println("Ende abfrage: newadress " + newAdress); //test-code
-			return newAdress;
+			String newAddress = n.AbfServiceOSM(rawAddress);
+			setExtAddress(newAddress);
+			System.out.println("Ende abfrage: newaddress " + newAddress); //test-code
+			return newAddress;
 		}
-		else if (rawAdress == "strasse 2") {
+		else if (rawAddress == "strasse 2") {
 			//wird später erweitert
 		}
 		else {
-			//wird später erweitert
+			//Code ist im Moment Platzhalter, damit der ganze Prozess läuft
+			AbfrageDienst n = new AbfrageDienst(1);
+			String newAddress = n.AbfServiceOSM(rawAddress);
+			setExtAddress(newAddress);
+			System.out.println("Ende abfrage: newaddress " + newAddress); //test-code
+			return newAddress;
 		}
 		
-		return extAdress;
+		return extAddress;
 	}
 	
 	

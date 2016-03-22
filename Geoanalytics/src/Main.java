@@ -68,6 +68,13 @@ public class Main {
 				System.out.print(", Name Freeform: " + nameFreeform);
 				System.out.println(", Adress_1: " + addressOne);
 				System.out.println(", Adress_2: " + addressTwo);
+				
+				//Werte Instanzieren in Struktur
+				Struktur f = new Struktur(personOrigId, personId, nameFreeform, addressOne, addressTwo);
+				
+				//Abfrage bei Dienstleisungen starten
+				f.startAbfrage(f.getRawAddress());
+				
 			}
 			//ResultSet rs, Statement bereinigen und Verbindung schliessen
 			rs.close();
@@ -95,9 +102,8 @@ public class Main {
 		}//end try
 		System.out.println("DB Connection closed");
 		
-		
-		Struktur f = new Struktur("strasse , 1, Ort, 1234, CH", 1);		
-		System.out.println("Resultat: " + f.startAbfrage(f.getAdress()));
+		// Resultat ausgeben	
+		//System.out.println("Resultat: " + f.startAbfrage(f.getAdress()));
 		
 	}
 }

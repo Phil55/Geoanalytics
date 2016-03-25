@@ -1,8 +1,14 @@
 import java.sql.*; //wird für die Verbindung zur Datenbank benötigt
+
 import java.util.Scanner; //für Eingabe in Konsole benötigt
+
+
 
 public class Main {
 
+	//USER_AGENT festlegen
+	private final String USER_AGENT = "Mozilla/5.0";
+	
 	// Instanzierung von Name und URL von JDBC driver
 	static final String jdbcTreiber = "com.mysql.jdbc.Driver";  
 	static final String url = "jdbc:mysql://160.85.104.27/patstat";

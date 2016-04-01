@@ -1,3 +1,7 @@
+import java.util.List;
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
 
 public class Validierung {
 
@@ -5,10 +9,10 @@ public class Validierung {
 	private String rawAdressVal;
 	private String extAdressVal;
 	
-	public Validierung(String rawAdress, String extAdress) {
+	public Validierung(String rawAdress, String extAdress, List<AbfrageOSM> osm, HttpResponse<JsonNode> response) {
 		this.rawAdressVal = rawAdress;
 		this.extAdressVal = extAdress;
-		pruefen(rawAdress, extAdress);
+		pruefen(rawAdress, extAdress, osm, response);
 	}
 
 	public int getScore() {
@@ -35,7 +39,20 @@ public class Validierung {
 		this.extAdressVal = extAdressVal;
 	}
 	
-	public int pruefen(String rawAdress, String extAdress){
+	public int pruefen(String rawAdress, String extAdress, List<AbfrageOSM> osm, HttpResponse<JsonNode> response){
+		
+		System.out.println("startprüfen: ");
+		String oldAddress = rawAdress;
+		String newAddress = osm.get(0).getAddress().getRoad();;
+		System.out.println("newAddress: " + newAddress);
+		System.out.println("oldAddress: " + oldAddress);
+		
+		int result = oldAddress.compareToIgnoreCase(newAddress);
+		System.out.println(result);
+		
+		result = newAddress.compareToIgnoreCase(oldAddress);
+		System.out.println(result);
+		
 		if (rawAdress.equals(extAdress) == true){
 			setScore(100);
 		}

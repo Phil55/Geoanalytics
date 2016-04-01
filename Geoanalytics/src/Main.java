@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.sql.*; //wird für die Verbindung zur Datenbank benötigt
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner; //für Eingabe in Konsole benötigt
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,7 +11,7 @@ import com.mashape.unirest.http.Unirest;
 
 
 public class Main {
-
+	
 	//USER_AGENT festlegen
 	private final String USER_AGENT = "Mozilla/5.0";
 	

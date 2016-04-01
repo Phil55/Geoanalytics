@@ -13,6 +13,8 @@ public class Abfrage {
 	private String rawAddressAbfr;
 	private int dienstID; //evt. Array
 	private String extAddress; //evt. Array
+	private List<AbfrageOSM> osm;
+	private HttpResponse<JsonNode> response;
 	
 	public Abfrage(String rawAddress) {
 		//super();
@@ -44,6 +46,23 @@ public class Abfrage {
 		this.extAddress = extAddress;
 	}
 	
+	public List<AbfrageOSM> getOsm() {
+		return osm;
+	}
+
+	public void setOsm(List<AbfrageOSM> osm) {
+		this.osm = osm;
+	}
+
+	public HttpResponse<JsonNode> getResponse() {
+		return response;
+	}
+
+	public void setResponse(HttpResponse<JsonNode> response) {
+		this.response = response;
+	}
+	
+	
 	//je nach Gegebenheit der Adresse werden jeweils andere Services angefragt
 	//Reihenfolge und Bedingungen können sich noch ändern
 	public String abfrage(String rawAddress) {
@@ -56,7 +75,7 @@ public class Abfrage {
 				
 			try {
 				
-				HttpResponse<JsonNode> response = Unirest.get("http://nominatim.openstreetmap.org/search?q={address}&format=json&polygon=1&addressdetails=1").
+				response = Unirest.get("http://nominatim.openstreetmap.org/search?q={address}&format=json&polygon=1&addressdetails=1").
 					routeParam("address", "Bachstrasse+39,+8912+Obfelden").
 					//header("accept", "application/json").
 					//queryString("display_name", "display_name").
@@ -72,10 +91,11 @@ public class Abfrage {
 				System.out.println("bodyNew: " + newBody);
 					
 				ObjectMapper mapper = new ObjectMapper();
-				List<AbfrageOSM> osm = mapper.readValue(newBody, new TypeReference<List<AbfrageOSM>>(){});
+				osm = mapper.readValue(newBody, new TypeReference<List<AbfrageOSM>>(){});
 				System.out.println("display: " + osm.get(0).getDisplay_name());
 				setExtAddress(osm.get(0).getDisplay_name());
 				System.out.println("ExtAddress: " + Abfrage.this.getExtAddress());
+				
 				//List<AbfrageOSM> osm = mapper.readValue(body, ArrayList.class);
 				//AbfrageOSM [] osm = mapper.readValue(newBody, AbfrageOSM[].class);
 				//System.out.println("JavaObjekt Abfragedienst n: " + mapper.readValue(newBody, AbfrageOSM[].class)) ;
@@ -101,11 +121,13 @@ public class Abfrage {
 			
 			try {
 				
+				
 				HttpResponse<JsonNode> response = Unirest.get("http://nominatim.openstreetmap.org/search?q={address}&format=json&polygon=1&addressdetails=1").
 					routeParam("address", "Bachstrasse+39,+8912+Obfelden").
 					//header("accept", "application/json").
 					//queryString("display_name", "display_name").
 					asJson();
+				
 					
 				response = Unirest.get("http://nominatim.openstreetmap.org/search?q=Bachstrasse+39,+8912+Obfelden&format=json&polygon=1&addressdetails=1").asJson();
 				String body = response.getBody().toString();
@@ -115,22 +137,26 @@ public class Abfrage {
 				//String class in classe umbenennen
 				String newBody = body.replaceAll("class", "classe");
 				System.out.println("bodyNew: " + newBody);
-					
+				
 				ObjectMapper mapper = new ObjectMapper();
-				List<AbfrageOSM> osm = mapper.readValue(newBody, new TypeReference<List<AbfrageOSM>>(){});
-				System.out.println("display: " + osm.get(0).getDisplay_name());
-				setExtAddress(osm.get(0).getDisplay_name());
+				List<AbfrageOSM> osmOne = mapper.readValue(newBody, new TypeReference<List<AbfrageOSM>>(){});
+				System.out.println("display: " + osmOne.get(0).getDisplay_name());
+				
+				setExtAddress(osmOne.get(0).getDisplay_name());
 				System.out.println("ExtAddress: " + Abfrage.this.getExtAddress());
+				
 				//List<AbfrageOSM> osm = mapper.readValue(body, ArrayList.class);
 				//AbfrageOSM [] osm = mapper.readValue(newBody, AbfrageOSM[].class);
 				//System.out.println("JavaObjekt Abfragedienst n: " + mapper.readValue(newBody, AbfrageOSM[].class)) ;
 					
 				System.out.println("response_status2: " + response.getStatusText());
-					
+				
+				
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-							
+			
+			
 			//extAddress = "strasse , 1, Ort, 1234, CH, lat: 35.12378, long: 5.78735";
 			System.out.println("Ende abfrage: extaddress " + extAddress); //test-code
 			return extAddress;
@@ -138,14 +164,8 @@ public class Abfrage {
 		
 		return extAddress;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 }
+
+

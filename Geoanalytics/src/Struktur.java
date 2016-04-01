@@ -78,7 +78,7 @@ public class Struktur {
 		Abfrage m = new Abfrage(getRawAddress());
 		
 		//Prüfung der neu gewonnenen Adresse starten
-		Validierung f = new Validierung(getRawAddress(), m.getExtAddress());
+		Validierung f = new Validierung(getRawAddress(), m.getExtAddress(), m.getOsm(), m.getResponse());
 		if (f.getScore() >= 60){
 			System.out.println("Score der Adresse ist gleich/grösser 60 : " + f.getScore()); //test-code
 			

@@ -1,6 +1,11 @@
+import java.io.IOException;
 import java.sql.*; //wird für die Verbindung zur Datenbank benötigt
 
 import java.util.Scanner; //für Eingabe in Konsole benötigt
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mashape.unirest.http.Unirest;
 
 
 
@@ -56,7 +61,7 @@ public class Main {
 			System.out.println("Creating statement...");
 			stmt = conn.createStatement();
 			String sql;
-			sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 4;";
+			sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 426;";
 			ResultSet rs = stmt.executeQuery(sql);
 
 			//Daten von result set in Variablen extrahieren

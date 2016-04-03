@@ -70,7 +70,7 @@ public class Struktur {
 		String combinedString = addressOne + ", " + addressTwo;
 		return combinedString;
 	}
-
+	
 	//die Abfrage nach einer Adresse wird gestartet
 	public String startAbfrage(String rawAddress) {
 		System.out.println("BeginnstartAbfrage: " + rawAddress); //test-code

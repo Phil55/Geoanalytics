@@ -41,6 +41,8 @@ public class Validierung {
 	
 	public int pruefen(String rawAdress, String extAdress, List<AbfrageOSM> osm, HttpResponse<JsonNode> response){
 		
+		
+		
 		System.out.println("startprüfen: ");
 		String oldAddress = rawAdress;
 		String newAddress = osm.get(0).getAddress().getRoad();;
@@ -52,6 +54,9 @@ public class Validierung {
 		
 		result = newAddress.compareToIgnoreCase(oldAddress);
 		System.out.println(result);
+		
+		int count = 0;
+		
 		
 		if (rawAdress.equals(extAdress) == true){
 			setScore(100);

@@ -5,9 +5,8 @@ public class ListOption {
 
 	List<String> listOldOption = new ArrayList<String>();
 
-	public ListOption(List<String> listOldOption) {
-		super();
-		this.listOldOption = listOldOption;
+	public ListOption() {
+		
 	}
 
 	public List<String> getListOldOption() {

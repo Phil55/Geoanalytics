@@ -100,6 +100,7 @@ public class Validierung {
 		System.out.println("EndIndex an der Stelle :" + endIndex); 
 		System.out.println("listNewAddress String get(i) :" + listNewAddress.get(i));
 		
+		//aktuelle liste printen
 		for (int x = 0; x < provListOldAddress.get(i).listOldOption.size(); x++){
 			System.out.println("listOldaddress String get(i) :" + provListOldAddress.get(i).getListOldOption().get(x));
 			System.out.println("int x :" + x);
@@ -113,8 +114,13 @@ public class Validierung {
 		String addressNumber = osm.get(0).getAddress().getHouse_number();
 		String plz = osm.get(0).getAddress().getPostcode();
 		String village = osm.get(0).getAddress().getVillage();
+		String town = osm.get(0).getAddress().getTown();
+		String city = osm.get(0).getAddress().getCity();
 		System.out.println("newAddress: " + newAddress);
 		System.out.println("oldAddress: " + rawAddress);
+		System.out.println("village: " + village);
+		System.out.println("town: " + town);
+		System.out.println("city: " + city);
 		
 		//für Score berechnen für "if contains == true"
 		List<Boolean> listCheck = new ArrayList<Boolean>();
@@ -137,119 +143,133 @@ public class Validierung {
 		listNewAddress.add(newAddress);
 		listNewAddress.add(addressNumber);
 		listNewAddress.add(plz);
-		listNewAddress.add(village);
+		if (village != null){
+			listNewAddress.add(village);
+		}
+		if (town != null){
+			listNewAddress.add(town);
+		}
+		if (city != null){
+			listNewAddress.add(city);
+		}
 		int countTrue = 0;
 		int countFalse = 0;
 		int provScore = 0;
 		
 		for (int i = 0; i <listNewAddress.size(); i++){
 			
+			/*
+			if(listNewAddress.get(i) == null){
+				System.out.println("listNewAddress.get(i) == null");
+			}
+			else{
+			*/
 			
-			//ListOption f = new ListOption();
-			addListOldAddress(rawAddress, i);
-			
-			System.out.println("rawAddresslowerCase :" + rawAddress.toLowerCase());
-			System.out.println("newAddresslowerCase :" + listNewAddress.get(i).toLowerCase());
-			
-			if (rawAddress.toLowerCase().contains(listNewAddress.get(i).toLowerCase()) != true){ //zu testzwecken: == mit != ersetzt
-				
-				if (i == 0){
-					roadCheck = true;
-					listCheck.add(roadCheck); //falls nur liste benötigt wird: listCheck.add(true);
-					provScore += 100;
-				}
-				else if (i == 1){
-					addNrCheck = true;
-					listCheck.add(addNrCheck);
-					provScore += 100;
-				}
-				else if (i == 2){
-					plzCheck = true;
-					listCheck.add(plzCheck);
-					provScore += 100;
-				}
-				else if (i == 3){
-					villageCheck = true;
-					listCheck.add(villageCheck);
-					provScore += 100;
-				}
-				else {
-					listCheck.add(false);
-					System.out.println("True-Wert kann nicht zugeordnet werden bei List-Stelle :" + i);
-				}
-				
-				//Score berechnen für "if contains == true"
-				for (int q = 0; q < listCheck.size(); q++){
-					if (listCheck.get(q) == true){
-						countTrue++;
+				//ListOption f = new ListOption();
+				addListOldAddress(rawAddress, i);
+
+				System.out.println("rawAddresslowerCase :" + rawAddress.toLowerCase());
+				System.out.println("newAddresslowerCase :" + listNewAddress.get(i).toLowerCase());
+
+				if (rawAddress.toLowerCase().contains(listNewAddress.get(i).toLowerCase()) == true){ //zu testzwecken: == mit != ersetzt
+
+					if (i == 0){
+						roadCheck = true;
+						listCheck.add(roadCheck); //falls nur liste benötigt wird: listCheck.add(true);
+						provScore += 100;
+					}
+					else if (i == 1){
+						addNrCheck = true;
+						listCheck.add(addNrCheck);
+						provScore += 100;
+					}
+					else if (i == 2){
+						plzCheck = true;
+						listCheck.add(plzCheck);
+						provScore += 100;
+					}
+					else if (i == 3){
+						villageCheck = true;
+						listCheck.add(villageCheck);
+						provScore += 100;
 					}
 					else {
-						countFalse++;
+						listCheck.add(false);
+						System.out.println("True-Wert kann nicht zugeordnet werden bei List-Stelle :" + i);
 					}
-				}
-				
-				provScore = provScore/countTrue - 25*countFalse;
-				System.out.println("provScore provScore/countTrue - 25*countFalse :" + provScore);
-				
-				System.out.println("int countTrue :" + countTrue);
-				setScore(provScore);
-			}
-			else {
-				
-				//String testNew = "Bachstrassen 13";	//String zum testen
-				//String testOld = "Bachstrasse";		//String zum testen
-				
-				int nStartIndex = 0;
-				int nEndIndex = 1;
-				int nScoreTrue = 0;
-				int nScoreFalse = 0;
-				int valScore = 0; // kann evt. auch mit Variabel provScore gemacht werden
-				int totalCheck = 0;
-				List<Integer> checkList = new ArrayList<Integer>();
-				List<Integer> scoreList = new ArrayList<Integer>();
-				List<Integer> totalList = new ArrayList<Integer>();
-				
-				for (int x = 0; x < provListOldAddress.get(i).listOldOption.size(); x++){
-					String oldList = provListOldAddress.get(i).getListOldOption().get(x).substring(nStartIndex, nEndIndex);
-					String newList = listNewAddress.get(i).substring(nStartIndex, nEndIndex);
-				
-					//n-gram test
-					for (int a = 0; a < provListOldAddress.get(i).getListOldOption().size(); a++){
-				
-						for (int p = 0; p < listNewAddress.get(i).length(); p++){
-							if (oldList.equalsIgnoreCase(newList) == true) {
-								nStartIndex++;
-								nEndIndex++;
-								nScoreTrue++;
-								System.out.println("nScoreTrue :" + nScoreTrue);
-							}
-							else {
-								nStartIndex++;
-								nEndIndex++;
-								nScoreFalse++;
-								System.out.println("nScoreFalse :" + nScoreFalse);
-							}
+
+					//Score berechnen für "if contains == true"
+					for (int q = 0; q < listCheck.size(); q++){
+						if (listCheck.get(q) == true){
+							countTrue++;
+						}
+						else {
+							countFalse++;
 						}
 					}
-					
-					//Listen erstellen für bestimmung des besten Strings
-					totalCheck = nScoreFalse + nScoreTrue;
-					checkList.add(totalCheck);
-					valScore = nScoreTrue/totalCheck*100;
-					scoreList.add(valScore);
-					
-					//println für testzwecken
-					System.out.println("nScoreTrue finaly :" + nScoreTrue);
-					System.out.println("nScoreFalse finaly :" + nScoreFalse);
-					System.out.println("nScore Total (True+False) :" + totalCheck);
-					System.out.println("valScore :" + valScore);
-					System.out.println("contain is false with :" + listNewAddress.get(i));
+
+					provScore = provScore/countTrue - 25*countFalse;
+					System.out.println("provScore provScore/countTrue - 25*countFalse :" + provScore);
+
+					System.out.println("int countTrue :" + countTrue);
+					setScore(provScore);
 				}
-				
-				//grösster Score finden
-				int ind = 0;
-				if (provListOldAddress.get(i).getListOldOption().size() == 0){
-					listOldAddress.add(provListOldAddress.get(i).listOldOption.get(0));
+				else {
+
+					//String testNew = "Bachstrassen 13";	//String zum testen
+					//String testOld = "Bachstrasse";		//String zum testen
+
+					int nStartIndex = 0;
+					int nEndIndex = 1;
+					int nScoreTrue = 0;
+					int nScoreFalse = 0;
+					int valScore = 0; // kann evt. auch mit Variabel provScore gemacht werden
+					int totalCheck = 0;
+					List<Integer> checkList = new ArrayList<Integer>();
+					List<Integer> scoreList = new ArrayList<Integer>();
+					List<Integer> totalList = new ArrayList<Integer>();
+
+					for (int x = 0; x < provListOldAddress.get(i).listOldOption.size(); x++){
+						String oldList = provListOldAddress.get(i).getListOldOption().get(x).substring(nStartIndex, nEndIndex);
+						String newList = listNewAddress.get(i).substring(nStartIndex, nEndIndex);
+
+						//n-gram test
+						for (int a = 0; a < provListOldAddress.get(i).getListOldOption().size(); a++){
+
+							for (int p = 0; p < listNewAddress.get(i).length(); p++){
+								if (oldList.equalsIgnoreCase(newList) == true) {
+									nStartIndex++;
+									nEndIndex++;
+									nScoreTrue++;
+									System.out.println("nScoreTrue :" + nScoreTrue);
+								}
+								else {
+									nStartIndex++;
+									nEndIndex++;
+									nScoreFalse++;
+									System.out.println("nScoreFalse :" + nScoreFalse);
+								}
+							}
+						}
+
+						//Listen erstellen für bestimmung des besten Strings
+						totalCheck = nScoreFalse + nScoreTrue;
+						checkList.add(totalCheck);
+						valScore = nScoreTrue/totalCheck*100;
+						scoreList.add(valScore);
+
+						//println für testzwecken
+						System.out.println("nScoreTrue finaly :" + nScoreTrue);
+						System.out.println("nScoreFalse finaly :" + nScoreFalse);
+						System.out.println("nScore Total (True+False) :" + totalCheck);
+						System.out.println("valScore :" + valScore);
+						System.out.println("contain is false with :" + listNewAddress.get(i));
+					}
+
+					//grösster Score finden
+					int ind = 0;
+					if (provListOldAddress.get(i).getListOldOption().size() == 0){
+						listOldAddress.add(provListOldAddress.get(i).listOldOption.get(0));
 					}
 					else{
 						int max = 0;
@@ -307,9 +327,10 @@ public class Validierung {
 							}
 						}
 					}
+				}
 			}
-		}
-		
+		//}
+
 		//Score berechnen für "if contains == false"
 		//evt. kann Berechnung für Score bei beiden fällen (contains == false UND true) benutzt werden
 		for (int q = 0; q < listCheck.size(); q++){
@@ -320,13 +341,13 @@ public class Validierung {
 				countFalse++;
 			}
 		}
-		
+
 		provScore = provScore/countTrue - 25*countFalse;
 		System.out.println("provScore provScore/countTrue - 25*countFalse :" + provScore);
-		
+
 		System.out.println("int countTrue :" + countTrue);
 		setScore(provScore);
-		
+
 		/*
 		if (rawAdress.equals(extAdress) == true){
 			setScore(100);
@@ -337,12 +358,9 @@ public class Validierung {
 		else {
 			setScore(30);
 		}
-		*/
-		
+		 */
+
 		System.out.println("Ende pruefen: score " + score); //test-code
-		return score;
-	}
-	
-	
-	
+		return score;			
+	}	
 }

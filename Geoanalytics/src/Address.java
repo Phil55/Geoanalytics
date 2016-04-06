@@ -9,9 +9,14 @@ public class Address {
 	private String postcode;
 	private String country;
 	private String country_code;
+	private String residential;
+	private String town;
+	private String state_district;
+	private String city;
+	private String suburb;
 	
 	public Address(String house_number, String road, String village, String county, String state, String postcode,
-			String country, String country_code) {
+			String country, String country_code, String residential, String town, String state_district) {
 		//super();
 		this.house_number = house_number;
 		this.road = road;
@@ -21,6 +26,9 @@ public class Address {
 		this.postcode = postcode;
 		this.country = country;
 		this.country_code = country_code;
+		this.residential = residential;
+		this.town = town;
+		this.state_district = state_district;
 	}
 	
 	//test dummy constructor for Objectmapper
@@ -89,6 +97,46 @@ public class Address {
 
 	public void setCountry_code(String country_code) {
 		this.country_code = country_code;
+	}
+
+	public String getResidential() {
+		return residential;
+	}
+
+	public void setResidential(String residential) {
+		this.residential = residential;
+	}
+
+	public String getTown() {
+		return town;
+	}
+
+	public void setTown(String town) {
+		this.town = town;
+	}
+	
+	public String getState_district() {
+		return state_district;
+	}
+
+	public void setState_district(String state_district) {
+		this.state_district = state_district;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getSuburb() {
+		return suburb;
+	}
+
+	public void setSuburb(String suburb) {
+		this.suburb = suburb;
 	}
 	
 	

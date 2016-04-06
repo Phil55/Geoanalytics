@@ -13,7 +13,13 @@ public class Address {
 	private String town;
 	private String state_district;
 	private String city;
+	private String city_district;
+	private String construction;
+	private String continent;
+	private String neighbourhood;
+	private String public_building;
 	private String suburb;
+	private String bakery;
 	
 	public Address(String house_number, String road, String village, String county, String state, String postcode,
 			String country, String country_code, String residential, String town, String state_district) {
@@ -137,6 +143,54 @@ public class Address {
 
 	public void setSuburb(String suburb) {
 		this.suburb = suburb;
+	}
+
+	public String getBakery() {
+		return bakery;
+	}
+
+	public void setBakery(String bakery) {
+		this.bakery = bakery;
+	}
+
+	public String getCity_district() {
+		return city_district;
+	}
+
+	public void setCity_district(String city_district) {
+		this.city_district = city_district;
+	}
+
+	public String getConstruction() {
+		return construction;
+	}
+
+	public void setConstruction(String construction) {
+		this.construction = construction;
+	}
+
+	public String getContinent() {
+		return continent;
+	}
+
+	public void setContinent(String continent) {
+		this.continent = continent;
+	}
+
+	public String getNeighbourhood() {
+		return neighbourhood;
+	}
+
+	public void setNeighbourhood(String neighbourhood) {
+		this.neighbourhood = neighbourhood;
+	}
+
+	public String getPublic_building() {
+		return public_building;
+	}
+
+	public void setPublic_building(String public_building) {
+		this.public_building = public_building;
 	}
 	
 	

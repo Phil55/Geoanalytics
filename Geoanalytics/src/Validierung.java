@@ -212,6 +212,7 @@ public class Validierung {
 					System.out.println("provScore provScore/countTrue - 25*countFalse :" + provScore);
 
 					System.out.println("int countTrue :" + countTrue);
+					countTrue = 0; //countTrue zurücksetzen
 					setScore(provScore);
 				}
 				else {
@@ -220,7 +221,7 @@ public class Validierung {
 					//String testOld = "Bachstrasse";		//String zum testen
 
 					int nStartIndex = 0;
-					int nEndIndex = 1;
+					int nEndIndex = 2;
 					int nScoreTrue = 0;
 					int nScoreFalse = 0;
 					int valScore = 0; // kann evt. auch mit Variabel provScore gemacht werden
@@ -230,24 +231,33 @@ public class Validierung {
 					List<Integer> totalList = new ArrayList<Integer>();
 
 					for (int x = 0; x < provListOldAddress.get(i).listOldOption.size(); x++){
-						String oldList = provListOldAddress.get(i).getListOldOption().get(x).substring(nStartIndex, nEndIndex);
-						String newList = listNewAddress.get(i).substring(nStartIndex, nEndIndex);
-
+						String oldList = provListOldAddress.get(i).getListOldOption().get(x).substring(nStartIndex, nEndIndex); // evt. auf 244 verschieben bzw. löschen
+						String newList = listNewAddress.get(i).substring(nStartIndex, nEndIndex); // evt. auf 245 verschieben bzw. löschen
+						
 						//n-gram test
 						for (int a = 0; a < provListOldAddress.get(i).getListOldOption().size(); a++){
 
 							for (int p = 0; p < listNewAddress.get(i).length(); p++){
-								if (oldList.equalsIgnoreCase(newList) == true) {
-									nStartIndex++;
-									nEndIndex++;
-									nScoreTrue++;
-									System.out.println("nScoreTrue :" + nScoreTrue);
-								}
-								else {
-									nStartIndex++;
-									nEndIndex++;
-									nScoreFalse++;
-									System.out.println("nScoreFalse :" + nScoreFalse);
+								
+								while(nEndIndex <= listNewAddress.get(i).length()){
+									
+									oldList = provListOldAddress.get(i).getListOldOption().get(x).substring(nStartIndex, nEndIndex);
+									newList = listNewAddress.get(i).substring(nStartIndex, nEndIndex);
+									System.out.println("oldList :" + oldList);
+									System.out.println("newList :" + newList);
+
+									if (oldList.equalsIgnoreCase(newList) == true) {
+										nStartIndex++;
+										nEndIndex++;
+										nScoreTrue++;
+										System.out.println("nScoreTrue :" + nScoreTrue);
+									}
+									else {
+										nStartIndex++;
+										nEndIndex++;
+										nScoreFalse++;
+										System.out.println("nScoreFalse :" + nScoreFalse);
+									}
 								}
 							}
 						}
@@ -268,10 +278,13 @@ public class Validierung {
 
 					//grösster Score finden
 					int ind = 0;
-					if (provListOldAddress.get(i).getListOldOption().size() == 0){
+					System.out.println("provListOldAddress.get(i).getListOldOption().size() :" + provListOldAddress.get(i).getListOldOption().size());
+					System.out.println("size() == 0 :" + provListOldAddress.get(i).getListOldOption().get(0));
+					
+					if (provListOldAddress.get(i).getListOldOption().size() == 1){
 						listOldAddress.add(provListOldAddress.get(i).listOldOption.get(0));
 					}
-					else{
+					else {
 						int max = 0;
 						for (int x = 0; x < provListOldAddress.get(i).listOldOption.size(); x++){
 							if (max < scoreList.get(x)){

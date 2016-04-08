@@ -20,8 +20,15 @@ public class Main {
 	static final String url = "jdbc:mysql://160.85.104.27/patstat";
 
 	//  Instanzierung von Einlog-Daten für Datenbank
+	
+	//Für Testzwecke verwenden
+	static final String user = "patentdb";
+	static final String password = "tRNSBI7n7VHOPK7n";
+	
+	/*// Code für am Schluss (User muss Passwort eingeben
 	static final String user = getUsername();
 	static final String password = getPassword();
+	*/
 	
 	//Methode um Username einzugeben und in Variable zu speichern
 	public static String getUsername(){
@@ -65,7 +72,8 @@ public class Main {
 			//sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 426;";
 			//sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 450;";
 			//sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 500;";
-			sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 412;";
+			//sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 412;";
+			sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 110;";
 			ResultSet rs = stmt.executeQuery(sql);
 
 			//Daten von result set in Variablen extrahieren

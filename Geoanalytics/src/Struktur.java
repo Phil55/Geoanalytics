@@ -67,7 +67,7 @@ public class Struktur {
 	}
 	
 	public String createRawAddress(String addressOne, String addressTwo){
-		String combinedString = addressOne + ", " + addressTwo;
+		String combinedString = addressOne + " " + addressTwo;
 		return combinedString;
 	}
 	

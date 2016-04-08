@@ -46,6 +46,7 @@ public class AbfrageOSM {
 	private String type;
 	private String importance;
 	private Address address;
+	List<String> listNewAddressOSM = new ArrayList<String>(); // Liste erstellen um bei der Validierung strukturiert vorzugehen
 
 	
 	public AbfrageOSM(String place_id, String licence, String osm_type, String osm_id, List<String> boundingbox,
@@ -175,222 +176,52 @@ public class AbfrageOSM {
 		this.address = address;
 	}
 
-	
-	//DL/Service wird abgefragt und man erhält eine "externe Adresse"
-	//public String AbfServiceOSM (String rawAddress) {
-		
-		/*
-		//Serialization
-		Unirest.setObjectMapper(new ObjectMapper() {
-		    private com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper
-		                = new com.fasterxml.jackson.databind.ObjectMapper();
+	public List<String> getListNewAddressOSM() {
+		return listNewAddressOSM;
+	}
 
-		    public <T> T readValue(String value, Class<T> valueType) {
-		        try {
-		            return jacksonObjectMapper.readValue(value, valueType);
-		        } catch (Exception e) {
-		            throw new RuntimeException(e);
-		        }
-		    }
-
-		    public String writeValue(Object value) {
-		        try {
-		            return jacksonObjectMapper.writeValueAsString(value);
-		        } catch (JsonProcessingException e) {
-		            throw new RuntimeException(e);
-		        }
-		    }
-		});
-		*/
-		
-		//try {
-			/*	
-			//URL url = new URL("http://open.mapquestapi.com/geocoding/v1/address?key=V7QcX4ax6960SWrbde2ssAaAd6A92zMm&callback=renderOptions&inFormat=kvp&outFormat=json&location=" + rawAddress);
-			//URL url = new URL("http://open.mapquestapi.com/geocoding/v1/address?key=V7QcX4ax6960SWrbde2ssAaAd6A92zMm&outFormat=json&location=" + rawAddress);
-			//URL url = new URL("http://nominatim.openstreetmap.org/search/135%20pilkington%20avenue,%20birmingham?format=json&polygon=1&addressdetails=1");
-			URL url = new URL("http://nominatim.openstreetmap.org/search?q=Bachstrasse+39,+8912+Obfelden&format=json&polygon=1&addressdetails=1");
-			BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-			String strTemp = "";
-			while (null != (strTemp = br.readLine())) {
-				System.out.println("ServiceabfrageOSM: " + strTemp);
-			
-			JSONArray array = new JSONArray(strTemp);
-			JSONObject jsonobj = new JSONObject(array.getJSONObject(0));
-			String [] display = new String[array.length()];
-			for(int i = 0; i < array.length(); i++){
-				display[i] = jsonobj.getString("display_name");
-				System.out.println("display: " + display);
-			}
-			String lat = jsonobj.getString("lat");
-			System.out.println("lat: " + lat);
-			
-			//JSON in Java Objekt
-			ObjectMapper mapper = new ObjectMapper();
-			AbfrageOSM osm = mapper.readValue(url, AbfrageOSM.class);
-			System.out.println("JavaObjekt Abfragedienst n: ");
-			}
-			*/
-			//URL url = new URL("http://nominatim.openstreetmap.org/search?q=Bachstrasse+39,+8912+Obfelden&format=json&polygon=1&addressdetails=1");
-			//ObjectMapper mapper = new ObjectMapper();
-			//Data osm = mapper.readValue(url, Data.class);
-/*			
-			HttpResponse<JsonNode> response = Unirest.get("http://nominatim.openstreetmap.org/search?q={address}&format=json&polygon=1&addressdetails=1").
-				routeParam("address", "Bachstrasse+39,+8912+Obfelden").
-				//header("accept", "application/json").
-				//queryString("display_name", "display_name").
-				asJson();
-			response = Unirest.get("http://nominatim.openstreetmap.org/search?q=Bachstrasse+39,+8912+Obfelden&format=json&polygon=1&addressdetails=1").asJson();
-			String body = response.getBody().toString();
-			System.out.println("response: " + response);
-			System.out.println("response_status: " + response.getStatusText());
-			System.out.println("bodyReal: " + body);
-			//String class in classe umbenennen
-			String newBody = body.replaceAll("class", "classe");
-			System.out.println("bodyNew: " + newBody);
-			
-			ObjectMapper mapper = new ObjectMapper();
-			//List<AbfrageOSM> osm = mapper.readValue(body, ArrayList.class);
-			//AbfrageOSM [] osm = mapper.readValue(newBody, AbfrageOSM[].class);
-			List<AbfrageOSM> osm = mapper.readValue(newBody, new TypeReference<List<AbfrageOSM>>(){});
-			//System.out.println("JavaObjekt Abfragedienst n: " + mapper.readValue(newBody, AbfrageOSM[].class)) ;
-			System.out.println("display: " + osm.get(0).getDisplay_name());
-*/			
-			
-			/*
-			JsonFactory jsonf = new JsonFactory();
-			List<AbfrageOSM> abfrage = null;
-			JsonParser jp = jsonf.createJsonParser(newBody);
-			TypeReference<List<AbfrageOSM>> tRef = new TypeReference<List<AbfrageOSM>>(){};
-			abfrage = mapper.readValue(jp, tRef);
-			for (AbfrageOSM p : abfrage){
-				System.out.println("test: " + p.toString()) ;
-			}
-			*/
-			
-			//String display = mapper.writeValueAsString(osm);
-			//System.out.println("display: " + display);
-			
-			//JSONObject jsonnode = response.getBody().getObject().getJSONObject("address");
-			//JSONObject jsonnode = response.getBody().getArray().getJSONObject(0).getJSONObject("address");
-			
-			//String licence = jsonnode.getString("licence");
-			//JSONArray jsonArray = jsonnode.getJSONArray("boundingbox");
-			//String[] name = new String[jsonArray.length()];
-			
-			//JSONArray array = jsonnode.getArray();
-			//System.out.println("jsonString: " + jsonnode);
-			//System.out.println("displayName: " + type);
-			//System.out.println("licence: " + licence);	
-			//System.out.println("jsonarrayname: " + name);
-			
-			//ObjectMapper mapper = new ObjectMapper();
-			//Unirest.setObjectMapper(mapper);
-			
-			/*
-			Unirest.setObjectMapper(new ObjectMapper() {
-			    private com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper
-			                = new com.fasterxml.jackson.databind.ObjectMapper();
-
-			    public <T> T readValue(String value, Class<T> valueType) {
-			        try {
-			            return jacksonObjectMapper.readValue(value, valueType);
-			        } catch (IOException e) {
-			            throw new RuntimeException(e);
-			        }
-			    }
-
-			    public String writeValue(Object value) {
-			        try {
-			            return jacksonObjectMapper.writeValueAsString(value);
-			        } catch (JsonProcessingException e) {
-			            throw new RuntimeException(e);
-			        }
-			    }
-			});
-			
-			
-			HttpResponse<Data> result = Unirest.get("http://nominatim.openstreetmap.org/search?q={address}&format=json&polygon=1&addressdetails=1").
-					routeParam("address", "Bachstrasse+39,+8912+Obfelden").
-					asObject(Data.class);
-			
-			Data dataObject = result.getBody();
-			*/
-			
-			/*
-			JSONArray mainNode = response.getBody().getArray() ;
-			System.out.println("mainNode: " + mainNode);
-			
-			JSONObject jsonObject = response.getBody().getObject();
-			AbfrageOSM p = new AbfrageOSM(2);
-			p.display_name = jsonObject.getString("display_name");
-			System.out.println("display name: " + p.display_name);
-			System.out.println("jsonObject: " + jsonObject);
-			p.display_name = jsonObject.toString();
-			
-			for (int i = -1; i < mainNode.length(); i++) { //i = -1, weil die länge des Arrays bei 0 anfängt
-				JSONObject jsonObject = response.getBody().getObject();
-				AbfrageOSM p = new AbfrageOSM(2);
-				p.display_name = jsonObject.getString("display_name");
-				System.out.println("display name: " + p.display_name);
-				System.out.println("jsonObject: " + jsonObject);
-			}
-			*/
-			
-/*			
-			System.out.println("response_status2: " + response.getStatusText());
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-				
-		String extAddressDienst = "";	
-		extAddressDienst = "strasse , 1, Ort, 1234, CH, lat: 35.12378, long: 5.78735";
-		return extAddressDienst;
+	public void setListNewAddressOSM(List<String> listNewAddressOSM) {
+		this.listNewAddressOSM = listNewAddressOSM;
 	}
 	
-*/
-	
-/*	
-	// HTTP POST request
-		private void sendPost(String rawAddress) throws Exception {
-
-			String url = "http://open.mapquestapi.com/geocoding/v1/address?key=V7QcX4ax6960SWrbde2ssAaAd6A92zMm&callback=renderOptions&inFormat=kvp&outFormat=json&location=" + rawAddress;
-			URL obj = new URL(url);
-			HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
-
-			//add request header
-			con.setRequestMethod("POST");
-			con.setRequestProperty("User-Agent", USER_AGENT);
-			con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-
-			String urlParameters = "sn=C02G8416DRJM&cn=&locale=&caller=&num=12345";
-				
-			// Send post request
-			con.setDoOutput(true);
-			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-			wr.writeBytes(urlParameters);
-			wr.flush();
-			wr.close();
-
-			int responseCode = con.getResponseCode();
-			System.out.println("\nSending 'POST' request to URL : " + url);
-			System.out.println("Post parameters : " + urlParameters);
-			System.out.println("Response Code : " + responseCode);
-
-			BufferedReader in = new BufferedReader(
-			        new InputStreamReader(con.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
-				
-			//print result
-			System.out.println(response.toString());
-
+	public void createListNewAddressOSM (List<AbfrageOSM> osm){
+		
+		String road = osm.get(0).getAddress().getRoad();
+		String addressNumber = osm.get(0).getAddress().getHouse_number();
+		String plz = osm.get(0).getAddress().getPostcode();
+		String village = osm.get(0).getAddress().getVillage();
+		String town = osm.get(0).getAddress().getTown();
+		String city = osm.get(0).getAddress().getCity();
+		System.out.println("road: " + road);
+		System.out.println("village: " + village);
+		System.out.println("town: " + town);
+		System.out.println("city: " + city);
+		
+		// listNewAddress muss pro Service gleich strukturiert sein!! -> road, nr, plz, ort
+		// Struktur kann noch ergänzt bzw. verändert werden
+		
+		//road
+		listNewAddressOSM.add(road);
+		System.out.println("listNewAddress.add(road) = " + road);
+		//nr
+		listNewAddressOSM.add(addressNumber);
+		System.out.println("listNewAddress.add(addressNumber) = " + addressNumber);
+		//plz
+		listNewAddressOSM.add(plz);
+		System.out.println("listNewAddress.add(plz) = " + plz);
+		//Ort
+		if (village != null){
+			listNewAddressOSM.add(village);
+			System.out.println("listNewAddress.add(village) = " + village);
 		}
-*/
+		if (town != null){
+			listNewAddressOSM.add(town);
+			System.out.println("listNewAddress.add(town) = " + town);
+		}
+		if (city != null){
+			listNewAddressOSM.add(city);
+			System.out.println("listNewAddress.add(city) = " + city);
+		}
+	}
 
 }

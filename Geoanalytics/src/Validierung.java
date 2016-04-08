@@ -62,6 +62,8 @@ public class Validierung {
 	// Nur in Methode pruefen anwendbar
 	public void addListOldAddress(String rawAddress, int i){
 		
+		System.out.println("Start der Methode addListOldAddress"); //test
+		
 		int lengthRawAddress = listNewAddress.get(i).length();
 		int startOld = rawAddress.indexOf(listNewAddress.get(i));
 		int endOld = rawAddress.indexOf(listNewAddress.get(i)) + lengthRawAddress;
@@ -84,7 +86,7 @@ public class Validierung {
 				list.add(rawAddress.substring(startIndex, endIndex));
 				System.out.println("add.list on i :" + i); //test
 				System.out.println("list.add :" + rawAddress.substring(startIndex, endIndex)); //test
-				startIndex = rawAddress.indexOf(firstLetter, endIndex + 1);
+				startIndex = rawAddress.indexOf(firstLetter, startIndex + 1);
 				endIndex = startIndex + lengthRawAddress;
 			}
 			else {
@@ -105,22 +107,16 @@ public class Validierung {
 			System.out.println("listOldaddress String get(i) :" + provListOldAddress.get(i).getListOldOption().get(x));
 			System.out.println("int x :" + x);
 		}
+		System.out.println("Ende der Methode addListOldAddress"); //test
 	}
 
 	public int pruefen(String rawAddress, String extAdress, List<AbfrageOSM> osm){ //response wird evt. nicht gebraucht -> löschen
 		
 		System.out.println("startprüfen: ");
-		String newAddress = osm.get(0).getAddress().getRoad();
-		String addressNumber = osm.get(0).getAddress().getHouse_number();
-		String plz = osm.get(0).getAddress().getPostcode();
-		String village = osm.get(0).getAddress().getVillage();
-		String town = osm.get(0).getAddress().getTown();
-		String city = osm.get(0).getAddress().getCity();
-		System.out.println("newAddress: " + newAddress);
 		System.out.println("oldAddress: " + rawAddress);
-		System.out.println("village: " + village);
-		System.out.println("town: " + town);
-		System.out.println("city: " + city);
+		System.out.println("extAddress: " + extAdress);
+		
+		listNewAddress = osm.get(0).getListNewAddressOSM(); //muss evt. geändert werden -> osm.get(0) falls mehrere Addressen vorkommen
 		
 		//für Score berechnen für "if contains == true"
 		List<Boolean> listCheck = new ArrayList<Boolean>();
@@ -128,8 +124,6 @@ public class Validierung {
 		Boolean addNrCheck = null;
 		Boolean plzCheck = null;
 		Boolean villageCheck = null;
-		
-		
 		
 		/*
 		int result = oldAddress.compareToIgnoreCase(newAddress);
@@ -139,31 +133,25 @@ public class Validierung {
 		System.out.println(result);
 		*/
 		
-		// statische überprüfung: wäre pro Service unterschiedlich
-		listNewAddress.add(newAddress);
-		listNewAddress.add(addressNumber);
-		listNewAddress.add(plz);
-		if (village != null){
-			listNewAddress.add(village);
-		}
-		if (town != null){
-			listNewAddress.add(town);
-		}
-		if (city != null){
-			listNewAddress.add(city);
-		}
+		
+		
 		int countTrue = 0;
 		int countFalse = 0;
 		int provScore = 0;
 		
 		for (int i = 0; i <listNewAddress.size(); i++){
 			
-			/*
+			System.out.println("listNewAddress :" + listNewAddress.get(i) + " bei i :" + i);
+			
+			// überprüfen, ob ein Wert null ist
+			// falls sinnvoll evt. Bedingung festlegen welche Werte zwingend != null sein müssen
 			if(listNewAddress.get(i) == null){
-				System.out.println("listNewAddress.get(i) == null");
+				System.out.println("listNewAddress.get(i) == null -> keine Punkte vergeben (Score = 0 für diesen Wert) oder anderer Service wird abgefragt");
+				//provScore = 0; // falls null wird im Moment 0 punkte gegeben d.h. kein Code nötig
+				//System.out.println("provScore :" + provScore);
 			}
 			else{
-			*/
+			
 			
 				//ListOption f = new ListOption();
 				addListOldAddress(rawAddress, i);
@@ -172,6 +160,7 @@ public class Validierung {
 				System.out.println("newAddresslowerCase :" + listNewAddress.get(i).toLowerCase());
 
 				if (rawAddress.toLowerCase().contains(listNewAddress.get(i).toLowerCase()) == true){ //zu testzwecken: == mit != ersetzt
+					System.out.println("rawAddress.toLowerCase().contains(listNewAddress.get(i).toLowerCase()) == true");
 
 					if (i == 0){
 						roadCheck = true;
@@ -217,6 +206,7 @@ public class Validierung {
 				}
 				else {
 
+					System.out.println("rawAddress.toLowerCase().contains(listNewAddress.get(i).toLowerCase()) == false");
 					//String testNew = "Bachstrassen 13";	//String zum testen
 					//String testOld = "Bachstrasse";		//String zum testen
 
@@ -342,7 +332,7 @@ public class Validierung {
 					}
 				}
 			}
-		//}
+		}
 
 		//Score berechnen für "if contains == false"
 		//evt. kann Berechnung für Score bei beiden fällen (contains == false UND true) benutzt werden

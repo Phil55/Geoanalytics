@@ -1,3 +1,4 @@
+package ch.zhaw.core.query.queryOSM;
 
 public class Address {
 
@@ -21,6 +22,7 @@ public class Address {
 	private String suburb;
 	private String bakery;
 	
+	/* für individuelle erstellung der Addresse möglich
 	public Address(String house_number, String road, String village, String county, String state, String postcode,
 			String country, String country_code, String residential, String town, String state_district) {
 		//super();
@@ -36,6 +38,7 @@ public class Address {
 		this.town = town;
 		this.state_district = state_district;
 	}
+	*/
 	
 	//test dummy constructor for Objectmapper
 	public Address(){

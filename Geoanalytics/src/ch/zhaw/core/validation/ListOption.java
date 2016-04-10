@@ -1,3 +1,4 @@
+package ch.zhaw.core.validation;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,3 +1,4 @@
+package ch.zhaw.core.query.queryOSM;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -17,6 +18,7 @@ import org.apache.http.entity.mime.*;
 import com.mashape.unirest.*;
 import com.mashape.unirest.http.*;
 import com.mashape.unirest.http.HttpResponse;
+
 import org.apache.commons.logging.LogFactory;
 
 
@@ -26,10 +28,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.*;
 
 import java.util.ArrayList;
-
 import java.util.List;
 
-public class AbfrageOSM {
+public class QueryOSM {
 
 	//private final String USER_AGENT = "Mozilla/5.0"; //für GET und POST
 	
@@ -49,7 +50,7 @@ public class AbfrageOSM {
 	List<String> listNewAddressOSM = new ArrayList<String>(); // Liste erstellen um bei der Validierung strukturiert vorzugehen
 
 	
-	public AbfrageOSM(String place_id, String licence, String osm_type, String osm_id, List<String> boundingbox,
+	public QueryOSM(String place_id, String licence, String osm_type, String osm_id, List<String> boundingbox,
 			List<List<String>> polygonpoints, String lat, String lon, String display_name, String classe, String type,
 			String importance, Address address) {
 		super();
@@ -69,7 +70,7 @@ public class AbfrageOSM {
 	}
 	
 	//test dummy constructor for objectmapper
-	public AbfrageOSM(){	
+	public QueryOSM(){	
 	}
 
 	public String getPlace_id() {
@@ -184,7 +185,7 @@ public class AbfrageOSM {
 		this.listNewAddressOSM = listNewAddressOSM;
 	}
 	
-	public void createListNewAddressOSM (List<AbfrageOSM> osm){
+	public void createListNewAddressOSM (List<QueryOSM> osm){
 		
 		String road = osm.get(0).getAddress().getRoad();
 		String addressNumber = osm.get(0).getAddress().getHouse_number();

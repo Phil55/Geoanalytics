@@ -1,3 +1,4 @@
+package ch.zhaw.core;
 import java.io.IOException;
 import java.sql.*; //wird für die Verbindung zur Datenbank benötigt
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public class Main {
 			//sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 450;";
 			//sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 500;";
 			//sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 412;";
-			sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 110;";
+			sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 426;";
 			ResultSet rs = stmt.executeQuery(sql);
 
 			//Daten von result set in Variablen extrahieren
@@ -95,8 +96,8 @@ public class Main {
 				//Werte Instanzieren in Struktur
 				Struktur f = new Struktur(personOrigId, personId, nameFreeform, addressOne, addressTwo);
 				
-				//Abfrage bei Dienstleisungen starten
-				f.startAbfrage(f.getRawAddress());
+				//Abfrage Initiieren
+				f.startQuery(f.getRawAddress());
 				
 			}
 			//ResultSet rs, Statement bereinigen und Verbindung schliessen

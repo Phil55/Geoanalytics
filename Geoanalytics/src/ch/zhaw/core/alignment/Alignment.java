@@ -1,6 +1,7 @@
+package ch.zhaw.core.alignment;
 import java.util.ArrayList;
 
-public class Harmonisierung {
+public class Alignment {
 
 	private String extAdressHarm;
 	private String adressName;
@@ -13,10 +14,9 @@ public class Harmonisierung {
 	private ArrayList <String> structAdress;
 	
 	
-	public Harmonisierung(String extAdress) {
+	public Alignment(String extAdress) {
 		this.extAdressHarm = extAdress;
 		this.structAdress = new ArrayList<String>();
-		align(extAdress);
 	}
 	public String getExtAdressHarm() {
 		return extAdressHarm;

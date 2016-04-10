@@ -1,3 +1,4 @@
+package ch.zhaw.core.query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,34 +9,31 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 
-public class Abfrage {
+import ch.zhaw.core.query.queryOSM.*;
+import ch.zhaw.core.query.queryBing.*;
+
+public class Query {
 
 	private String rawAddress;
-	private int dienstID; //evt. Array
 	private String extAddress; //evt. Array
-	private List<AbfrageOSM> osm;
+	private List<QueryOSM> osm;
+	private QueryBing bing;
 	private HttpResponse<JsonNode> response;
+	private Boolean statusOSM;
+	private Boolean statusBing;
+	private List<Boolean> statusList; // für überprüfung bei Struktur nötig
 	
-	public Abfrage(String rawAddress) {
+	public Query(String rawAddress) {
 		//super();
 		this.rawAddress = rawAddress;
-		abfrage(rawAddress);
 	}
 
 	public String getRawAddress() {
 		return rawAddress;
 	}
 
-	public void setRawAddressAbfr(String rawAddress) {
+	public void setRawAddress(String rawAddress) {
 		this.rawAddress = rawAddress;
-	}
-
-	public int getDienstID() {
-		return dienstID;
-	}
-
-	public void setDienstID(int dienstID) {
-		this.dienstID = dienstID;
 	}
 
 	public String getExtAddress() {
@@ -46,11 +44,11 @@ public class Abfrage {
 		this.extAddress = extAddress;
 	}
 	
-	public List<AbfrageOSM> getOsm() {
+	public List<QueryOSM> getOsm() {
 		return osm;
 	}
 
-	public void setOsm(List<AbfrageOSM> osm) {
+	public void setOsm(List<QueryOSM> osm) {
 		this.osm = osm;
 	}
 
@@ -62,15 +60,54 @@ public class Abfrage {
 		this.response = response;
 	}
 	
-	
+	public QueryBing getBing() {
+		return bing;
+	}
+
+	public void setBing(QueryBing bing) {
+		this.bing = bing;
+	}
+
+	public Boolean getStatusOSM() {
+		return statusOSM;
+	}
+
+	public void setStatusOSM(Boolean statusOSM) {
+		this.statusOSM = statusOSM;
+	}
+
+	public Boolean getStatusBing() {
+		return statusBing;
+	}
+
+	public void setStatusBing(Boolean statusBing) {
+		this.statusBing = statusBing;
+	}
+
+	public List<Boolean> getStatusList() {
+		return statusList;
+	}
+
+	public void setStatusList(List<Boolean> statusList) {
+		this.statusList = statusList;
+	}
+
 	//je nach Gegebenheit der Adresse werden jeweils andere Services angefragt
 	//Reihenfolge und Bedingungen können sich noch ändern
 	//Methode überprüft welche Services bereits überprüft wurden und ruft dann die Methode für den entsprechenden Service der als nächster kommt auf
-	public String abfrage(String rawAddress) {
+	public String query() {
+		String rawAddress = getRawAddress();
 		System.out.println("Beginn abfrage: rawAddress " + rawAddress); //test-code
 		//OSM Service abfragen und auf Bollean statusOSM setzen, um zu überprüfen ob abfrage vollständig war
-		Boolean statusOSM = abfrageOSM(rawAddress); //Boolean für OSM ob anfrage i.O ist
-		Boolean statusBing = abfrageBing(rawAddress); //Boolean für Bing ob anfrage i.O ist
+		//überprüfen welche Services bereits genutzt wurden
+		
+		
+		statusOSM = queryOSM(rawAddress); //Boolean für OSM ob anfrage i.O ist
+		statusList.add(statusOSM); 
+		
+		statusBing = queryBing(rawAddress); //Boolean für Bing ob anfrage i.O ist
+		statusList.add(statusBing);
+		
 		
 		System.out.println("statusOSM : " + statusOSM); //test-code
 		System.out.println("statusBing : " + statusBing); //test-code
@@ -90,7 +127,7 @@ public class Abfrage {
 	}
 
 	//Methode erhält eine externe Adresse (extAddress) und gibt Boolean zurück Wenn True war Abfrage Erfolgreich und vollständig, ansonsten false
-	public Boolean abfrageOSM(String rawAddress){
+	public Boolean queryOSM(String rawAddress){
 		System.out.println("Beginn abfrage bei OSM: rawAddress " + rawAddress); //test-code
 		String urlVar = rawAddress.replaceAll(" ", "+");
 		System.out.println("Beginn abfrage bei OSM: urlVar " + urlVar); //test-code
@@ -125,18 +162,20 @@ public class Abfrage {
 			System.out.println("bodyNew: " + newBody);
 				
 			ObjectMapper mapper = new ObjectMapper();
-			osm = mapper.readValue(newBody, new TypeReference<List<AbfrageOSM>>(){});
+			osm = mapper.readValue(newBody, new TypeReference<List<QueryOSM>>(){});
 			System.out.println("display: " + osm.get(0).getDisplay_name());
 			setExtAddress(osm.get(0).getDisplay_name());
-			System.out.println("ExtAddress: " + Abfrage.this.getExtAddress());
+			System.out.println("ExtAddress: " + getExtAddress());
 			osm.get(0).createListNewAddressOSM(osm);
 			
 			//überprüfen ob newlistaddress von OSM vollständig ist
 			int i = 0; //lokale Variable
-			System.out.println("osm.get(0).listNewAddressOSM.size() : " + osm.get(0).listNewAddressOSM.size()); //test-code
+			int sizeNewAddress = osm.get(0).getListNewAddressOSM().size();
+			String getNewAddress = osm.get(0).getListNewAddressOSM().get(i);
+			System.out.println("osm.get(0).getListNewAddressOSM().size() : " + sizeNewAddress); //test-code
 			//wenn position != null wird ein true zurückgegeben, ansonsten ein false und die schlaufe wird verlassen
-			while(i < osm.get(0).listNewAddressOSM.size() && status == true){
-				if( osm.get(0).listNewAddressOSM.get(i) != null){
+			while(i < sizeNewAddress && status == true){
+				if( getNewAddress != null){
 					status = true;
 					i++;
 				}
@@ -260,7 +299,7 @@ public class Abfrage {
 		*/
 	}
 	
-	public Boolean abfrageBing(String rawAddress){
+	public Boolean queryBing(String rawAddress){
 		
 		System.out.println("Beginn abfrage bei OSM: rawAddress " + rawAddress); //test-code
 		String urlVar = rawAddress.replaceAll(" ", "%20");
@@ -278,20 +317,28 @@ public class Abfrage {
 			System.out.println("bodyReal: " + body);
 			String newBody = body.replaceAll("class", "classe");
 			System.out.println("bodyNew: " + newBody);
+			
 					
 			ObjectMapper mapper = new ObjectMapper();
-			osm = mapper.readValue(newBody, new TypeReference<List<AbfrageOSM>>(){});
-			System.out.println("display: " + osm.get(0).getDisplay_name());
-			setExtAddress(osm.get(0).getDisplay_name());
-			System.out.println("ExtAddress: " + Abfrage.this.getExtAddress());
-			osm.get(0).createListNewAddressOSM(osm);
+			bing = mapper.readValue(newBody, QueryBing.class);
+			
+			//achtung nicht vollständig -> get(0) muss noch mit int ersetzt werden sonst wird immer das gleiche aufgerufen
+			String bingName = bing.getResourceSets().get(0).getResources().get(0).getName();
+			System.out.println("name: " + bingName);
+			
+			
+			setExtAddress(bingName);
+			System.out.println("ExtAddress: " + getExtAddress());
+			bing.createListNewAddressBing(bing); // Bing-Adresse erstellen für Alignment -> evt. in Konstruktor QueryBing integrieren?
 				
-			//überprüfen ob newlistaddress von OSM vollständig ist
+			//überprüfen ob newlistaddress von Bing vollständig ist -> evt. überprüfung gleich? -> neue Methode
 			int i = 0; //lokale Variable
-			System.out.println("osm.get(0).listNewAddressOSM.size() : " + osm.get(0).listNewAddressOSM.size()); //test-code
+			int sizeNewAddress = bing.getListNewAddressBing().size();
+			String getNewAddress = bing.getListNewAddressBing().get(i);
+			System.out.println("bing.getListNewAddressBing().size() : " + sizeNewAddress); //test-code
 			//wenn position != null wird ein true zurückgegeben, ansonsten ein false und die schlaufe wird verlassen
-			while(i < osm.get(0).listNewAddressOSM.size() && status == true){
-				if( osm.get(0).listNewAddressOSM.get(i) != null){
+			while(i < sizeNewAddress && status == true){
+				if( getNewAddress != null){
 					status = true;
 					i++;
 				}

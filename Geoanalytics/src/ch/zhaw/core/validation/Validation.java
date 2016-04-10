@@ -1,10 +1,13 @@
+package ch.zhaw.core.validation;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 
-public class Validierung {
+import ch.zhaw.core.query.queryOSM.QueryOSM;
+
+public class Validation {
 
 	private int score;
 	private String rawAdressVal;
@@ -13,10 +16,9 @@ public class Validierung {
 	List<String> listOldAddress = new ArrayList<String>();
 	List<ListOption> provListOldAddress = new ArrayList<ListOption>();
 	
-	public Validierung(String rawAdress, String extAdress, List<AbfrageOSM> osm) {
+	public Validation(String rawAdress, String extAdress, List<QueryOSM> osm) {
 		this.rawAdressVal = rawAdress;
 		this.extAdressVal = extAdress;
-		pruefen(rawAdress, extAdress, osm);
 	}
 
 	public int getScore() {
@@ -110,7 +112,7 @@ public class Validierung {
 		System.out.println("Ende der Methode addListOldAddress"); //test
 	}
 
-	public int pruefen(String rawAddress, String extAdress, List<AbfrageOSM> osm){ //response wird evt. nicht gebraucht -> löschen
+	public int pruefen(String rawAddress, String extAdress, List<QueryOSM> osm){ //response wird evt. nicht gebraucht -> löschen
 		
 		System.out.println("startprüfen: ");
 		System.out.println("oldAddress: " + rawAddress);

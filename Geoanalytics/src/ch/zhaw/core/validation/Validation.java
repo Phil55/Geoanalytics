@@ -5,20 +5,18 @@ import java.util.List;
 //import com.mashape.unirest.http.HttpResponse;
 //import com.mashape.unirest.http.JsonNode;
 
-import ch.zhaw.core.query.queryOSM.QueryOSM;
+//import ch.zhaw.core.query.queryOSM.QueryOSM;
 
 public class Validation {
 
 	private int score;
 	private String rawAdressVal;
-	//private String extAdressVal;
 	private List<String> listNewAddress = new ArrayList<String>();
 	private List<String> listOldAddress = new ArrayList<String>();
 	private List<ListOption> provListOldAddress = new ArrayList<ListOption>();
 	
-	public Validation(String rawAdress, String extAdress, List<QueryOSM> osm) {
+	public Validation(String rawAdress) {
 		this.rawAdressVal = rawAdress;
-		//this.extAdressVal = extAdress;
 	}
 
 	public int getScore() {
@@ -36,16 +34,6 @@ public class Validation {
 	public void setRawAdressVal(String rawAdressVal) {
 		this.rawAdressVal = rawAdressVal;
 	}
-
-	/*
-	public String getExtAdressVal() {
-		return extAdressVal;
-	}
-
-	public void setExtAdressVal(String extAdressVal) {
-		this.extAdressVal = extAdressVal;
-	}
-	*/
 	
 	public List<String> getListNewAddress() {
 		return listNewAddress;
@@ -122,7 +110,7 @@ public class Validation {
 		System.out.println("Ende der Methode addListOldAddress"); //test
 	}
 
-	public int validate(String rawAddress, Object obj, List<String> listNewAddress){ //response wird evt. nicht gebraucht -> löschen
+	public int validate(String rawAddress, List<String> listNewAddress){ //response wird evt. nicht gebraucht -> löschen
 		
 		System.out.println("startprüfen: ");
 		System.out.println("oldAddress: " + rawAddress);

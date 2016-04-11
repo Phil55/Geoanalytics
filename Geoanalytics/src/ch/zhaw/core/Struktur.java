@@ -120,14 +120,13 @@ public class Struktur {
 		System.out.println("BeginnstartAbfrage: " + rawAddress); //test-code
 		
 		Query m = new Query(getRawAddress()); //Query-klasse instanzieren und rawAddress setzen
-		Validation v = new Validation(getRawAddress(), m.getExtAddress(), m.getOsm()); //Initiiere Validation
-		Alignment l = new Alignment(m.getExtAddress()); //Inittiere Alignment
+		Alignment l = new Alignment(m.getExtAddress()); //Inittiere Alignment -> evt. nicht hier instanzieren
 		
 		//Schlaufe die überprüft, ob abfrage vollständig und valide ist. 
 		//solange Abfrage nicht true ist wird Methode wiederholt bis keine Services mehr vorhanden sind
 		Boolean complete = false; // default false sonst geht while nicht
 		while(complete != true){
-			complete = testCheck(v, m);
+			complete = testCheck(m);
 		}
 		
 		//überprüft ob addresse i.O zum speichern ist und ob alle Services bereits überprüft wurden
@@ -174,7 +173,7 @@ public class Struktur {
 	//Output noch nicht ganz sicher (Boolean?)
 	//überprüfen welche Services bereits genutzt wurden und startet query. wenn alle Services genutzt wurden, geht man auf mainQuery zurück
 	//danach wird überprüft, ob query vollständig ist und falls ja wird validation gestartet, wenn false wird nächster service abgefragt
-	public Boolean testCheck (Validation v, Query m){
+	public Boolean testCheck (Query m){
 		
 		Boolean check = false;
 		String checkedQuery = null; // String für überprüfung benötigt welche Query gemacht wurde
@@ -189,7 +188,8 @@ public class Struktur {
 				//bei true wird die Abfrage gestartet, bei false wird Methode wiederholt 
 				if(m.getStatusOSM() == true){
 					//Prüfung der neu gewonnenen Adresse starten
-					setValOSM(startValidation(v, m, m.getOsm(), m.getOsm().get(0).getListNewAddressOSM())); //validierung wird gestartet und ergebins false/true bei valOSM gespeichert
+					Validation v = startValidation(m, m.getOsm().get(0).getListNewAddressOSM()); //validierung wird gestartet
+					setValOSM(setVal(v)); //validierung wird gestartet und ergebins false/true bei valOSM gespeichert
 					setScoreOSM(v.getScore()); //Score ergebnis wird bei scoreOSM gespeichert -> nicht sicher ob das benötigt wird
 					System.out.println("Validation OSM :" + valOSM + " , Score: " + scoreOSM); //test-code
 					check = valOSM; //setzt check auf false oder true nach ergebnis der validierung
@@ -204,7 +204,8 @@ public class Struktur {
 				if(checkedQuery == "bing"){
 					if(m.getStatusBing() == true){
 						//Prüfung der neu gewonnenen Adresse starten
-						setValBing(startValidation(v, m, m.getBing(), m.getBing().getListNewAddressBing())); //validierung wird gestartet und ergebins false/true bei valBing gespeichert
+						Validation v = startValidation(m, m.getBing().getListNewAddressBing()); //validierung wird gestartet
+						setValBing(setVal(v)); // ergebins false/true bei valBing gespeichert
 						setScoreBing(v.getScore()); //Score ergebnis wird bei scoreBing gespeichert -> nicht sicher ob das benötigt wird
 						System.out.println("Validation Bing :" + valBing + " , Score: " + scoreBing); //test-code
 						check = valBing; //setzt check auf false oder true nach ergebnis der validierung
@@ -231,22 +232,28 @@ public class Struktur {
 		return check;
 	}
 	
-	public Boolean startValidation(Validation v, Query m, Object obj, List<String> listNewAddress){
+	//Instanziert Validation und startet Validierung
+	public Validation startValidation(Query m, List<String> listNewAddress){
 		
-		v.validate(m.getRawAddress(), obj, listNewAddress);
-		
-		Boolean statusValidation = null;
+		Validation v = new Validation(getRawAddress()); //Initiiere Validation
+		v.validate(m.getRawAddress(), listNewAddress);
+		return v;
+	}
 	
+	// überprüft ob addresse valide ist anhand des scores
+	public Boolean setVal(Validation v){
+		Boolean val = null;
+		
 		if (v.getScore() >= 60){
 			System.out.println("Score der Adresse ist gleich/grösser 60 : " + v.getScore()); //test-code
-			statusValidation = true;
+			val = true;
 		}
 		else {
 			System.out.println("Score der Adresse ist kleiner 60 : " + v.getScore()); //test-code
-			statusValidation = false;
+			val = false;
 		}
 		
-		return statusValidation;
+		return val;
 	}
 	
 	public void startAlignment(Alignment l, List<QueryOSM> osm){

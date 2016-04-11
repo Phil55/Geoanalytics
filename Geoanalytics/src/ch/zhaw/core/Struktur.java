@@ -1,7 +1,6 @@
 package ch.zhaw.core;
-import java.util.ArrayList;
-import java.util.List;
 
+import java.util.List;
 import ch.zhaw.core.alignment.Alignment;
 import ch.zhaw.core.query.*;
 import ch.zhaw.core.query.queryOSM.QueryOSM;
@@ -15,6 +14,12 @@ public class Struktur {
 	private String nameFreeform;
 	private String addressOne;
 	private String addressTwo;
+	private int scoreOSM; //für Validation benötigt
+	private int scoreBing; //für Validation benötigt
+	private Boolean valOSM; //für Validation benötigt
+	private Boolean valBing; //für Validation benötigt
+	private Boolean allServices; //wird zum überprüfen genutzt ob alle services benutzt wurden
+	
 	
 	public Struktur(int personOrigId, int personId, String nameFreeform, String addressOne, String addressTwo) {
 		this.personOrigId = personOrigId;
@@ -73,36 +78,68 @@ public class Struktur {
 		this.addressTwo = addressTwo;
 	}
 	
+	public int getScoreOSM() {
+		return scoreOSM;
+	}
+
+	public void setScoreOSM(int scoreOSM) {
+		this.scoreOSM = scoreOSM;
+	}
+
+	public int getScoreBing() {
+		return scoreBing;
+	}
+
+	public void setScoreBing(int scoreBing) {
+		this.scoreBing = scoreBing;
+	}
+	
+	public Boolean getValOSM() {
+		return valOSM;
+	}
+
+	public void setValOSM(Boolean valOSM) {
+		this.valOSM = valOSM;
+	}
+
+	public Boolean getValBing() {
+		return valBing;
+	}
+
+	public void setValBing(Boolean valBing) {
+		this.valBing = valBing;
+	}
+
 	public String createRawAddress(String addressOne, String addressTwo){
 		String combinedString = addressOne + " " + addressTwo;
 		return combinedString;
 	}
 	
 	//die Abfrage nach einer Adresse wird gestartet
-	public String startQuery(String rawAddress) {
+	public String mainQuery(String rawAddress) {
 		System.out.println("BeginnstartAbfrage: " + rawAddress); //test-code
 		
 		Query m = new Query(getRawAddress()); //Query-klasse instanzieren und rawAddress setzen
-		Validation f = new Validation(getRawAddress(), m.getExtAddress(), m.getOsm()); //Initiiere Validation
+		Validation v = new Validation(getRawAddress(), m.getExtAddress(), m.getOsm()); //Initiiere Validation
 		Alignment l = new Alignment(m.getExtAddress()); //Inittiere Alignment
 		
-		//überprüfen welche Services bereits genutzt wurden
-		//bei false wird die Abfrage gestartet, bei true 
-		if(checkUsedQueries(m.getStatusList()) == false){
-			System.out.println("noch nicht alle Services abgefragt. starte neue abfrage"); //test-code
-			m.query(); // Abfrage-Methode iniziieren
+		//Schlaufe die überprüft, ob abfrage vollständig und valide ist. 
+		//solange Abfrage nicht true ist wird Methode wiederholt bis keine Services mehr vorhanden sind
+		Boolean complete = false; // default false sonst geht while nicht
+		while(complete != true){
+			complete = testCheck(v, m);
+		}
+		
+		//überprüft ob addresse i.O zum speichern ist und ob alle Services bereits überprüft wurden
+		//Neue Positionierung von startAlignment wahrscheinlich nötig
+		if(complete == true && allServices == true){
+			System.out.println("allServices == true, neue Addresse wird abgefragt falls vorhanden "); //test-code
 		}
 		else{
-			System.out.println("alle Services abgefragt. starte neue abfrage"); //test-code
+			//Durchführung der Strukturierung der Adresse
+			startAlignment(l, m.getOsm());
+			System.out.println("StructAddress : " + l.getStructAdress()); //test-code
 		}
-		
-		//Prüfung der neu gewonnenen Adresse starten
-		startValidation(f, m);
-		
-		
-		//Durchführung der Strukturierung der Adresse
-		startAlignment(l, m.getOsm());
-		System.out.println("StructAddress : " + l.getStructAdress()); //test-code
 		return m.getExtAddress();
 	}
 	
@@ -112,32 +149,100 @@ public class Struktur {
 		System.out.println("Start checkUsedQueries"); //test-code
 		Boolean check = null;
 		
-		for(int i = 0; i < statusList.size(); i++){ // bedingung einbauen falls statusList leer ist
-			if(statusList.get(i) == null){
-				check = false;
-				System.out.println("status == null bei i : " + i); //test-code
-				return check;
-			}
-			else{
-				check = true;
-				System.out.println("status != null bei i : " + i); //test-code
+		//überprüft ob liste leer ist
+		if(statusList.isEmpty()){
+			check = false;
+			System.out.println("statusList is Empty d.h. noch keine Abfrage gemacht "); //test-code
+		}
+		else {
+			//statusList wird mit vordefinierten länge erstellt (alles defaultmässig auf null)
+			for(int i = 0; i < statusList.size(); i++){
+				if(statusList.get(i) == null){
+					check = false;
+					System.out.println("status == null bei i : " + i); //test-code
+				}
+				else{
+					check = true;
+					System.out.println("status != null bei i : " + i); //test-code
+					allServices = true;
+				}
 			}
 		}
 		return check;
 	}
 	
-	public Boolean startValidation(Validation f, Query m){
+	//Output noch nicht ganz sicher (Boolean?)
+	//überprüfen welche Services bereits genutzt wurden und startet query. wenn alle Services genutzt wurden, geht man auf mainQuery zurück
+	//danach wird überprüft, ob query vollständig ist und falls ja wird validation gestartet, wenn false wird nächster service abgefragt
+	public Boolean testCheck (Validation v, Query m){
 		
-		f.pruefen(m.getRawAddress(), m.getExtAddress(), m.getOsm());
+		Boolean check = false;
+		String checkedQuery = null; // String für überprüfung benötigt welche Query gemacht wurde
+		
+		if(checkUsedQueries(m.getStatusList()) == false){
+			System.out.println("noch nicht alle Services abgefragt. starte neue abfrage"); //test-code
+			checkedQuery = m.query(); // Abfrage-Methode iniziieren
+			System.out.println("überprüfung beendet für Abfrage : " + checkedQuery); //test-code
+			
+			if(checkedQuery == "osm"){
+				System.out.println("m.getStatusOSM() : " + m.getStatusOSM()); //test-code
+				//bei true wird die Abfrage gestartet, bei false wird Methode wiederholt 
+				if(m.getStatusOSM() == true){
+					//Prüfung der neu gewonnenen Adresse starten
+					setValOSM(startValidation(v, m, m.getOsm(), m.getOsm().get(0).getListNewAddressOSM())); //validierung wird gestartet und ergebins false/true bei valOSM gespeichert
+					setScoreOSM(v.getScore()); //Score ergebnis wird bei scoreOSM gespeichert -> nicht sicher ob das benötigt wird
+					System.out.println("Validation OSM :" + valOSM + " , Score: " + scoreOSM); //test-code
+					check = valOSM; //setzt check auf false oder true nach ergebnis der validierung
+				}
+				else{
+					//testCheck wiederholen (schlaufe)
+					check = false;
+				}
+			}
+			else{
+				//bei true wird die Abfrage gestartet, bei false wird Methode wiederholt 
+				if(checkedQuery == "bing"){
+					if(m.getStatusBing() == true){
+						//Prüfung der neu gewonnenen Adresse starten
+						setValBing(startValidation(v, m, m.getBing(), m.getBing().getListNewAddressBing())); //validierung wird gestartet und ergebins false/true bei valBing gespeichert
+						setScoreBing(v.getScore()); //Score ergebnis wird bei scoreBing gespeichert -> nicht sicher ob das benötigt wird
+						System.out.println("Validation Bing :" + valBing + " , Score: " + scoreBing); //test-code
+						check = valBing; //setzt check auf false oder true nach ergebnis der validierung
+					}
+					else{
+						//testCheck wiederholen (schlaufe)
+						check = false;
+					}
+				}
+				else{
+					//anderer Service aufrufen
+					System.out.println("Struktur: anderer Service aufrufen -> Prozess sollte nicht bis hierher kommen "); //test-code
+					check = true;
+					allServices = true;
+				}
+			}
+		}
+		else{
+			//hier zurück zur mainQuery gehen und neue Adresse abfragen falls vorhanden
+			System.out.println("alle Services abgefragt. starte neue abfrage"); //test-code
+			allServices = true; //wenn man hierherkommt hat man alle Services abgerufen -> Code später evt. anpassen
+			check = true;
+		}
+		return check;
+	}
+	
+	public Boolean startValidation(Validation v, Query m, Object obj, List<String> listNewAddress){
+		
+		v.validate(m.getRawAddress(), obj, listNewAddress);
 		
 		Boolean statusValidation = null;
 	
-		if (f.getScore() >= 60){
-			System.out.println("Score der Adresse ist gleich/grösser 60 : " + f.getScore()); //test-code
+		if (v.getScore() >= 60){
+			System.out.println("Score der Adresse ist gleich/grösser 60 : " + v.getScore()); //test-code
 			statusValidation = true;
 		}
 		else {
-			System.out.println("Score der Adresse ist kleiner 60 : " + f.getScore()); //test-code
+			System.out.println("Score der Adresse ist kleiner 60 : " + v.getScore()); //test-code
 			statusValidation = false;
 		}
 		

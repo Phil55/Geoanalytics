@@ -97,7 +97,7 @@ public class Main {
 				Struktur f = new Struktur(personOrigId, personId, nameFreeform, addressOne, addressTwo);
 				
 				//Abfrage Initiieren
-				f.startQuery(f.getRawAddress());
+				f.mainQuery(f.getRawAddress());
 				
 			}
 			//ResultSet rs, Statement bereinigen und Verbindung schliessen

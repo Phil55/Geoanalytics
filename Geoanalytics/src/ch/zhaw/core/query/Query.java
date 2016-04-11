@@ -26,6 +26,14 @@ public class Query {
 	public Query(String rawAddress) {
 		//super();
 		this.rawAddress = rawAddress;
+		this.statusOSM = null; //auf null gesetzt damit Bedingung simpler abzufragen ist
+		this.statusBing = null; //auf null gesetzt damit Bedingung simpler abzufragen ist
+		this.statusList = new ArrayList<Boolean>(); 
+		//folgende Reihenfolge wird bei statusList festgelegt:
+		//1 -> osm, 2 -> bing
+		for(int i = 0; i < 2; i++){ //zahl 2 repräsentiert die anzahl Services, die es gibt
+			statusList.add(null);
+		}
 	}
 
 	public String getRawAddress() {
@@ -95,35 +103,40 @@ public class Query {
 	//je nach Gegebenheit der Adresse werden jeweils andere Services angefragt
 	//Reihenfolge und Bedingungen können sich noch ändern
 	//Methode überprüft welche Services bereits überprüft wurden und ruft dann die Methode für den entsprechenden Service der als nächster kommt auf
+	//Methode gibt vordefinierten String zurück, des aussagt welcher Service aufgerufen wurde (z.B. osm)
 	public String query() {
 		String rawAddress = getRawAddress();
 		System.out.println("Beginn abfrage: rawAddress " + rawAddress); //test-code
 		//OSM Service abfragen und auf Bollean statusOSM setzen, um zu überprüfen ob abfrage vollständig war
 		//überprüfen welche Services bereits genutzt wurden
 		
-		
-		statusOSM = queryOSM(rawAddress); //Boolean für OSM ob anfrage i.O ist
-		statusList.add(statusOSM); 
-		
-		statusBing = queryBing(rawAddress); //Boolean für Bing ob anfrage i.O ist
-		statusList.add(statusBing);
-		
-		
-		System.out.println("statusOSM : " + statusOSM); //test-code
-		System.out.println("statusBing : " + statusBing); //test-code
-		
+		 
 		//Code noch nicht vollständig: es wird überprüft ob vorherige abfrage positiv war. 
 		//wenn positiv beginnt Validierung, wenn negativ wird anderer Service aufgerufen
-		if(statusOSM == true){
-			System.out.println("statusOSM true, Validierung beginnt"); //test-code
-			return extAddress;
+		if(statusOSM == null){
+			System.out.println("statusOSM false, Query beginnt"); //test-code
+			statusOSM = queryOSM(rawAddress); //Boolean für OSM ob anfrage i.O ist
+			System.out.println("statusOSM neu : " + statusOSM); //test-code
+			//.set weil der Wert an dieser Position ersetzt werden soll
+			statusList.set(0, statusOSM); //statusOSM-wert in statusList hinzufügen. OSM hat den platz 1 bei statusList
+			return "osm";
 		}
 		else{
-			//anderer Service aufrufen
-			System.out.println("anderer Service aufrufen "); //test-code
+			if(statusBing == null){
+				System.out.println("statusBing false, Query beginnt"); //test-code
+				statusBing = queryBing(rawAddress); //Boolean für Bing ob anfrage i.O ist
+				System.out.println("statusBing neu : " + statusBing); //test-code
+				//.set weil der Wert an dieser Position ersetzt werden soll
+				statusList.set(1, statusBing); //statusBing-wert in statusList hinzufügen. Bing hat den platz 2 bei statusList
+				return "bing";
+			}
+			else{
+				//anderer Service aufrufen
+				System.out.println("Query: anderer Service aufrufen -> Prozess sollte nicht bis hierher kommen "); //test-code
+			}
 		}
-		
-		return extAddress;
+	System.out.println("return error -> kein vordefinierter service konnte ausgewählt werden "); //test-code
+	return "error";
 	}
 
 	//Methode erhält eine externe Adresse (extAddress) und gibt Boolean zurück Wenn True war Abfrage Erfolgreich und vollständig, ansonsten false
@@ -301,10 +314,10 @@ public class Query {
 	
 	public Boolean queryBing(String rawAddress){
 		
-		System.out.println("Beginn abfrage bei OSM: rawAddress " + rawAddress); //test-code
+		System.out.println("Beginn abfrage bei Bing: rawAddress " + rawAddress); //test-code
 		String urlVar = rawAddress.replaceAll(" ", "%20");
 		String bingKey = "AoJzcR56eRmy0CW6xaxTkzvkb3cTLjb6UWgMj2fu_4gt87yatP7oTZ1tcs1wIcx3";
-		System.out.println("Beginn abfrage bei OSM: urlVar " + urlVar); //test-code
+		System.out.println("Beginn abfrage bei Bing: urlVar " + urlVar); //test-code
 		Boolean status = true; //Boolean für OSM ob anfrage i.O ist ; wird default-mässig auf true gesetzt weil sonst while-schlaufe nicht funktioniert
 		
 		try {

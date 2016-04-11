@@ -2,8 +2,8 @@ package ch.zhaw.core.validation;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
+//import com.mashape.unirest.http.HttpResponse;
+//import com.mashape.unirest.http.JsonNode;
 
 import ch.zhaw.core.query.queryOSM.QueryOSM;
 
@@ -11,14 +11,14 @@ public class Validation {
 
 	private int score;
 	private String rawAdressVal;
-	private String extAdressVal;
-	List<String> listNewAddress = new ArrayList<String>();
-	List<String> listOldAddress = new ArrayList<String>();
-	List<ListOption> provListOldAddress = new ArrayList<ListOption>();
+	//private String extAdressVal;
+	private List<String> listNewAddress = new ArrayList<String>();
+	private List<String> listOldAddress = new ArrayList<String>();
+	private List<ListOption> provListOldAddress = new ArrayList<ListOption>();
 	
 	public Validation(String rawAdress, String extAdress, List<QueryOSM> osm) {
 		this.rawAdressVal = rawAdress;
-		this.extAdressVal = extAdress;
+		//this.extAdressVal = extAdress;
 	}
 
 	public int getScore() {
@@ -37,6 +37,7 @@ public class Validation {
 		this.rawAdressVal = rawAdressVal;
 	}
 
+	/*
 	public String getExtAdressVal() {
 		return extAdressVal;
 	}
@@ -44,6 +45,7 @@ public class Validation {
 	public void setExtAdressVal(String extAdressVal) {
 		this.extAdressVal = extAdressVal;
 	}
+	*/
 	
 	public List<String> getListNewAddress() {
 		return listNewAddress;
@@ -61,6 +63,14 @@ public class Validation {
 		this.provListOldAddress = listOldAddress;
 	}
 	
+	public List<ListOption> getProvListOldAddress() {
+		return provListOldAddress;
+	}
+
+	public void setProvListOldAddress(List<ListOption> provListOldAddress) {
+		this.provListOldAddress = provListOldAddress;
+	}
+
 	// Nur in Methode pruefen anwendbar
 	public void addListOldAddress(String rawAddress, int i){
 		
@@ -112,13 +122,13 @@ public class Validation {
 		System.out.println("Ende der Methode addListOldAddress"); //test
 	}
 
-	public int pruefen(String rawAddress, String extAdress, List<QueryOSM> osm){ //response wird evt. nicht gebraucht -> löschen
+	public int validate(String rawAddress, Object obj, List<String> listNewAddress){ //response wird evt. nicht gebraucht -> löschen
 		
 		System.out.println("startprüfen: ");
 		System.out.println("oldAddress: " + rawAddress);
-		System.out.println("extAddress: " + extAdress);
 		
-		listNewAddress = osm.get(0).getListNewAddressOSM(); //muss evt. geändert werden -> osm.get(0) falls mehrere Addressen vorkommen
+		setListNewAddress(listNewAddress); //Input listNewAddress in Attribut listNewAddress speichern damit Methode addListOldAddress geht
+		//listNewAddress = osm.get(0).getListNewAddressOSM(); //muss evt. geändert werden -> osm.get(0) falls mehrere Addressen vorkommen
 		
 		//für Score berechnen für "if contains == true"
 		List<Boolean> listCheck = new ArrayList<Boolean>();
@@ -134,8 +144,6 @@ public class Validation {
 		result = newAddress.compareToIgnoreCase(oldAddress);
 		System.out.println(result);
 		*/
-		
-		
 		
 		int countTrue = 0;
 		int countFalse = 0;
@@ -199,12 +207,8 @@ public class Validation {
 						}
 					}
 
-					provScore = provScore/countTrue - 25*countFalse;
-					System.out.println("provScore provScore/countTrue - 25*countFalse :" + provScore);
-
-					System.out.println("int countTrue :" + countTrue);
-					countTrue = 0; //countTrue zurücksetzen
-					setScore(provScore);
+					score = calculateScore(provScore, countTrue, countFalse);
+			
 				}
 				else {
 
@@ -220,7 +224,7 @@ public class Validation {
 					int totalCheck = 0;
 					List<Integer> checkList = new ArrayList<Integer>();
 					List<Integer> scoreList = new ArrayList<Integer>();
-					List<Integer> totalList = new ArrayList<Integer>();
+					//List<Integer> totalList = new ArrayList<Integer>();
 
 					for (int x = 0; x < provListOldAddress.get(i).listOldOption.size(); x++){
 						String oldList = provListOldAddress.get(i).getListOldOption().get(x).substring(nStartIndex, nEndIndex); // evt. auf 244 verschieben bzw. löschen
@@ -338,7 +342,7 @@ public class Validation {
 
 		//Score berechnen für "if contains == false"
 		//evt. kann Berechnung für Score bei beiden fällen (contains == false UND true) benutzt werden
-		for (int q = 0; q < listCheck.size(); q++){
+		for (int q = 0; q < listCheck.size(); q++){ //hier entsteht fehler, dass calculateScore nicht funktionieren lässt
 			if (listCheck.get(q) == true){
 				countTrue++;
 			}
@@ -346,26 +350,24 @@ public class Validation {
 				countFalse++;
 			}
 		}
-
-		provScore = provScore/countTrue - 25*countFalse;
-		System.out.println("provScore provScore/countTrue - 25*countFalse :" + provScore);
-
-		System.out.println("int countTrue :" + countTrue);
-		setScore(provScore);
-
-		/*
-		if (rawAdress.equals(extAdress) == true){
-			setScore(100);
-		}
-		if (rawAdress.equalsIgnoreCase(extAdress) == true){
-			setScore(75);
-		}
-		else {
-			setScore(30);
-		}
-		 */
+		
+		score = calculateScore(provScore, countTrue, countFalse);
 
 		System.out.println("Ende pruefen: score " + score); //test-code
 		return score;			
-	}	
+	}
+	
+	//berechnet den Score anhand der gezählten True's und False's und gibt das ergebnis als int zurück
+	public int calculateScore(int provScore, int countTrue, int countFalse){
+		System.out.println("int provScore vor Berechnung :" + provScore);
+		provScore = provScore/countTrue - 25*countFalse;
+		System.out.println("provScore provScore/countTrue - 25*countFalse :" + provScore);
+		System.out.println("int provScore neu :" + provScore);
+		System.out.println("int countTrue :" + countTrue);
+		System.out.println("int countFalse :" + countFalse);
+		setScore(provScore);
+		countTrue = 0; //countTrue zurücksetzen
+		provScore = 0; //provScore zurücksetzen
+		return provScore;
+	}
 }

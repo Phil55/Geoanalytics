@@ -47,7 +47,9 @@ public class QueryOSM {
 	private String type;
 	private String importance;
 	private Address address;
-	List<String> listNewAddressOSM = new ArrayList<String>(); // Liste erstellen um bei der Validierung strukturiert vorzugehen
+	private List<String> listNewAddressOSM = new ArrayList<String>(); // Liste erstellen um bei der Validierung strukturiert vorzugehen
+	// für QueryGoogle() benötigt
+	private List<Integer> newAddressTrue = new ArrayList<Integer>(); //Listet die Stelle der Adressen auf, die vollständig sind
 
 	
 	public QueryOSM(String place_id, String licence, String osm_type, String osm_id, List<String> boundingbox,
@@ -185,15 +187,33 @@ public class QueryOSM {
 		this.listNewAddressOSM = listNewAddressOSM;
 	}
 	
-	public void createListNewAddressOSM (List<QueryOSM> osm){
+	public List<Integer> getNewAddressTrue() {
+		return newAddressTrue;
+	}
+
+	public void setNewAddressTrue(List<Integer> newAddressTrue) {
+		this.newAddressTrue = newAddressTrue;
+	}
+
+	public void createListNewAddressOSM (){
 		
-		String road = osm.get(0).getAddress().getRoad();
-		String addressNumber = osm.get(0).getAddress().getHouse_number();
-		String plz = osm.get(0).getAddress().getPostcode();
-		String village = osm.get(0).getAddress().getVillage();
-		String town = osm.get(0).getAddress().getTown();
-		String city = osm.get(0).getAddress().getCity();
+		String road = address.getRoad();
+		String addressNumber = address.getHouse_number();
+		String plz = address.getPostcode();
+		String village = address.getVillage();
+		String town = address.getTown();
+		String city = address.getCity();
+		/*
+		String road = osm.get(k).getAddress().getRoad();
+		String addressNumber = osm.get(k).getAddress().getHouse_number();
+		String plz = osm.get(k).getAddress().getPostcode();
+		String village = osm.get(k).getAddress().getVillage();
+		String town = osm.get(k).getAddress().getTown();
+		String city = osm.get(k).getAddress().getCity();
+		*/
 		System.out.println("road: " + road);
+		System.out.println("addressNumber: " + addressNumber);
+		System.out.println("plz: " + plz);
 		System.out.println("village: " + village);
 		System.out.println("town: " + town);
 		System.out.println("city: " + city);

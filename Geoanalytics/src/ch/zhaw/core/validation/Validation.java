@@ -11,7 +11,8 @@ public class Validation {
 
 	private int score;
 	private String rawAdressVal;
-	private List<String> listNewAddress = new ArrayList<String>();
+	private List<List<String>> listNewAddress = new ArrayList<List<String>>();
+	private List<String> newAddress = new ArrayList<String>();
 	private List<String> listOldAddress = new ArrayList<String>();
 	private List<ListOption> provListOldAddress = new ArrayList<ListOption>();
 	
@@ -35,22 +36,30 @@ public class Validation {
 		this.rawAdressVal = rawAdressVal;
 	}
 	
-	public List<String> getListNewAddress() {
+	public List<List<String>> getListNewAddress() {
 		return listNewAddress;
 	}
 
-	public void setListNewAddress(List<String> listNewAddress) {
+	public void setListNewAddress(List<List<String>> listNewAddress) {
 		this.listNewAddress = listNewAddress;
 	}
-
-	public List<ListOption> getListOldAddress() {
-		return provListOldAddress;
+	
+	public List<String> getNewAddress() {
+		return newAddress;
 	}
 
-	public void setListOldAddress(List<ListOption> listOldAddress) {
-		this.provListOldAddress = listOldAddress;
+	public void setNewAddress(List<String> newAddress) {
+		this.newAddress = newAddress;
+	}
+
+	public List<String> getListOldAddress() {
+		return listOldAddress;
 	}
 	
+	public void setListOldAddress(List<String> listOldAddress) {
+		this.listOldAddress = listOldAddress;
+	}
+
 	public List<ListOption> getProvListOldAddress() {
 		return provListOldAddress;
 	}
@@ -64,16 +73,14 @@ public class Validation {
 		
 		System.out.println("Start der Methode addListOldAddress"); //test
 		
-		int lengthRawAddress = listNewAddress.get(i).length();
-		int startOld = rawAddress.indexOf(listNewAddress.get(i));
-		int endOld = rawAddress.indexOf(listNewAddress.get(i)) + lengthRawAddress;
-		String firstLetter = listNewAddress.get(i).substring(0, 1); //ersten Buchstaben nehmen
+		int lengthRawAddress = newAddress.get(i).length();
+		int startOld = rawAddress.indexOf(newAddress.get(i));
+		int endOld = rawAddress.indexOf(newAddress.get(i)) + lengthRawAddress;
+		String firstLetter = newAddress.get(i).substring(0, 1); //ersten Buchstaben nehmen
 		int startIndex = rawAddress.indexOf(firstLetter, 0);
 		int endIndex = startIndex + lengthRawAddress;
 		List<String> list = new ArrayList<String>();
-		ListOption f = new ListOption();
-			
-			
+		//ListOption f = new ListOption();
 			
 		System.out.println("StartOld an der Stelle :" + startOld); //test
 		System.out.println("EndOld an der Stelle :" + endOld); //test
@@ -93,18 +100,19 @@ public class Validation {
 				System.out.println("no more add.list on i :" + i); //test
 			}
 		}
-		f.setListOldOption(list);
-		provListOldAddress.add(f);
+		setListOldAddress(list);
+		//f.setListOldOption(list);
+		//provListOldAddress.add(f);
 			
 		System.out.println("StartOld an der Stelle :" + startOld);
 		System.out.println("EndOld an der Stelle :" + endOld);
 		System.out.println("StartIndex an der Stelle :" + startIndex); 
 		System.out.println("EndIndex an der Stelle :" + endIndex); 
-		System.out.println("listNewAddress String get(i) :" + listNewAddress.get(i));
+		System.out.println("newAddress String get(i) :" + newAddress.get(i));
 		
 		//aktuelle liste printen
-		for (int x = 0; x < provListOldAddress.get(i).listOldOption.size(); x++){
-			System.out.println("listOldaddress String get(i) :" + provListOldAddress.get(i).getListOldOption().get(x));
+		for (int x = 0; x < listOldAddress.size(); x++){
+			System.out.println("listOldaddress String get(i) :" + listOldAddress.get(x));
 			System.out.println("int x :" + x);
 		}
 		System.out.println("Ende der Methode addListOldAddress"); //test
@@ -115,7 +123,7 @@ public class Validation {
 		System.out.println("startprüfen: ");
 		System.out.println("oldAddress: " + rawAddress);
 		
-		setListNewAddress(listNewAddress); //Input listNewAddress in Attribut listNewAddress speichern damit Methode addListOldAddress geht
+		setNewAddress(listNewAddress); //Input listNewAddress in Attribut listNewAddress speichern damit Methode addListOldAddress geht
 		//listNewAddress = osm.get(0).getListNewAddressOSM(); //muss evt. geändert werden -> osm.get(0) falls mehrere Addressen vorkommen
 		
 		//für Score berechnen für "if contains == true"
@@ -357,5 +365,21 @@ public class Validation {
 		countTrue = 0; //countTrue zurücksetzen
 		provScore = 0; //provScore zurücksetzen
 		return provScore;
+	}
+	
+	// überprüft ob addresse valide ist anhand des scores
+	public Boolean setVal(){
+		Boolean val = null;
+		
+		if (getScore() >= 60){
+			System.out.println("Score der Adresse ist gleich/grösser 60 : " + getScore()); //test-code
+			val = true;
+		}
+		else {
+			System.out.println("Score der Adresse ist kleiner 60 : " + getScore()); //test-code
+			val = false;
+		}
+		
+		return val;
 	}
 }

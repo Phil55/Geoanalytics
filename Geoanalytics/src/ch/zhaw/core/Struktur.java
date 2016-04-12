@@ -16,8 +16,10 @@ public class Struktur {
 	private String addressTwo;
 	private int scoreOSM; //für Validation benötigt
 	private int scoreBing; //für Validation benötigt
+	private int scoreGoogle; //für Validation benötigt
 	private Boolean valOSM; //für Validation benötigt
 	private Boolean valBing; //für Validation benötigt
+	private Boolean valGoogle; //für Validation benötigt
 	private Boolean allServices; //wird zum überprüfen genutzt ob alle services benutzt wurden
 	
 	
@@ -109,6 +111,30 @@ public class Struktur {
 	public void setValBing(Boolean valBing) {
 		this.valBing = valBing;
 	}
+	
+	public int getScoreGoogle() {
+		return scoreGoogle;
+	}
+
+	public void setScoreGoogle(int scoreGoogle) {
+		this.scoreGoogle = scoreGoogle;
+	}
+
+	public Boolean getValGoogle() {
+		return valGoogle;
+	}
+
+	public void setValGoogle(Boolean valGoogle) {
+		this.valGoogle = valGoogle;
+	}
+
+	public Boolean getAllServices() {
+		return allServices;
+	}
+
+	public void setAllServices(Boolean allServices) {
+		this.allServices = allServices;
+	}
 
 	public String createRawAddress(String addressOne, String addressTwo){
 		String combinedString = addressOne + " " + addressTwo;
@@ -189,7 +215,7 @@ public class Struktur {
 				if(m.getStatusOSM() == true){
 					//Prüfung der neu gewonnenen Adresse starten
 					Validation v = startValidation(m, m.getOsm().get(0).getListNewAddressOSM()); //validierung wird gestartet
-					setValOSM(setVal(v)); //validierung wird gestartet und ergebins false/true bei valOSM gespeichert
+					setValOSM(v.setVal()); //validierung wird gestartet und ergebins false/true bei valOSM gespeichert
 					setScoreOSM(v.getScore()); //Score ergebnis wird bei scoreOSM gespeichert -> nicht sicher ob das benötigt wird
 					System.out.println("Validation OSM :" + valOSM + " , Score: " + scoreOSM); //test-code
 					check = valOSM; //setzt check auf false oder true nach ergebnis der validierung
@@ -204,8 +230,8 @@ public class Struktur {
 				if(checkedQuery == "bing"){
 					if(m.getStatusBing() == true){
 						//Prüfung der neu gewonnenen Adresse starten
-						Validation v = startValidation(m, m.getBing().getListNewAddressBing()); //validierung wird gestartet
-						setValBing(setVal(v)); // ergebins false/true bei valBing gespeichert
+						Validation v = startValidation(m, m.getBing().getResourceSets().get(0).getResources().get(0).getListNewAddressBing()); //validierung wird gestartet
+						setValBing(v.setVal()); // ergebins false/true bei valBing gespeichert
 						setScoreBing(v.getScore()); //Score ergebnis wird bei scoreBing gespeichert -> nicht sicher ob das benötigt wird
 						System.out.println("Validation Bing :" + valBing + " , Score: " + scoreBing); //test-code
 						check = valBing; //setzt check auf false oder true nach ergebnis der validierung
@@ -216,10 +242,27 @@ public class Struktur {
 					}
 				}
 				else{
-					//anderer Service aufrufen
-					System.out.println("Struktur: anderer Service aufrufen -> Prozess sollte nicht bis hierher kommen "); //test-code
-					check = true;
-					allServices = true;
+					//bei true wird die Abfrage gestartet, bei false wird Methode wiederholt 
+					if(checkedQuery == "google"){
+						if(m.getStatusGoogle() == true){
+							//Prüfung der neu gewonnenen Adresse starten
+							Validation v = startValidation(m, m.getGoogle().getResults().get(0).getListNewAddressGoogle()); //validierung wird gestartet
+							setValGoogle(v.setVal()); // ergebins false/true bei valBing gespeichert
+							setScoreGoogle(v.getScore()); //Score ergebnis wird bei scoreBing gespeichert -> nicht sicher ob das benötigt wird
+							System.out.println("Validation Google :" + valGoogle + " , Score: " + scoreGoogle); //test-code
+							check = valGoogle; //setzt check auf false oder true nach ergebnis der validierung
+						}
+						else{
+							//testCheck wiederholen (schlaufe)
+							check = false;
+						}
+					}
+					else{
+						//anderer Service aufrufen
+						System.out.println("Struktur: anderer Service aufrufen -> Prozess sollte nicht bis hierher kommen "); //test-code
+						check = true;
+						allServices = true;
+					}
 				}
 			}
 		}
@@ -238,22 +281,6 @@ public class Struktur {
 		Validation v = new Validation(getRawAddress()); //Initiiere Validation
 		v.validate(m.getRawAddress(), listNewAddress);
 		return v;
-	}
-	
-	// überprüft ob addresse valide ist anhand des scores
-	public Boolean setVal(Validation v){
-		Boolean val = null;
-		
-		if (v.getScore() >= 60){
-			System.out.println("Score der Adresse ist gleich/grösser 60 : " + v.getScore()); //test-code
-			val = true;
-		}
-		else {
-			System.out.println("Score der Adresse ist kleiner 60 : " + v.getScore()); //test-code
-			val = false;
-		}
-		
-		return val;
 	}
 	
 	public void startAlignment(Alignment l, List<QueryOSM> osm){

@@ -12,8 +12,6 @@ public class QueryBing { //Literaturverweis finden um zu begründen wieso Package
 	private String statusDescription;
 	private String traceId;
 	private List<ResourceSetsObj> resourceSets;
-	// für QueryGoogle() benötigt
-	private List<Integer> newAddressTrue = new ArrayList<Integer>(); //Listet die Stelle der Adressen auf, die vollständig sind
 	
 	//test dummy constructor for objectmapper
 	public QueryBing(){	
@@ -75,13 +73,4 @@ public class QueryBing { //Literaturverweis finden um zu begründen wieso Package
 		this.resourceSets = resourceSets;
 	}
 	
-	public List<Integer> getNewAddressTrue() {
-		return newAddressTrue;
-	}
-
-	public void setNewAddressTrue(List<Integer> newAddressTrue) {
-		this.newAddressTrue = newAddressTrue;
-	}
-
-
 }

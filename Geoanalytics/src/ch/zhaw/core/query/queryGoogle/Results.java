@@ -10,7 +10,9 @@ public class Results {
 	private List<String> types;
 	private List<AddressComponents> address_components;
 	private Geometry geometry;
-	private List<String> listNewAddressGoogle = new ArrayList<String>(); // Liste erstellen um bei der Validierung strukturiert vorzugehen
+	private List<String> newAddress = new ArrayList<String>(); // Liste erstellen um bei der Validierung strukturiert vorzugehen
+	private Boolean status = null; //für Validation benötigt
+	private int score; //für Validation benötigt
 	
 	
 	//constructor for objectmapper
@@ -57,25 +59,43 @@ public class Results {
 		this.geometry = geometry;
 	}
 
-	public List<String> getListNewAddressGoogle() {
-		return listNewAddressGoogle;
+	public List<String> getNewAddress() {
+		return newAddress;
 	}
 
-	public void setListNewAddressGoogle(List<String> listNewAddressGoogle) {
-		this.listNewAddressGoogle = listNewAddressGoogle;
+	public void setNewAddress(List<String> newAddress) {
+		this.newAddress = newAddress;
+	}
+	
+	public Boolean getStatus() {
+		return status;
 	}
 
-	public void createListNewAddressGoogle(int i){
+	public void setStatus(Boolean status) {
+		this.status = status;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public void createListNewAddress(int i){
 		
 		String route = address_components.get(getIndex("route", i)).getLong_name();
-		System.out.println("route: " + route);
 		String addressNumber = address_components.get(getIndex("street_number", i)).getLong_name();
+		String addressLine = route + " " + addressNumber;
 		String plz = address_components.get(getIndex("postal_code", i)).getLong_name();
 		String locality = address_components.get(getIndex("locality", i)).getLong_name();
 		String areaLevel1 = address_components.get(getIndex("administrative_area_level_1", i)).getLong_name(); //evt. nicht nötig
 		String areaLevel2 = address_components.get(getIndex("administrative_area_level_2", i)).getLong_name(); //evt. nicht nötig
+		
 		System.out.println("route: " + route);
 		System.out.println("addressNumber: " + addressNumber);
+		System.out.println("addressLine: " + addressLine);
 		System.out.println("plz: " + plz);
 		System.out.println("locality: " + locality);
 		System.out.println("areaLevel1: " + areaLevel1);
@@ -84,32 +104,35 @@ public class Results {
 		// listNewAddress muss pro Service gleich strukturiert sein!! -> road, nr, plz, ort
 		// Struktur kann noch ergänzt bzw. verändert werden
 		
-		//road
-		listNewAddressGoogle.add(route);
-		System.out.println("listNewAddress.add(route) = " + route);
+		//addressline
+		newAddress.add(addressLine);
+		System.out.println("newAddress.add(addressLine) = " + addressLine);
 		
+		/*
 		//nr
-		listNewAddressGoogle.add(addressNumber);
-		System.out.println("listNewAddress.add(addressNumber) = " + addressNumber);
+		newAddress.add(addressNumber);
+		System.out.println("newAddress.add(addressNumber) = " + addressNumber);
+		*/
 		
 		//plz
-		listNewAddressGoogle.add(plz);
-		System.out.println("listNewAddress.add(plz) = " + plz);
+		newAddress.add(plz);
+		System.out.println("newAddress.add(plz) = " + plz);
+		
 		//Ort
 		if (locality != null){
-			listNewAddressGoogle.add(locality);
-			System.out.println("listNewAddress.add(locality) = " + locality);
+			newAddress.add(locality);
+			System.out.println("newAddress.add(locality) = " + locality);
 		}
 		
 		//evt. nicht nötig
 		/*
 		if (areaLevel1 != null){
-			listNewAddressGoogle.add(areaLevel1);
-			System.out.println("listNewAddress.add(areaLevel1) = " + areaLevel1);
+			newAddress.add(areaLevel1);
+			System.out.println("newAddress.add(areaLevel1) = " + areaLevel1);
 		}
 		if (areaLevel2 != null){
-			listNewAddressGoogle.add(areaLevel2);
-			System.out.println("listNewAddress.add(areaLevel2) = " + areaLevel2);
+			newAddress.add(areaLevel2);
+			System.out.println("newAddress.add(areaLevel2) = " + areaLevel2);
 		}
 		*/
 	}

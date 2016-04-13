@@ -1,9 +1,18 @@
 package ch.zhaw.core;
 
 import java.util.List;
+import java.util.ArrayList;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import ch.zhaw.core.alignment.Alignment;
 import ch.zhaw.core.query.*;
-import ch.zhaw.core.query.queryOSM.QueryOSM;
+import ch.zhaw.core.query.queryBing.*;
+import ch.zhaw.core.query.queryGoogle.QueryGoogle;
+import ch.zhaw.core.query.queryGoogle.Results;
+import ch.zhaw.core.query.queryOSM.*;
+import ch.zhaw.core.query.queryOSM.Address;
 import ch.zhaw.core.validation.Validation;
 
 public class Struktur {
@@ -14,12 +23,6 @@ public class Struktur {
 	private String nameFreeform;
 	private String addressOne;
 	private String addressTwo;
-	private int scoreOSM; //für Validation benötigt
-	private int scoreBing; //für Validation benötigt
-	private int scoreGoogle; //für Validation benötigt
-	private Boolean valOSM; //für Validation benötigt
-	private Boolean valBing; //für Validation benötigt
-	private Boolean valGoogle; //für Validation benötigt
 	private Boolean allServices; //wird zum überprüfen genutzt ob alle services benutzt wurden
 	
 	
@@ -29,6 +32,7 @@ public class Struktur {
 		this.nameFreeform = nameFreeform;
 		this.addressOne = addressOne;
 		this.addressTwo = addressTwo;
+		this.allServices = false; //wird defaultmässig auf false gesetzt
 		setRawAddress(createRawAddress(addressOne, addressTwo)); //Instanzierung von String rawAddress
 	}
 
@@ -79,54 +83,6 @@ public class Struktur {
 	public void setAddressTwo(String addressTwo) {
 		this.addressTwo = addressTwo;
 	}
-	
-	public int getScoreOSM() {
-		return scoreOSM;
-	}
-
-	public void setScoreOSM(int scoreOSM) {
-		this.scoreOSM = scoreOSM;
-	}
-
-	public int getScoreBing() {
-		return scoreBing;
-	}
-
-	public void setScoreBing(int scoreBing) {
-		this.scoreBing = scoreBing;
-	}
-	
-	public Boolean getValOSM() {
-		return valOSM;
-	}
-
-	public void setValOSM(Boolean valOSM) {
-		this.valOSM = valOSM;
-	}
-
-	public Boolean getValBing() {
-		return valBing;
-	}
-
-	public void setValBing(Boolean valBing) {
-		this.valBing = valBing;
-	}
-	
-	public int getScoreGoogle() {
-		return scoreGoogle;
-	}
-
-	public void setScoreGoogle(int scoreGoogle) {
-		this.scoreGoogle = scoreGoogle;
-	}
-
-	public Boolean getValGoogle() {
-		return valGoogle;
-	}
-
-	public void setValGoogle(Boolean valGoogle) {
-		this.valGoogle = valGoogle;
-	}
 
 	public Boolean getAllServices() {
 		return allServices;
@@ -148,11 +104,25 @@ public class Struktur {
 		Query m = new Query(getRawAddress()); //Query-klasse instanzieren und rawAddress setzen
 		Alignment l = new Alignment(m.getExtAddress()); //Inittiere Alignment -> evt. nicht hier instanzieren
 		
+		String checkedQuery = null; // für überprüfung bei checkQuery() und checkValidation() nötig,für überprüfung benötigt welche Query gemacht wurde
+		
 		//Schlaufe die überprüft, ob abfrage vollständig und valide ist. 
 		//solange Abfrage nicht true ist wird Methode wiederholt bis keine Services mehr vorhanden sind
 		Boolean complete = false; // default false sonst geht while nicht
 		while(complete != true){
-			complete = testCheck(m);
+			complete = checkQuery(m, checkedQuery);
+			/*
+			if(complete == true){
+				Boolean completeVal = false;
+				while(completeVal != true){
+					completeVal = checkValidation(m, checkedQuery);
+					complete = completeVal;
+				}
+			}
+			else{
+				
+			}
+			*/
 		}
 		
 		//überprüft ob addresse i.O zum speichern ist und ob alle Services bereits überprüft wurden
@@ -199,26 +169,27 @@ public class Struktur {
 	//Output noch nicht ganz sicher (Boolean?)
 	//überprüfen welche Services bereits genutzt wurden und startet query. wenn alle Services genutzt wurden, geht man auf mainQuery zurück
 	//danach wird überprüft, ob query vollständig ist und falls ja wird validation gestartet, wenn false wird nächster service abgefragt
-	public Boolean testCheck (Query m){
-		
+	public Boolean checkQuery (Query m, String checkedQuery){
+		System.out.println("start checkQuery()"); //test-code
+		System.out.println(""); //test-code
 		Boolean check = false;
-		String checkedQuery = null; // String für überprüfung benötigt welche Query gemacht wurde
+		//String checkedQuery = null; // String für überprüfung benötigt welche Query gemacht wurde
 		
 		if(checkUsedQueries(m.getStatusList()) == false){
 			System.out.println("noch nicht alle Services abgefragt. starte neue abfrage"); //test-code
 			checkedQuery = m.query(); // Abfrage-Methode iniziieren
 			System.out.println("überprüfung beendet für Abfrage : " + checkedQuery); //test-code
 			
+			Boolean statusOSM = m.getStatusOSM();
+			Boolean statusBing = m.getStatusBing();
+			Boolean statusGoogle = m.getStatusGoogle();
+			
 			if(checkedQuery == "osm"){
-				System.out.println("m.getStatusOSM() : " + m.getStatusOSM()); //test-code
+				System.out.println("statusOSM : " + statusOSM); //test-code
 				//bei true wird die Abfrage gestartet, bei false wird Methode wiederholt 
-				if(m.getStatusOSM() == true){
-					//Prüfung der neu gewonnenen Adresse starten
-					Validation v = startValidation(m, m.getOsm().get(0).getListNewAddressOSM()); //validierung wird gestartet
-					setValOSM(v.setVal()); //validierung wird gestartet und ergebins false/true bei valOSM gespeichert
-					setScoreOSM(v.getScore()); //Score ergebnis wird bei scoreOSM gespeichert -> nicht sicher ob das benötigt wird
-					System.out.println("Validation OSM :" + valOSM + " , Score: " + scoreOSM); //test-code
-					check = valOSM; //setzt check auf false oder true nach ergebnis der validierung
+				if(statusOSM == true){
+					//je nach dem ob die validierung gut war, setzt es check auf true oder false
+					check = checkValidation(m, checkedQuery); //Prüfung der neu gewonnenen Adresse starten
 				}
 				else{
 					//testCheck wiederholen (schlaufe)
@@ -228,13 +199,9 @@ public class Struktur {
 			else{
 				//bei true wird die Abfrage gestartet, bei false wird Methode wiederholt 
 				if(checkedQuery == "bing"){
-					if(m.getStatusBing() == true){
-						//Prüfung der neu gewonnenen Adresse starten
-						Validation v = startValidation(m, m.getBing().getResourceSets().get(0).getResources().get(0).getListNewAddressBing()); //validierung wird gestartet
-						setValBing(v.setVal()); // ergebins false/true bei valBing gespeichert
-						setScoreBing(v.getScore()); //Score ergebnis wird bei scoreBing gespeichert -> nicht sicher ob das benötigt wird
-						System.out.println("Validation Bing :" + valBing + " , Score: " + scoreBing); //test-code
-						check = valBing; //setzt check auf false oder true nach ergebnis der validierung
+					if(statusBing == true){
+						//je nach dem ob die validierung gut war, setzt es check auf true oder false
+						check = checkValidation(m, checkedQuery); //Prüfung der neu gewonnenen Adresse starten
 					}
 					else{
 						//testCheck wiederholen (schlaufe)
@@ -244,13 +211,9 @@ public class Struktur {
 				else{
 					//bei true wird die Abfrage gestartet, bei false wird Methode wiederholt 
 					if(checkedQuery == "google"){
-						if(m.getStatusGoogle() == true){
-							//Prüfung der neu gewonnenen Adresse starten
-							Validation v = startValidation(m, m.getGoogle().getResults().get(0).getListNewAddressGoogle()); //validierung wird gestartet
-							setValGoogle(v.setVal()); // ergebins false/true bei valBing gespeichert
-							setScoreGoogle(v.getScore()); //Score ergebnis wird bei scoreBing gespeichert -> nicht sicher ob das benötigt wird
-							System.out.println("Validation Google :" + valGoogle + " , Score: " + scoreGoogle); //test-code
-							check = valGoogle; //setzt check auf false oder true nach ergebnis der validierung
+						if(statusGoogle == true){
+							//je nach dem ob die validierung gut war, setzt es check auf true oder false
+							check = checkValidation(m, checkedQuery); //Prüfung der neu gewonnenen Adresse starten
 						}
 						else{
 							//testCheck wiederholen (schlaufe)
@@ -259,7 +222,7 @@ public class Struktur {
 					}
 					else{
 						//anderer Service aufrufen
-						System.out.println("Struktur: anderer Service aufrufen -> Prozess sollte nicht bis hierher kommen "); //test-code
+						System.out.println("Struktur checkQuery(): anderer Service aufrufen -> Prozess sollte nicht bis hierher kommen "); //test-code
 						check = true;
 						allServices = true;
 					}
@@ -275,12 +238,235 @@ public class Struktur {
 		return check;
 	}
 	
-	//Instanziert Validation und startet Validierung
-	public Validation startValidation(Query m, List<String> listNewAddress){
+	public Boolean checkValidation(Query m, String checkedQuery){
+		System.out.println("start checkValidation()"); //test-code
+		System.out.println(""); //test-code
+		Boolean check = false;
 		
-		Validation v = new Validation(getRawAddress()); //Initiiere Validation
-		v.validate(m.getRawAddress(), listNewAddress);
+		if(checkedQuery == "osm"){
+			//Prüfung der neu gewonnenen Adresse starten
+			QueryOSM obj = m.getOsm().get(0); // wird nur benötigt um code lesbarer zu machen -> import dafür benötigt
+			List<Integer> newAddressTrue = obj.getNewAddressTrue();
+			List<Integer> listScore = obj.getListScore();
+			List<Integer> listScoreTrue = obj.getListScoreTrue();
+			
+			//get mit jedem List<String> die validation durch 
+			for(int i = 0; i < newAddressTrue.size(); i++){
+				int index = newAddressTrue.get(i);
+				Address addressObj = m.getOsm().get(index).getAddress();
+				List<String> newAddress = addressObj.getListNewAddress(); // wird erstellt damit Code leserlicher ist
+				
+				Validation v = startValidation(m, newAddress); //validierung wird gestartet
+				addressObj.setScore(v.getScore()); // Score bei adresse speichern falls es später gebraucht wird
+				addressObj.setStatus(v.getVal());
+				int score = addressObj.getScore();
+				Boolean statusAddress = addressObj.getStatus();
+				
+				//überprüft ob berechneter Score gut genut ist. 
+				//wenn true wird er bei listScor hinzugefügt, wenn false wird nächster Service aufgerufen
+				if(statusAddress == true){
+					listScore.add(score); //erhaltener Score wird in der List hinzugefügt
+					listScoreTrue.add(index); //List mit der Stelle wo listScoreOSM den Score hat
+					System.out.println("Validation OSM genügend:" + statusAddress + " , Score: " + score + " , bei Stelle index: " + index); //test-code
+					//listTrueExist = true;
+				}
+				else{
+					System.out.println("Validation OSM ungenügend:" + statusAddress + " , Score: " + score); //test-code
+					//testCheck wiederholen (schlaufe)
+					//listTrueExist = false;
+				}
+			}
+			
+			//listScore und listScoreTrue "speichern"
+			obj.setListScore(listScore);
+			obj.setListScoreTrue(listScoreTrue);
+
+			//für testzecken eingesetzt um zu sehen was die Listen beinhalten
+			for(int i = 0; i < newAddressTrue.size(); i++){
+				System.out.println("newAddressTrue bei OSM: " + newAddressTrue.get(i)); //test-code
+			}
+			for(int i = 0; i < listScoreTrue.size(); i++){
+				System.out.println("listScoreTrue bei OSM:" + listScoreTrue.get(i)); //test-code
+			}
+			
+			//es wird überprüft ob newAddressTrue leer ist
+			//wenn true war keine Adresse geeignet und check wird auf false gesetzt, wenn false wird die beste adresse gesucht und true zurückgegeben
+			if(listScoreTrue.isEmpty() == false){
+				int indexBest = bestScoreIndex(listScore, listScoreTrue); // gibt die Stelle zurück, wo der beste Score erzielt wurde
+				int scoreBest = obj.getListScore().get(indexBest);
+				obj.setStatusValidation(true);
+				obj.setDefIndex(indexBest);
+				System.out.println("listScoreTrue ist nicht leer, defIndexOSM:" + indexBest + " , Score: " + scoreBest); //test-code
+				check = true; //setzt check auf false oder true nach ergebnis der validierung
+			}
+			else{
+				obj.setStatusValidation(false);
+				System.out.println("listScoreTrue ist leer d.h. keine Adresse hat einen guten Score"); //test-code
+				check = false;
+			}
+		}
+		else{
+			if(checkedQuery == "bing"){	
+				//Prüfung der neu gewonnenen Adresse starten
+				ResourceSetsObj obj = m.getBing().getResourceSets().get(0); // wird nur benötigt um code lesbarer zu machen -> import dafür benötigt
+				List<Integer> newAddressTrue = obj.getNewAddressTrue();;
+				List<Integer> listScore = obj.getListScore();
+				List<Integer> listScoreTrue = obj.getListScoreTrue();
+				
+				//get mit jedem List<String> die validation durch 
+				for(int i = 0; i < newAddressTrue.size(); i++){
+					int index = newAddressTrue.get(i);
+					ResourcesObj addressObj = m.getBing().getResourceSets().get(0).getResources().get(index); // wird nur benötigt um code lesbarer zu machen -> import dafür benötigt
+					List<String> newAddress = addressObj.getNewAddress(); // wird erstellt damit Code leserlicher ist
+					
+					Validation v = startValidation(m, newAddress); //validierung wird gestartet
+					addressObj.setScore(v.getScore()); // Score bei adresse speichern falls es später gebraucht wird
+					addressObj.setStatus(v.getVal());
+					int score = addressObj.getScore();
+					Boolean statusAddress = addressObj.getStatus();
+					
+					//überprüft ob berechneter Score gut genut ist. 
+					//wenn true wird er bei listScor hinzugefügt, wenn false wird nächster Service aufgerufen
+					if(statusAddress == true){
+						listScore.add(score); //erhaltener Score wird in der List hinzugefügt
+						listScoreTrue.add(index); //List mit der Stelle wo listScoreBing den Score hat
+						System.out.println("Validation Bing genügend:" + statusAddress + " , Score: " + score + " , bei Stelle index: " + index); //test-code
+					}
+					else{
+						System.out.println("Validation Bing ungenügend:" + statusAddress + " , Score: " + score); //test-code
+						//testCheck wiederholen (schlaufe)
+						check = false;
+					}
+				}
+				
+				//listScore und listScoreTrue "speichern"
+				obj.setListScore(listScore);
+				obj.setListScoreTrue(listScoreTrue);
+				
+				//für testzecken eingesetzt um zu sehen was die Listen beinhalten
+				for(int i = 0; i < newAddressTrue.size(); i++){
+					System.out.println("newAddressTrue bei OSM: " + newAddressTrue.get(i)); //test-code
+				}
+				for(int i = 0; i < listScoreTrue.size(); i++){
+					System.out.println("listScoreTrue bei OSM:" + listScoreTrue.get(i)); //test-code
+				}
+				
+				//es wird überprüft ob newAddressTrue leer ist
+				//wenn true war keine Adresse geeignet und check wird auf false gesetzt, wenn false wird die beste adresse gesucht und true zurückgegeben
+				if(listScoreTrue.isEmpty() == false){
+					int indexBest = bestScoreIndex(listScore, listScoreTrue); // gibt die Stelle zurück, wo der beste Score erzielt wurde
+					int scoreBest = obj.getListScore().get(indexBest);
+					obj.setStatusValidation(true);
+					obj.setDefIndex(indexBest);
+					System.out.println("newAddressTrue ist nicht leer, defIndexBing:" + indexBest + " , Score: " + scoreBest); //test-code
+					check = true; //setzt check auf false oder true nach ergebnis der validierung
+				}
+				else{
+					obj.setStatusValidation(false);
+					System.out.println("newAddressTrue ist leer d.h. keine Adresse hat einen guten Score"); //test-code
+					check = false;
+				}
+			}
+			else{
+				if(checkedQuery == "google"){
+					
+					//Prüfung der neu gewonnenen Adresse starten
+					QueryGoogle obj = m.getGoogle(); // wird nur benötigt um code lesbarer zu machen -> import dafür benötigt
+					List<Integer> newAddressTrue = obj.getNewAddressTrue();;
+					List<Integer> listScore = obj.getListScore();
+					List<Integer> listScoreTrue = obj.getListScoreTrue();
+					
+					//get mit jedem List<String> die validation durch 
+					for(int i = 0; i < newAddressTrue.size(); i++){
+						int index = newAddressTrue.get(i);
+						Results addressObj = m.getGoogle().getResults().get(index); // wird nur benötigt um code lesbarer zu machen -> import dafür benötigt
+						List<String> newAddress = addressObj.getNewAddress(); // wird erstellt damit Code leserlicher ist
+						
+						Validation v = startValidation(m, newAddress); //validierung wird gestartet
+						addressObj.setScore(v.getScore()); // Score bei adresse speichern falls es später gebraucht wird
+						addressObj.setStatus(v.getVal());
+						int score = addressObj.getScore();
+						Boolean statusAddress = addressObj.getStatus();
+						
+						//überprüft ob berechneter Score gut genut ist. 
+						//wenn true wird er bei listScor hinzugefügt, wenn false wird nächster Service aufgerufen
+						if(statusAddress == true){
+							listScore.add(score); //erhaltener Score wird in der List hinzugefügt
+							listScoreTrue.add(index); //List mit der Stelle wo listScoreBing den Score hat
+							System.out.println("Validation Google genügend:" + statusAddress + " , Score: " + score + " , bei Stelle index: " + index); //test-code
+						}
+						else{
+							System.out.println("Validation Google ungenügend:" + statusAddress + " , Score: " + score); //test-code
+							//testCheck wiederholen (schlaufe)
+							check = false;
+						}
+					}
+					
+					//listScore und listScoreTrue "speichern"
+					obj.setListScore(listScore);
+					obj.setListScoreTrue(listScoreTrue);
+					
+					//für testzecken eingesetzt um zu sehen was die Listen beinhalten
+					for(int i = 0; i < newAddressTrue.size(); i++){
+						System.out.println("newAddressTrue bei OSM: " + newAddressTrue.get(i)); //test-code
+					}
+					for(int i = 0; i < listScoreTrue.size(); i++){
+						System.out.println("listScoreTrue bei OSM:" + listScoreTrue.get(i)); //test-code
+					}
+					
+					//es wird überprüft ob newAddressTrue leer ist
+					//wenn true war keine Adresse geeignet und check wird auf false gesetzt, wenn false wird die beste adresse gesucht und true zurückgegeben
+					if(listScoreTrue.isEmpty() == false){
+						int indexBest = bestScoreIndex(listScore, listScoreTrue); // gibt die Stelle zurück, wo der beste Score erzielt wurde
+						int scoreBest = obj.getListScore().get(indexBest);
+						obj.setStatusValidation(true);
+						obj.setDefIndex(indexBest);
+						System.out.println("newAddressTrue ist nicht leer, defIndexGoogle:" + indexBest + " , Score: " + scoreBest); //test-code
+						check = true; //setzt check auf false oder true nach ergebnis der validierung
+					}
+					else{
+						obj.setStatusValidation(false);
+						System.out.println("newAddressTrue ist leer d.h. keine Adresse hat einen guten Score"); //test-code
+						check = false;
+					}
+				}
+				else{
+					//anderer Service aufrufen
+					System.out.println("Struktur checkValidation(): anderer Service aufrufen -> Prozess sollte nicht bis hierher kommen "); //test-code
+					check = true;
+					//all = true;
+				}
+			}
+		}
+		
+		return check;
+	}
+	
+	//Instanziert Validation und startet Validierung
+	public Validation startValidation(Query m, List<String> newAddress){
+		String rawAddress = m.getRawAddress();
+		Validation v = new Validation(rawAddress); //Initiiere Validation
+		v.validate(rawAddress, newAddress);
 		return v;
+	}
+	
+	// sucht aus der Liste den besten Score und gibt die Stelle zurück, die auf die Adresse verweisen soll
+	public int bestScoreIndex(List<Integer> listScore, List<Integer> listTrue){
+		int index = 0;
+		int max = 0;
+		for (int x = 0; x < listTrue.size(); x++){
+			if (max < listScore.get(x)){
+				max = listScore.get(x);
+				index = x;
+				System.out.println("min = listScore.get(x) :" + listScore.get(x));
+			}
+			else{
+				System.out.println("listScore -> Score ist kleiner als der vorherige Score :" + listScore.get(x));
+				//scoreList.remove(x); 
+				//checkList.remove(x);
+			}
+		}
+		return index;
 	}
 	
 	public void startAlignment(Alignment l, List<QueryOSM> osm){

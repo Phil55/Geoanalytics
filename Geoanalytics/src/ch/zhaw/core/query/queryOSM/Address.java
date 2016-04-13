@@ -1,5 +1,8 @@
 package ch.zhaw.core.query.queryOSM;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Address {
 
 	private String house_number;
@@ -21,6 +24,9 @@ public class Address {
 	private String public_building;
 	private String suburb;
 	private String bakery;
+	private List<String> listNewAddress = new ArrayList<String>(); // Liste erstellen um bei der Validierung strukturiert vorzugehen
+	private Boolean status = null; //für Validation benötigt
+	private int score; //für Validation benötigt
 	
 	/* für individuelle erstellung der Addresse möglich
 	public Address(String house_number, String road, String village, String county, String state, String postcode,
@@ -195,6 +201,85 @@ public class Address {
 	public void setPublic_building(String public_building) {
 		this.public_building = public_building;
 	}
+
+	public List<String> getListNewAddress() {
+		return listNewAddress;
+	}
+
+	public void setListNewAddress(List<String> listNewAddress) {
+		this.listNewAddress = listNewAddress;
+	}
 	
+	public Boolean getStatus() {
+		return status;
+	}
+
+	public void setStatus(Boolean status) {
+		this.status = status;
+	}
 	
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public void createListNewAddress(){
+		
+		String road = getRoad();
+		String addressNumber = getHouse_number();
+		String addressLine = road + " " + addressNumber;
+		String plz = getPostcode();
+		String village = getVillage();
+		String town = getTown();
+		String city = getCity();
+		/*
+		String road = osm.get(k).getAddress().getRoad();
+		String addressNumber = osm.get(k).getAddress().getHouse_number();
+		String plz = osm.get(k).getAddress().getPostcode();
+		String village = osm.get(k).getAddress().getVillage();
+		String town = osm.get(k).getAddress().getTown();
+		String city = osm.get(k).getAddress().getCity();
+		*/
+		System.out.println("road: " + road);
+		System.out.println("addressNumber: " + addressNumber);
+		System.out.println("addressLine: " + addressLine);
+		System.out.println("plz: " + plz);
+		System.out.println("village: " + village);
+		System.out.println("town: " + town);
+		System.out.println("city: " + city);
+		
+		// listNewAddress muss pro Service gleich strukturiert sein!! -> road, nr, plz, ort
+		// Struktur kann noch ergänzt bzw. verändert werden
+		
+		//addressLine
+		listNewAddress.add(addressLine);
+		System.out.println("listNewAddress.add(addressLine) = " + addressLine);
+		
+		/*
+		//nr
+		listNewAddressOSM.add(addressNumber);
+		System.out.println("listNewAddress.add(addressNumber) = " + addressNumber);
+		*/
+		
+		//plz
+		listNewAddress.add(plz);
+		System.out.println("listNewAddress.add(plz) = " + plz);
+		
+		//Ort
+		if (village != null){
+			listNewAddress.add(village);
+			System.out.println("listNewAddress.add(village) = " + village);
+		}
+		if (town != null){
+			listNewAddress.add(town);
+			System.out.println("listNewAddress.add(town) = " + town);
+		}
+		if (city != null){
+			listNewAddress.add(city);
+			System.out.println("listNewAddress.add(city) = " + city);
+		}
+	}
 }

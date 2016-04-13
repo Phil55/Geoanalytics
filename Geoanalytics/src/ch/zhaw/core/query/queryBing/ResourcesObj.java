@@ -14,7 +14,9 @@ public class ResourcesObj {
 	private Point point;
 	private Address address;
 	private List<GeocodePointsObj> geocodePoints;
-	private List<String> listNewAddressBing = new ArrayList<String>(); // Liste erstellen um bei der Validierung strukturiert vorzugehen
+	private List<String> newAddress = new ArrayList<String>(); // Liste erstellen um bei der Validierung strukturiert vorzugehen
+	private Boolean status = null; //für Validation benötigt
+	private int score; //für Validation benötigt
 	
 	//test dummy constructor for objectmapper
 	public ResourcesObj(){	
@@ -92,15 +94,31 @@ public class ResourcesObj {
 		this.geocodePoints = geocodePoints;
 	}
 
-	public List<String> getListNewAddressBing() {
-		return listNewAddressBing;
+	public List<String> getNewAddress() {
+		return newAddress;
 	}
 
-	public void setListNewAddressBing(List<String> listNewAddressBing) {
-		this.listNewAddressBing = listNewAddressBing;
+	public void setNewAddress(List<String> newAddress) {
+		this.newAddress = newAddress;
 	}
 	
-	public void createListNewAddressBing (){
+	public Boolean getStatus() {
+		return status;
+	}
+
+	public void setStatus(Boolean status) {
+		this.status = status;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public void createListNewAddress(){
 		
 		String addressLine = address.getAddressLine();
 		String plz = address.getPostalCode();
@@ -123,32 +141,32 @@ public class ResourcesObj {
 		// listNewAddress muss pro Service gleich strukturiert sein!! -> road, nr, plz, ort
 		// Struktur kann noch ergänzt bzw. verändert werden
 		
-		//road
-		listNewAddressBing.add(addressLine);
-		System.out.println("listNewAddress.add(addressLine) = " + addressLine);
+		//addressline
+		newAddress.add(addressLine);
+		System.out.println("newAddress.add(addressLine) = " + addressLine);
 		/*
 		//nr
-		listNewAddressOSM.add(addressNumber);
-		System.out.println("listNewAddress.add(addressNumber) = " + addressNumber);
+		newAddress.add(addressNumber);
+		System.out.println("newAddress.add(addressNumber) = " + addressNumber);
 		*/
 		//plz
-		listNewAddressBing.add(plz);
-		System.out.println("listNewAddress.add(plz) = " + plz);
+		newAddress.add(plz);
+		System.out.println("newAddress.add(plz) = " + plz);
 		//Ort
 		if (locality != null){
-			listNewAddressBing.add(locality);
-			System.out.println("listNewAddress.add(locality) = " + locality);
+			newAddress.add(locality);
+			System.out.println("newAddress.add(locality) = " + locality);
 		}
 		
 		//evt. nicht nötig
 		/*
 		if (district != null){
-			listNewAddressBing.add(district);
-			System.out.println("listNewAddress.add(district) = " + district);
+			newAddress.add(district);
+			System.out.println("newAddress.add(district) = " + district);
 		}
 		if (district2 != null){
-			listNewAddressBing.add(district2);
-			System.out.println("listNewAddress.add(district2) = " + district2);
+			newAddress.add(district2);
+			System.out.println("newAddress.add(district2) = " + district2);
 		}
 		*/
 	}

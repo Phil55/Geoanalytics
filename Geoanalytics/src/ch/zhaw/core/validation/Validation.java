@@ -11,7 +11,7 @@ public class Validation {
 
 	private int score;
 	private String rawAdressVal;
-	private List<List<String>> listNewAddress = new ArrayList<List<String>>();
+	//private List<List<String>> listNewAddress = new ArrayList<List<String>>();
 	private List<String> newAddress = new ArrayList<String>();
 	private List<String> listOldAddress = new ArrayList<String>();
 	private List<ListOption> provListOldAddress = new ArrayList<ListOption>();
@@ -35,7 +35,7 @@ public class Validation {
 	public void setRawAdressVal(String rawAdressVal) {
 		this.rawAdressVal = rawAdressVal;
 	}
-	
+	/*
 	public List<List<String>> getListNewAddress() {
 		return listNewAddress;
 	}
@@ -43,6 +43,7 @@ public class Validation {
 	public void setListNewAddress(List<List<String>> listNewAddress) {
 		this.listNewAddress = listNewAddress;
 	}
+	*/
 	
 	public List<String> getNewAddress() {
 		return newAddress;
@@ -118,7 +119,7 @@ public class Validation {
 		System.out.println("Ende der Methode addListOldAddress"); //test
 	}
 
-	public int validate(String rawAddress, List<String> listNewAddress){ //response wird evt. nicht gebraucht -> löschen
+	public int validate(String rawAddress, List<String> listNewAddress){
 		
 		System.out.println("startprüfen: ");
 		System.out.println("oldAddress: " + rawAddress);
@@ -128,8 +129,9 @@ public class Validation {
 		
 		//für Score berechnen für "if contains == true"
 		List<Boolean> listCheck = new ArrayList<Boolean>();
-		Boolean roadCheck = null;
-		Boolean addNrCheck = null;
+		//Boolean roadCheck = null;
+		//Boolean addNrCheck = null;
+		Boolean addressLineCheck = null;
 		Boolean plzCheck = null;
 		Boolean villageCheck = null;
 		
@@ -168,6 +170,7 @@ public class Validation {
 				if (rawAddress.toLowerCase().contains(listNewAddress.get(i).toLowerCase()) == true){ //zu testzwecken: == mit != ersetzt
 					System.out.println("rawAddress.toLowerCase().contains(listNewAddress.get(i).toLowerCase()) == true");
 
+					/*
 					if (i == 0){
 						roadCheck = true;
 						listCheck.add(roadCheck); //falls nur liste benötigt wird: listCheck.add(true);
@@ -178,12 +181,18 @@ public class Validation {
 						listCheck.add(addNrCheck);
 						provScore += 100;
 					}
-					else if (i == 2){
+					*/
+					if (i == 0){
+						addressLineCheck = true;
+						listCheck.add(addressLineCheck);
+						provScore += 100;
+					}
+					else if (i == 1){
 						plzCheck = true;
 						listCheck.add(plzCheck);
 						provScore += 100;
 					}
-					else if (i == 3){
+					else if (i == 2){
 						villageCheck = true;
 						listCheck.add(villageCheck);
 						provScore += 100;
@@ -193,6 +202,7 @@ public class Validation {
 						System.out.println("True-Wert kann nicht zugeordnet werden bei List-Stelle :" + i);
 					}
 
+					/*
 					//Score berechnen für "if contains == true"
 					for (int q = 0; q < listCheck.size(); q++){
 						if (listCheck.get(q) == true){
@@ -204,22 +214,25 @@ public class Validation {
 					}
 
 					score = calculateScore(provScore, countTrue, countFalse);
+					countTrue = 0; //countTrue zurücksetzen
+					provScore = 0; //provScore zurücksetzen
+					*/
 			
 				}
 				else {
-
+					
 					System.out.println("rawAddress.toLowerCase().contains(listNewAddress.get(i).toLowerCase()) == false");
 					//String testNew = "Bachstrassen 13";	//String zum testen
 					//String testOld = "Bachstrasse";		//String zum testen
 
 					int nStartIndex = 0;
 					int nEndIndex = 2;
-					int nScoreTrue = 0;
-					int nScoreFalse = 0;
-					int valScore = 0; // kann evt. auch mit Variabel provScore gemacht werden
-					int totalCheck = 0;
-					List<Integer> checkList = new ArrayList<Integer>();
-					List<Integer> scoreList = new ArrayList<Integer>();
+					double nScoreTrue = 0;
+					double nScoreFalse = 0;
+					double valScore = 0; // kann evt. auch mit Variabel provScore gemacht werden
+					double totalCheck = 0;
+					List<Double> checkList = new ArrayList<Double>();
+					List<Double> scoreList = new ArrayList<Double>();
 					//List<Integer> totalList = new ArrayList<Integer>();
 
 					for (int x = 0; x < provListOldAddress.get(i).listOldOption.size(); x++){
@@ -277,7 +290,7 @@ public class Validation {
 						listOldAddress.add(provListOldAddress.get(i).listOldOption.get(0));
 					}
 					else {
-						int max = 0;
+						double max = 0;
 						for (int x = 0; x < provListOldAddress.get(i).listOldOption.size(); x++){
 							if (max < scoreList.get(x)){
 								max = scoreList.get(x);
@@ -293,8 +306,8 @@ public class Validation {
 						listOldAddress.add(provListOldAddress.get(i).listOldOption.get(ind));
 						System.out.println("final one Score of list :" + scoreList.get(0));
 						//Score berechnen für "if contains == false" und false oder true in listcheck zurückgeben
-						int n = checkList.get(0);
-						int score = scoreList.get(0);
+						double n = checkList.get(0);
+						double score = scoreList.get(0);
 						if (n <= 5){
 							if(score >= 75){
 								listCheck.add(true);
@@ -336,6 +349,7 @@ public class Validation {
 			}
 		}
 
+		
 		//Score berechnen für "if contains == false"
 		//evt. kann Berechnung für Score bei beiden fällen (contains == false UND true) benutzt werden
 		for (int q = 0; q < listCheck.size(); q++){ //hier entsteht fehler, dass calculateScore nicht funktionieren lässt
@@ -362,21 +376,19 @@ public class Validation {
 		System.out.println("int countTrue :" + countTrue);
 		System.out.println("int countFalse :" + countFalse);
 		setScore(provScore);
-		countTrue = 0; //countTrue zurücksetzen
-		provScore = 0; //provScore zurücksetzen
 		return provScore;
 	}
 	
 	// überprüft ob addresse valide ist anhand des scores
-	public Boolean setVal(){
+	public Boolean getVal(){
 		Boolean val = null;
 		
-		if (getScore() >= 60){
-			System.out.println("Score der Adresse ist gleich/grösser 60 : " + getScore()); //test-code
+		if (getScore() >= 120){
+			System.out.println("Score der Adresse ist gleich/grösser 120 : " + getScore()); //test-code
 			val = true;
 		}
 		else {
-			System.out.println("Score der Adresse ist kleiner 60 : " + getScore()); //test-code
+			System.out.println("Score der Adresse ist kleiner 120 : " + getScore()); //test-code
 			val = false;
 		}
 		

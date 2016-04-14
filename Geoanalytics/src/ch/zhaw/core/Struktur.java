@@ -444,9 +444,14 @@ public class Struktur {
 	
 	//Instanziert Validation und startet Validierung
 	public Validation startValidation(Query m, List<String> newAddress){
-		String rawAddress = m.getRawAddress();
+		String rawAddress = m.getRawAddress().toLowerCase(); // für die validierung werden beide Adressen auf LowerCase gestellt
+		List<String> newAddressLow = new ArrayList<String>();
+		for(int i = 0; i < newAddress.size(); i++){
+			newAddressLow.add(i, newAddress.get(i).toLowerCase()); // index zur sicherheit eingefügt
+			System.out.println("newAddressLow.add :" + newAddressLow.get(i));
+		}
 		Validation v = new Validation(rawAddress); //Initiiere Validation
-		v.validate(rawAddress, newAddress);
+		v.validate(rawAddress, newAddressLow);
 		return v;
 	}
 	

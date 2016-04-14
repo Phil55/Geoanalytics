@@ -13,11 +13,14 @@ public class Validation {
 	private String rawAdressVal;
 	//private List<List<String>> listNewAddress = new ArrayList<List<String>>();
 	private List<String> newAddress = new ArrayList<String>();
-	private List<String> listOldAddress = new ArrayList<String>();
+	private List<String> oldAddress = new ArrayList<String>(); //wenn das beste Element aus listOption gefunden wurde kann es hier gespeichert werden
+	private ListOption listOption;
 	private List<ListOption> provListOldAddress = new ArrayList<ListOption>();
+	private List<Boolean> listCheck = new ArrayList<Boolean>(); //für Score berechnen benötigt
 	
 	public Validation(String rawAdress) {
 		this.rawAdressVal = rawAdress;
+		this.listOption = new ListOption();
 	}
 
 	public int getScore() {
@@ -53,13 +56,15 @@ public class Validation {
 		this.newAddress = newAddress;
 	}
 
-	public List<String> getListOldAddress() {
-		return listOldAddress;
+	
+	public List<String> getOldAddress() {
+		return oldAddress;
 	}
 	
-	public void setListOldAddress(List<String> listOldAddress) {
-		this.listOldAddress = listOldAddress;
+	public void setOldAddress(List<String> oldAddress) {
+		this.oldAddress = oldAddress;
 	}
+	
 
 	public List<ListOption> getProvListOldAddress() {
 		return provListOldAddress;
@@ -69,6 +74,73 @@ public class Validation {
 		this.provListOldAddress = provListOldAddress;
 	}
 
+	public ListOption getListOption() {
+		return listOption;
+	}
+
+	public void setListOption(ListOption listOption) {
+		this.listOption = listOption;
+	}
+
+	public List<Boolean> getListCheck() {
+		return listCheck;
+	}
+
+	public void setListCheck(List<Boolean> listCheck) {
+		this.listCheck = listCheck;
+	}
+
+	public void setPosibleRawAddress(String rawAddress, List<String> newAddress){
+		System.out.println("Start der Methode setPosibleRawAddress"); //test
+		
+		
+		for(int i = 0; i < newAddress.size(); i++){
+			int lengthComponent = newAddress.get(i).length();
+			int startOld = rawAddress.indexOf(newAddress.get(i));
+			int endOld = rawAddress.indexOf(newAddress.get(i)) + lengthComponent;
+			String firstLetter = newAddress.get(i).substring(0, 1); //ersten Buchstaben nehmen
+			int startIndex = rawAddress.indexOf(firstLetter, 0);
+			int endIndex = startIndex + lengthComponent;
+			//List<String> list = new ArrayList<String>();
+			provListOldAddress.add(i, listOption);
+			
+			System.out.println("StartOld an der Stelle :" + startOld); //test
+			System.out.println("EndOld an der Stelle :" + endOld); //test
+			System.out.println("StartIndex an der Stelle :" + startIndex); //test
+			System.out.println("EndIndex an der Stelle :" + endIndex); //test
+			
+			while (startIndex >= 0 && endIndex <= rawAddress.length() ){
+				int x = 0;
+				if (endIndex <= rawAddress.length()){
+					Option option = new Option ();
+					provListOldAddress.get(i).getAddress_component().add(x, option);
+					provListOldAddress.get(i).getAddress_component().get(x).setComponent(rawAddress.substring(startIndex, endIndex));
+					//list.add(rawAddress.substring(startIndex, endIndex));
+					System.out.println("add.list on i :" + i); //test
+					System.out.println("list.add :" + rawAddress.substring(startIndex, endIndex)); //test
+					startIndex = rawAddress.indexOf(firstLetter, startIndex + 1);
+					endIndex = startIndex + lengthComponent;
+					x++;
+				}
+				else {
+					System.out.println("no more add.list on i :" + i); //test
+				}
+			}
+			//provListOldAddress.get(i).setListOldOption(list);
+			
+			//Liste printen an der Stelle i
+			for(int x = 0; x < provListOldAddress.size(); x++){
+				System.out.println("provListOldAddress.get(i).getAddress_component().get(x).getComponent():" + provListOldAddress.get(i).getAddress_component().get(x).getComponent());
+				System.out.println("i :" + i); 
+				System.out.println("x :" + x);
+			}
+			System.out.println("Ende der Methode setPosibleRawAddress"); //test
+			System.out.println(); //test
+		}
+		
+	}
+	
+	/*
 	// Nur in Methode pruefen anwendbar
 	public void addListOldAddress(String rawAddress, int i){
 		
@@ -118,41 +190,31 @@ public class Validation {
 		}
 		System.out.println("Ende der Methode addListOldAddress"); //test
 	}
+	*/
 
 	public int validate(String rawAddress, List<String> listNewAddress){
 		
 		System.out.println("startprüfen: ");
 		System.out.println("oldAddress: " + rawAddress);
 		
+		//erstellt liste rawAddress mit allen möglichkeiten pro liste
+		/*
+		z.B. rawAddress = Türkenstrasse 89 8789 lasten
+		listNewAddress = Türkenstrasse 89 / 8789 / lasten
+		listOldAddress = Türkenstrasse 89, trasse 89 8789 l / 8987, 8789, 89 l / lasten 
+		 */
+		setPosibleRawAddress(rawAddress, listNewAddress);
+		
 		setNewAddress(listNewAddress); //Input listNewAddress in Attribut listNewAddress speichern damit Methode addListOldAddress geht
 		//listNewAddress = osm.get(0).getListNewAddressOSM(); //muss evt. geändert werden -> osm.get(0) falls mehrere Addressen vorkommen
-		
-		//für Score berechnen für "if contains == true"
-		List<Boolean> listCheck = new ArrayList<Boolean>();
-		//Boolean roadCheck = null;
-		//Boolean addNrCheck = null;
-		Boolean addressLineCheck = null;
-		Boolean plzCheck = null;
-		Boolean villageCheck = null;
-		
-		/*
-		int result = oldAddress.compareToIgnoreCase(newAddress);
-		System.out.println(result);
-		
-		result = newAddress.compareToIgnoreCase(oldAddress);
-		System.out.println(result);
-		*/
-		
-		int countTrue = 0;
-		int countFalse = 0;
-		int provScore = 0;
-		
+				
 		for (int i = 0; i <listNewAddress.size(); i++){
 			
 			System.out.println("listNewAddress :" + listNewAddress.get(i) + " bei i :" + i);
 			
 			// überprüfen, ob ein Wert null ist
 			// falls sinnvoll evt. Bedingung festlegen welche Werte zwingend != null sein müssen
+			//dies wird eigentlich schon früher geprüft, aber wird zur sicherheit dringelassen
 			if(listNewAddress.get(i) == null){
 				System.out.println("listNewAddress.get(i) == null -> keine Punkte vergeben (Score = 0 für diesen Wert) oder anderer Service wird abgefragt");
 				//provScore = 0; // falls null wird im Moment 0 punkte gegeben d.h. kein Code nötig
@@ -160,64 +222,36 @@ public class Validation {
 			}
 			else{
 			
-			
-				//ListOption f = new ListOption();
-				addListOldAddress(rawAddress, i);
+				System.out.println("rawAddresslowerCase :" + rawAddress);
+				System.out.println("newAddresslowerCase :" + listNewAddress.get(i));
+				
 
-				System.out.println("rawAddresslowerCase :" + rawAddress.toLowerCase());
-				System.out.println("newAddresslowerCase :" + listNewAddress.get(i).toLowerCase());
+				for(int x = 0; x < provListOldAddress.get(i).getAddress_component().size(); x++){
+					String oldOption = provListOldAddress.get(i).getAddress_component().get(x).getComponent();
+					
+					if (oldOption.contains(listNewAddress.get(i)) == true){ //zu testzwecken: == mit != ersetzt
+						System.out.println("rawAddress.contains(listNewAddress.get(i)) == true");
+						//starte Methode valContains() und fügt eine Punktzahl bei provScore hinzu
+						valContains(rawAddress, listNewAddress, i, x);
 
-				if (rawAddress.toLowerCase().contains(listNewAddress.get(i).toLowerCase()) == true){ //zu testzwecken: == mit != ersetzt
-					System.out.println("rawAddress.toLowerCase().contains(listNewAddress.get(i).toLowerCase()) == true");
-
-					/*
-					if (i == 0){
-						roadCheck = true;
-						listCheck.add(roadCheck); //falls nur liste benötigt wird: listCheck.add(true);
-						provScore += 100;
-					}
-					else if (i == 1){
-						addNrCheck = true;
-						listCheck.add(addNrCheck);
-						provScore += 100;
-					}
-					*/
-					if (i == 0){
-						addressLineCheck = true;
-						listCheck.add(addressLineCheck);
-						provScore += 100;
-					}
-					else if (i == 1){
-						plzCheck = true;
-						listCheck.add(plzCheck);
-						provScore += 100;
-					}
-					else if (i == 2){
-						villageCheck = true;
-						listCheck.add(villageCheck);
-						provScore += 100;
 					}
 					else {
-						listCheck.add(false);
-						System.out.println("True-Wert kann nicht zugeordnet werden bei List-Stelle :" + i);
+						
+						valNgram(rawAddress, listNewAddress, i, x);
 					}
+				}
+				
+				//Component mit dem besten Score wird bei oldAddress hinzugefügt
+				addOldAddress(i);
+				
+				//Score überprüfen
+				
+				/*
+				if (rawAddress.contains(listNewAddress.get(i)) == true){ //zu testzwecken: == mit != ersetzt
+					System.out.println("rawAddress.contains(listNewAddress.get(i)) == true");
+					//starte Methode valContains() und fügt eine Punktzahl bei provScore hinzu
+					valContains(rawAddress, listNewAddress, i, x);
 
-					/*
-					//Score berechnen für "if contains == true"
-					for (int q = 0; q < listCheck.size(); q++){
-						if (listCheck.get(q) == true){
-							countTrue++;
-						}
-						else {
-							countFalse++;
-						}
-					}
-
-					score = calculateScore(provScore, countTrue, countFalse);
-					countTrue = 0; //countTrue zurücksetzen
-					provScore = 0; //provScore zurücksetzen
-					*/
-			
 				}
 				else {
 					
@@ -287,7 +321,7 @@ public class Validation {
 					System.out.println("size() == 0 :" + provListOldAddress.get(i).getListOldOption().get(0));
 					
 					if (provListOldAddress.get(i).getListOldOption().size() == 1){
-						listOldAddress.add(provListOldAddress.get(i).listOldOption.get(0));
+						oldAddress.add(provListOldAddress.get(i).listOldOption.get(0));
 					}
 					else {
 						double max = 0;
@@ -303,7 +337,7 @@ public class Validation {
 								checkList.remove(x);
 							}
 						}
-						listOldAddress.add(provListOldAddress.get(i).listOldOption.get(ind));
+						oldAddress.add(provListOldAddress.get(i).listOldOption.get(ind));
 						System.out.println("final one Score of list :" + scoreList.get(0));
 						//Score berechnen für "if contains == false" und false oder true in listcheck zurückgeben
 						double n = checkList.get(0);
@@ -346,10 +380,12 @@ public class Validation {
 						}
 					}
 				}
+				*/
 			}
 		}
 
 		
+		//zu einer Methode machen -> z.B countListCheck
 		//Score berechnen für "if contains == false"
 		//evt. kann Berechnung für Score bei beiden fällen (contains == false UND true) benutzt werden
 		for (int q = 0; q < listCheck.size(); q++){ //hier entsteht fehler, dass calculateScore nicht funktionieren lässt
@@ -393,5 +429,111 @@ public class Validation {
 		}
 		
 		return val;
+	}
+	
+	public void valContains(String rawAddress, List<String> listNewAddress, int i, int x){
+		
+		//für Score berechnen für "if contains == true"
+		//Boolean roadCheck = null;
+		//Boolean addNrCheck = null;
+		Boolean addressLineCheck = null;
+		Boolean plzCheck = null;
+		Boolean villageCheck = null;
+		int provScore = 0;
+		Option address_component = provListOldAddress.get(i).getAddress_component().get(x);
+		
+		/*
+		if (i == 0){
+			roadCheck = true;
+			listCheck.add(roadCheck); //falls nur liste benötigt wird: listCheck.add(true);
+			provScore = 100;
+			address_component.setProvScore(provScore);
+		}
+		else if (i == 1){
+			addNrCheck = true;
+			listCheck.add(addNrCheck);
+			provScore = 100;
+			address_component.setProvScore(provScore);
+		}
+		*/
+		if (i == 0){
+			addressLineCheck = true;
+			listCheck.add(addressLineCheck);
+			provScore = 100;
+			address_component.setProvScore(provScore);
+		}
+		else if (i == 1){
+			plzCheck = true;
+			listCheck.add(plzCheck);
+			provScore = 100;
+			address_component.setProvScore(provScore);
+		}
+		else if (i == 2){
+			villageCheck = true;
+			listCheck.add(villageCheck);
+			provScore = 100;
+			address_component.setProvScore(provScore);
+		}
+		else {
+			listCheck.add(false);
+			System.out.println("True-Wert kann nicht zugeordnet werden bei List-Stelle :" + i);
+		}
+
+		/*
+		//Score berechnen für "if contains == true"
+		for (int q = 0; q < listCheck.size(); q++){
+			if (listCheck.get(q) == true){
+				countTrue++;
+			}
+			else {
+				countFalse++;
+			}
+		}
+		score = calculateScore(provScore, countTrue, countFalse);
+		countTrue = 0; //countTrue zurücksetzen
+		provScore = 0; //provScore zurücksetzen
+		*/
+		
+	}
+	
+	public void valNgram(String rawAddress, List<String> listNewAddress, int i, int x){
+		
+		
+		
+	}
+	
+	public void addOldAddress(int i){
+		List<Option> addressComponent = provListOldAddress.get(i).getAddress_component();
+		List<Integer> scoreList = new ArrayList<Integer>();
+		int ind = 0;
+		
+		if (addressComponent.size() == 1){
+			oldAddress.add(addressComponent.get(0).getComponent());
+		}
+		else {
+			//scoreList erstellen
+			for(int x = 0; x < addressComponent.size(); x++){
+				scoreList.add(addressComponent.get(x).getProvScore());
+			}
+			//scoreList überprüfen
+			int max = 0;
+			for (int x = 0; x < addressComponent.size(); x++){
+				if (max < scoreList.get(x)){
+					max = scoreList.get(x);
+					ind = x;
+					System.out.println("max < scoreList.get(x) :" + scoreList.get(x));
+				}
+				else{
+					System.out.println("int max >= scoreList.get(x)" + scoreList.get(x));
+				}
+			}
+			oldAddress.add(addressComponent.get(ind).getComponent());
+			System.out.println("final one Score of list :");
+			System.out.println("Component :" + addressComponent.get(ind).getComponent());
+			System.out.println("Score :" + addressComponent.get(ind).getProvScore());
+			System.out.println();
+		}
+		
+		
 	}
 }

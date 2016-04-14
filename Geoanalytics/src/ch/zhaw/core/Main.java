@@ -23,8 +23,8 @@ public class Main {
 	//  Instanzierung von Einlog-Daten für Datenbank
 	
 	//Für Testzwecke verwenden
-	static final String user = "patentdb";
-	static final String password = "tRNSBI7n7VHOPK7n";
+	static final String user = "";
+	static final String password = "";
 	
 	/*// Code für am Schluss (User muss Passwort eingeben
 	static final String user = getUsername();

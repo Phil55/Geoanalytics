@@ -13,7 +13,7 @@ public class QueryGoogle {
 	private List<Integer> newAddressTrue = new ArrayList<Integer>(); //Listet die Stelle der Adressen auf, die vollständig sind
 	private Boolean statusValidation = null; //für Validation benötigt
 	private Boolean statusQuery = null; //für Query benötigt, auf null gesetzt damit Bedingung simpler abzufragen ist
-	private List <Integer> listScore = new ArrayList<Integer>(); //für Validation benötigt
+	private List <Double> listScore = new ArrayList<Double>(); //für Validation benötigt
 	private List <Integer> listScoreTrue = new ArrayList<Integer>(); //für Validation benötigt
 	private int defIndex; //für Validation benötigt, verweist auf die Stelle, wo die Adresse mit dem besten Score ist
 	
@@ -61,11 +61,11 @@ public class QueryGoogle {
 		this.statusQuery = statusQuery;
 	}
 
-	public List<Integer> getListScore() {
+	public List<Double> getListScore() {
 		return listScore;
 	}
 
-	public void setListScore(List<Integer> listScore) {
+	public void setListScore(List<Double> listScore) {
 		this.listScore = listScore;
 	}
 

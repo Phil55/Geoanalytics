@@ -26,7 +26,7 @@ public class Address {
 	private String bakery;
 	private List<String> listNewAddress = new ArrayList<String>(); // Liste erstellen um bei der Validierung strukturiert vorzugehen
 	private Boolean status = null; //für Validation benötigt
-	private int score; //für Validation benötigt
+	private Double score; //für Validation benötigt
 	
 	/* für individuelle erstellung der Addresse möglich
 	public Address(String house_number, String road, String village, String county, String state, String postcode,
@@ -218,15 +218,17 @@ public class Address {
 		this.status = status;
 	}
 	
-	public int getScore() {
+	public Double getScore() {
 		return score;
 	}
 
-	public void setScore(int score) {
+	public void setScore(Double score) {
 		this.score = score;
 	}
 
 	public void createListNewAddress(){
+		System.out.println(); //test-code
+		System.out.println("Start createListNewAddress() (OSM)"); //test
 		
 		String road = getRoad();
 		String addressNumber = getHouse_number();

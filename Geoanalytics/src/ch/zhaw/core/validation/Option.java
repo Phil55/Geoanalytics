@@ -3,9 +3,9 @@ package ch.zhaw.core.validation;
 public class Option {
 	
 	private String component;
-	private int countTrue; // für Validation benötigt
-	private int countFalse; // für Validation benötigt
-	private int provScore; // für Validation benötigt
+	private double countTrue; // für Validation benötigt, wegen n-gram muss es double sein
+	private double countFalse; // für Validation benötigt, wegen n-gram muss es double sein
+	private double provScore; // für Validation benötigt, wegen n-gram muss es double sein
 	
 	public Option(){
 		this.countTrue = 0;
@@ -21,27 +21,27 @@ public class Option {
 		this.component = component;
 	}
 
-	public int getCountTrue() {
+	public double getCountTrue() {
 		return countTrue;
 	}
 
-	public void setCountTrue(int countTrue) {
+	public void setCountTrue(double countTrue) {
 		this.countTrue = countTrue;
 	}
 
-	public int getCountFalse() {
+	public double getCountFalse() {
 		return countFalse;
 	}
 
-	public void setCountFalse(int countFalse) {
+	public void setCountFalse(double countFalse) {
 		this.countFalse = countFalse;
 	}
 
-	public int getProvScore() {
+	public double getProvScore() {
 		return provScore;
 	}
 
-	public void setProvScore(int provScore) {
+	public void setProvScore(double provScore) {
 		this.provScore = provScore;
 	}
 

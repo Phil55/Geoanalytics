@@ -16,7 +16,7 @@ public class ResourcesObj {
 	private List<GeocodePointsObj> geocodePoints;
 	private List<String> newAddress = new ArrayList<String>(); // Liste erstellen um bei der Validierung strukturiert vorzugehen
 	private Boolean status = null; //für Validation benötigt
-	private int score; //für Validation benötigt
+	private Double score; //für Validation benötigt
 	
 	//test dummy constructor for objectmapper
 	public ResourcesObj(){	
@@ -110,15 +110,17 @@ public class ResourcesObj {
 		this.status = status;
 	}
 
-	public int getScore() {
+	public Double getScore() {
 		return score;
 	}
 
-	public void setScore(int score) {
+	public void setScore(Double score) {
 		this.score = score;
 	}
 
 	public void createListNewAddress(){
+		System.out.println(); //test-code
+		System.out.println("Start createListNewAddress() (Bing)"); //test
 		
 		String addressLine = address.getAddressLine();
 		String plz = address.getPostalCode();

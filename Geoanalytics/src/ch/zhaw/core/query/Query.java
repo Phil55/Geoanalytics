@@ -127,8 +127,8 @@ public class Query {
 	public String query() {
 		
 		String rawAddress = getRawAddress();
+		System.out.println(); //test-code
 		System.out.println("start query(), rawAddress :" + rawAddress); //test-code
-		System.out.println(""); //test-code
 		//OSM Service abfragen und auf Bollean statusOSM setzen, um zu überprüfen ob abfrage vollständig war
 		//überprüfen welche Services bereits genutzt wurden
 		
@@ -203,7 +203,9 @@ public class Query {
 
 	//Methode erhält eine externe Adresse (extAddress) und gibt Boolean zurück Wenn True war Abfrage Erfolgreich und vollständig, ansonsten false
 	public Boolean queryOSM(String rawAddress){
-		System.out.println("Beginn abfrage bei OSM: rawAddress " + rawAddress); //test-code
+		System.out.println(); //test-code
+		System.out.println("start queryOSM()"); //test-code
+		System.out.println("rawAddress: " + rawAddress); //test-code
 		String urlVar = rawAddress.replaceAll(" ", "+");
 		String finalURL = "http://nominatim.openstreetmap.org/search?q=" + urlVar + "&format=json&polygon=1&addressdetails=1";
 		System.out.println("URL : " + finalURL); //test-code
@@ -288,8 +290,9 @@ public class Query {
 	}
 	
 	public Boolean queryBing(String rawAddress){
-		
-		System.out.println("Beginn abfrage bei Bing: rawAddress " + rawAddress); //test-code
+		System.out.println(); //test-code
+		System.out.println("start queryBing()"); //test-code
+		System.out.println("rawAddress: " + rawAddress); //test-code
 		String urlVar = rawAddress.replaceAll(" ", "%20");
 		String bingKey = "AoJzcR56eRmy0CW6xaxTkzvkb3cTLjb6UWgMj2fu_4gt87yatP7oTZ1tcs1wIcx3";
 		String finalURL = "http://dev.virtualearth.net/REST/v1/Locations/" + urlVar + "?&key=" + bingKey;
@@ -366,8 +369,9 @@ public class Query {
 	}
 	
 	public Boolean queryGoogle(String rawAddress){
-		
-		System.out.println("Beginn abfrage bei Google: rawAddress " + rawAddress); //test-code
+		System.out.println(); //test-code
+		System.out.println("start queryGoogle()"); //test-code
+		System.out.println("rawAddress: " + rawAddress); //test-code
 		String urlVar = rawAddress.replaceAll(" ", "+");
 		String googleKey = "AIzaSyAzpsj4yxTE4bQ8R3WysueyAHUNmJ9Chzw";
 		String finalURL = "https://maps.googleapis.com/maps/api/geocode/json?address=" + urlVar + "&key=" + googleKey;
@@ -442,7 +446,8 @@ public class Query {
 	
 	//überprüfen ob newlistaddress vollständig ist
 	public Boolean checkNewList(int sizeNewAddress, List<String> newAddress){ //List<String> weil get(i) innerhalb der while-Methode sein muss
-		System.out.println("Start checkNewList : "); //test-code
+		System.out.println(); //test-code
+		System.out.println("Start checkNewList() : "); //test-code
 		Boolean status = true;
 		int i = 0;
 		

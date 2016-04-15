@@ -87,9 +87,9 @@ public class Main {
 				String addressTwo = rs.getString("address_2");
 
 				//Werte anzeigen
-				System.out.print("Person Orig ID: " + personOrigId);
-				System.out.print(", Person ID: " + personId);
-				System.out.print(", Name Freeform: " + nameFreeform);
+				System.out.println("Person Orig ID: " + personOrigId);
+				System.out.println(", Person ID: " + personId);
+				System.out.println(", Name Freeform: " + nameFreeform);
 				System.out.println(", Adress_1: " + addressOne);
 				System.out.println(", Adress_2: " + addressTwo);
 				

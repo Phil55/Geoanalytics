@@ -12,7 +12,7 @@ public class Results {
 	private Geometry geometry;
 	private List<String> newAddress = new ArrayList<String>(); // Liste erstellen um bei der Validierung strukturiert vorzugehen
 	private Boolean status = null; //für Validation benötigt
-	private int score; //für Validation benötigt
+	private Double score; //für Validation benötigt
 	
 	
 	//constructor for objectmapper
@@ -75,15 +75,17 @@ public class Results {
 		this.status = status;
 	}
 
-	public int getScore() {
+	public Double getScore() {
 		return score;
 	}
 
-	public void setScore(int score) {
+	public void setScore(Double score) {
 		this.score = score;
 	}
 
 	public void createListNewAddress(int i){
+		System.out.println(); //test-code
+		System.out.println("Start createListNewAddress() (Google)"); //test
 		
 		String route = address_components.get(getIndex("route", i)).getLong_name();
 		String addressNumber = address_components.get(getIndex("street_number", i)).getLong_name();
@@ -139,6 +141,8 @@ public class Results {
 	
 	//findet die stelle, wo die gesuchte componente ist (z.B. street_number) falls nichts gefunden wurde gibt es -1 zurück
 	public int getIndex(String component, int i){
+		System.out.println(); //test-code
+		System.out.println("Start getIndex() (Google)"); //test
 		int index = -1; // nicht null da erste Position von list 0 ist
 		int sizeComponent = address_components.size();
 		System.out.println("sizeComponent = " + sizeComponent);

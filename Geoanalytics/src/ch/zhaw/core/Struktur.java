@@ -99,7 +99,9 @@ public class Struktur {
 	
 	//die Abfrage nach einer Adresse wird gestartet
 	public String mainQuery(String rawAddress) {
-		System.out.println("BeginnstartAbfrage: " + rawAddress); //test-code
+		System.out.println(); //test-code
+		System.out.println("Start mainQuery: "); //test-code
+		System.out.println("rawAddress: " + rawAddress); //test-code
 		
 		Query m = new Query(getRawAddress()); //Query-klasse instanzieren und rawAddress setzen
 		Alignment l = new Alignment(m.getExtAddress()); //Inittiere Alignment -> evt. nicht hier instanzieren
@@ -141,7 +143,8 @@ public class Struktur {
 	//überprüfen welche Services bereits genutzt wurden
 	//bei true wurden alle Services bereits abgefragt, bei false noch nicht
 	public Boolean checkUsedQueries(List<Boolean> statusList){
-		System.out.println("Start checkUsedQueries"); //test-code
+		System.out.println(); //test-code
+		System.out.println("Start checkUsedQueries()"); //test-code
 		Boolean check = null;
 		
 		//überprüft ob liste leer ist
@@ -170,8 +173,8 @@ public class Struktur {
 	//überprüfen welche Services bereits genutzt wurden und startet query. wenn alle Services genutzt wurden, geht man auf mainQuery zurück
 	//danach wird überprüft, ob query vollständig ist und falls ja wird validation gestartet, wenn false wird nächster service abgefragt
 	public Boolean checkQuery (Query m, String checkedQuery){
+		System.out.println(); //test-code
 		System.out.println("start checkQuery()"); //test-code
-		System.out.println(""); //test-code
 		Boolean check = false;
 		//String checkedQuery = null; // String für überprüfung benötigt welche Query gemacht wurde
 		
@@ -185,6 +188,7 @@ public class Struktur {
 			Boolean statusGoogle = m.getStatusGoogle();
 			
 			if(checkedQuery == "osm"){
+				System.out.println("checkedQuery == osm"); //test-code
 				System.out.println("statusOSM : " + statusOSM); //test-code
 				//bei true wird die Abfrage gestartet, bei false wird Methode wiederholt 
 				if(statusOSM == true){
@@ -199,6 +203,8 @@ public class Struktur {
 			else{
 				//bei true wird die Abfrage gestartet, bei false wird Methode wiederholt 
 				if(checkedQuery == "bing"){
+					System.out.println("checkedQuery == bing"); //test-code
+					System.out.println("statusBing : " + statusBing); //test-code
 					if(statusBing == true){
 						//je nach dem ob die validierung gut war, setzt es check auf true oder false
 						check = checkValidation(m, checkedQuery); //Prüfung der neu gewonnenen Adresse starten
@@ -211,6 +217,8 @@ public class Struktur {
 				else{
 					//bei true wird die Abfrage gestartet, bei false wird Methode wiederholt 
 					if(checkedQuery == "google"){
+						System.out.println("checkedQuery == google"); //test-code
+						System.out.println("statusGoogle : " + statusGoogle); //test-code
 						if(statusGoogle == true){
 							//je nach dem ob die validierung gut war, setzt es check auf true oder false
 							check = checkValidation(m, checkedQuery); //Prüfung der neu gewonnenen Adresse starten
@@ -239,15 +247,16 @@ public class Struktur {
 	}
 	
 	public Boolean checkValidation(Query m, String checkedQuery){
+		System.out.println(); //test-code
 		System.out.println("start checkValidation()"); //test-code
-		System.out.println(""); //test-code
 		Boolean check = false;
 		
 		if(checkedQuery == "osm"){
+			System.out.println("checkedQuery == osm"); //test-code
 			//Prüfung der neu gewonnenen Adresse starten
 			QueryOSM obj = m.getOsm().get(0); // wird nur benötigt um code lesbarer zu machen -> import dafür benötigt
 			List<Integer> newAddressTrue = obj.getNewAddressTrue();
-			List<Integer> listScore = obj.getListScore();
+			List<Double> listScore = obj.getListScore();
 			List<Integer> listScoreTrue = obj.getListScoreTrue();
 			
 			//get mit jedem List<String> die validation durch 
@@ -259,7 +268,7 @@ public class Struktur {
 				Validation v = startValidation(m, newAddress); //validierung wird gestartet
 				addressObj.setScore(v.getScore()); // Score bei adresse speichern falls es später gebraucht wird
 				addressObj.setStatus(v.getVal());
-				int score = addressObj.getScore();
+				Double score = addressObj.getScore();
 				Boolean statusAddress = addressObj.getStatus();
 				
 				//überprüft ob berechneter Score gut genut ist. 
@@ -293,7 +302,7 @@ public class Struktur {
 			//wenn true war keine Adresse geeignet und check wird auf false gesetzt, wenn false wird die beste adresse gesucht und true zurückgegeben
 			if(listScoreTrue.isEmpty() == false){
 				int indexBest = bestScoreIndex(listScore, listScoreTrue); // gibt die Stelle zurück, wo der beste Score erzielt wurde
-				int scoreBest = obj.getListScore().get(indexBest);
+				Double scoreBest = obj.getListScore().get(indexBest);
 				obj.setStatusValidation(true);
 				obj.setDefIndex(indexBest);
 				System.out.println("listScoreTrue ist nicht leer, defIndexOSM:" + indexBest + " , Score: " + scoreBest); //test-code
@@ -307,10 +316,11 @@ public class Struktur {
 		}
 		else{
 			if(checkedQuery == "bing"){	
+				System.out.println("checkedQuery == bing"); //test-code
 				//Prüfung der neu gewonnenen Adresse starten
 				ResourceSetsObj obj = m.getBing().getResourceSets().get(0); // wird nur benötigt um code lesbarer zu machen -> import dafür benötigt
 				List<Integer> newAddressTrue = obj.getNewAddressTrue();;
-				List<Integer> listScore = obj.getListScore();
+				List<Double> listScore = obj.getListScore();
 				List<Integer> listScoreTrue = obj.getListScoreTrue();
 				
 				//get mit jedem List<String> die validation durch 
@@ -322,7 +332,7 @@ public class Struktur {
 					Validation v = startValidation(m, newAddress); //validierung wird gestartet
 					addressObj.setScore(v.getScore()); // Score bei adresse speichern falls es später gebraucht wird
 					addressObj.setStatus(v.getVal());
-					int score = addressObj.getScore();
+					Double score = addressObj.getScore();
 					Boolean statusAddress = addressObj.getStatus();
 					
 					//überprüft ob berechneter Score gut genut ist. 
@@ -355,7 +365,7 @@ public class Struktur {
 				//wenn true war keine Adresse geeignet und check wird auf false gesetzt, wenn false wird die beste adresse gesucht und true zurückgegeben
 				if(listScoreTrue.isEmpty() == false){
 					int indexBest = bestScoreIndex(listScore, listScoreTrue); // gibt die Stelle zurück, wo der beste Score erzielt wurde
-					int scoreBest = obj.getListScore().get(indexBest);
+					Double scoreBest = obj.getListScore().get(indexBest);
 					obj.setStatusValidation(true);
 					obj.setDefIndex(indexBest);
 					System.out.println("newAddressTrue ist nicht leer, defIndexBing:" + indexBest + " , Score: " + scoreBest); //test-code
@@ -369,11 +379,11 @@ public class Struktur {
 			}
 			else{
 				if(checkedQuery == "google"){
-					
+					System.out.println("checkedQuery == google"); //test-code
 					//Prüfung der neu gewonnenen Adresse starten
 					QueryGoogle obj = m.getGoogle(); // wird nur benötigt um code lesbarer zu machen -> import dafür benötigt
 					List<Integer> newAddressTrue = obj.getNewAddressTrue();;
-					List<Integer> listScore = obj.getListScore();
+					List<Double> listScore = obj.getListScore();
 					List<Integer> listScoreTrue = obj.getListScoreTrue();
 					
 					//get mit jedem List<String> die validation durch 
@@ -385,7 +395,7 @@ public class Struktur {
 						Validation v = startValidation(m, newAddress); //validierung wird gestartet
 						addressObj.setScore(v.getScore()); // Score bei adresse speichern falls es später gebraucht wird
 						addressObj.setStatus(v.getVal());
-						int score = addressObj.getScore();
+						Double score = addressObj.getScore();
 						Boolean statusAddress = addressObj.getStatus();
 						
 						//überprüft ob berechneter Score gut genut ist. 
@@ -418,7 +428,7 @@ public class Struktur {
 					//wenn true war keine Adresse geeignet und check wird auf false gesetzt, wenn false wird die beste adresse gesucht und true zurückgegeben
 					if(listScoreTrue.isEmpty() == false){
 						int indexBest = bestScoreIndex(listScore, listScoreTrue); // gibt die Stelle zurück, wo der beste Score erzielt wurde
-						int scoreBest = obj.getListScore().get(indexBest);
+						Double scoreBest = obj.getListScore().get(indexBest);
 						obj.setStatusValidation(true);
 						obj.setDefIndex(indexBest);
 						System.out.println("newAddressTrue ist nicht leer, defIndexGoogle:" + indexBest + " , Score: " + scoreBest); //test-code
@@ -444,6 +454,8 @@ public class Struktur {
 	
 	//Instanziert Validation und startet Validierung
 	public Validation startValidation(Query m, List<String> newAddress){
+		System.out.println(); //test-code
+		System.out.println("start startValidation()"); //test-code
 		String rawAddress = m.getRawAddress().toLowerCase(); // für die validierung werden beide Adressen auf LowerCase gestellt
 		List<String> newAddressLow = new ArrayList<String>();
 		for(int i = 0; i < newAddress.size(); i++){
@@ -456,9 +468,11 @@ public class Struktur {
 	}
 	
 	// sucht aus der Liste den besten Score und gibt die Stelle zurück, die auf die Adresse verweisen soll
-	public int bestScoreIndex(List<Integer> listScore, List<Integer> listTrue){
+	public int bestScoreIndex(List<Double> listScore, List<Integer> listTrue){
+		System.out.println(); //test-code
+		System.out.println("start bestScoreIndex()"); //test-code
 		int index = 0;
-		int max = 0;
+		Double max = 0.0;
 		for (int x = 0; x < listTrue.size(); x++){
 			if (max < listScore.get(x)){
 				max = listScore.get(x);
@@ -475,6 +489,8 @@ public class Struktur {
 	}
 	
 	public void startAlignment(Alignment l, List<QueryOSM> osm){
+		System.out.println(); //test-code
+		System.out.println("start startAlignment()"); //test-code
 		l.align(osm.get(0).getDisplay_name());
 		//resultat wird abgespeichert
 		

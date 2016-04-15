@@ -92,6 +92,7 @@ public class Results {
 		String addressLine = route + " " + addressNumber;
 		String plz = address_components.get(getIndex("postal_code", i)).getLong_name();
 		String locality = address_components.get(getIndex("locality", i)).getLong_name();
+		String sublocalityLevel1 = address_components.get(getIndex("sublocality_level_1", i)).getLong_name();
 		String areaLevel1 = address_components.get(getIndex("administrative_area_level_1", i)).getLong_name(); //evt. nicht nötig
 		String areaLevel2 = address_components.get(getIndex("administrative_area_level_2", i)).getLong_name(); //evt. nicht nötig
 		
@@ -100,6 +101,7 @@ public class Results {
 		System.out.println("addressLine: " + addressLine);
 		System.out.println("plz: " + plz);
 		System.out.println("locality: " + locality);
+		System.out.println("sublocalityLevel1: " + sublocalityLevel1);
 		System.out.println("areaLevel1: " + areaLevel1);
 		System.out.println("areaLevel2: " + areaLevel2);
 		
@@ -160,7 +162,7 @@ public class Results {
 			//überprüft ob bei der Liste type den String component beinhaltet
 			for (int o = 0; o < types.size(); o++){
 				//schlaufe wird verlassen, wenn component gefunden wurde oder länge von types.size() erreicht wurde
-				if(types.get(o).contains(component) == true){
+				if(types.get(o).equals(component) == true){
 					index = p;
 					System.out.println("component gefunden, set index = " + index + " , types.get(o) = "+ types.get(o));
 				}

@@ -215,15 +215,13 @@ public class Query {
 		//DL/Service wird abgefragt und man erhält eine "externe Adresse"
 		
 		try {
-				
-			response = Unirest.get(finalURL).asJson();
 			
 			/*
 			response = Unirest.get("http://nominatim.openstreetmap.org/search?q={address}&format=json&polygon=1&addressdetails=1").
 					routeParam("address", urlVar). //routeParam will so nicht funktionieren. Fehler noch nicht gefunden
 					asJson();
 			*/
-			
+			response = Unirest.get(finalURL).asJson();
 			String body = response.getBody().toString();
 			System.out.println("response: " + response);
 			System.out.println("response_status: " + response.getStatusText());
@@ -236,34 +234,34 @@ public class Query {
 			osm = mapper.readValue(newBody, new TypeReference<List<QueryOSM>>(){});
 			
 			//achtung nicht vollständig -> get(0) muss noch mit int ersetzt werden sonst wird immer das gleiche aufgerufen
-			String osmName = osm.get(0).getDisplay_name();
-			System.out.println("name: " + osmName);
-			setExtAddress(osmName);
+			//String display_name = osm.get(0).getDisplay_name();
+			//System.out.println("name: " + display_name);
+			//setExtAddress(display_name);
 			
 			int sizeResults = osm.size();
 			
-			for(int k = 0; k < sizeResults; k++){
+			for(int i = 0; i < sizeResults; i++){
 				
-				osmName = osm.get(k).getDisplay_name();
-				System.out.println("name: " + osmName);
+
+				String display_name = osm.get(i).getDisplay_name(); //nur für println "fügt index bei List NewAddressTrue. index i:" benötigt
 				
 				// for-Schlaufe falls mehrere Adressen zurückkommen erstellt ListNewAddressBing
 				// OSM-Adresse erstellen für Alignment -> evt. in Konstruktor QueryOSM integrieren?
-				System.out.println("start Methode createListNewAddressOSM an der Stelle (k): " + k); //test-code
-				osm.get(k).getAddress().createListNewAddress();
+				System.out.println("start Methode createListNewAddressOSM an der Stelle (i): " + i); //test-code
+				osm.get(i).getAddress().createListNewAddress(i, osm);
 				
 				//get alle newlistaddress durch mit der methode check NewList
-				int sizeNewAddress = osm.get(k).getAddress().getListNewAddress().size();
-				List<String> newAddress = osm.get(k).getAddress().getListNewAddress();
+				int sizeNewAddress = osm.get(i).getAddress().getListNewAddress().size();
+				List<String> newAddress = osm.get(i).getAddress().getListNewAddress();
 				System.out.println("start Methode checkNewList bei OSM"); //test-code
 				Boolean checkList = checkNewList(sizeNewAddress, newAddress);
 				
 				//wenn checkList true ist, wird die Stelle (osm.get(k) -> k) bei newAddressTrue hinzugefügt 
 				//kann evt. zu einer Methode umgewandelt werden. wird aber eher schwierig
 				if(checkList == true){
-					Integer kInteger = new Integer(k);
-					osm.get(k).getNewAddressTrue().add(kInteger);
-					System.out.println("fügt index bei List NewAddressTrue. index k: " + k + " , address: " + osmName);
+					Integer iInteger = new Integer(i);
+					osm.get(i).getNewAddressTrue().add(iInteger);
+					System.out.println("fügt index bei List NewAddressTrue. index i: " + i + " , address: " + display_name);
 				}
 				else{
 					System.out.println("nichts wird hinzugefügt -> checkList: " + checkList);
@@ -303,7 +301,6 @@ public class Query {
 		try {
 					
 			response = Unirest.get(finalURL).asJson();
-				
 			String body = response.getBody().toString();
 			System.out.println("response: " + response);
 			System.out.println("response_status: " + response.getStatusText());
@@ -313,37 +310,36 @@ public class Query {
 			bing = mapper.readValue(body, QueryBing.class);
 			
 			//achtung nicht vollständig -> get(0) muss noch mit int ersetzt werden sonst wird immer das gleiche aufgerufen
-			String bingName = bing.getResourceSets().get(0).getResources().get(0).getName();
-			System.out.println("name: " + bingName);
-			
-			setExtAddress(bingName);
-			System.out.println("ExtAddress: " + getExtAddress());
+			//String bingName = bing.getResourceSets().get(0).getResources().get(0).getName();
+			//System.out.println("name: " + bingName);
+			//setExtAddress(bingName);
+			//System.out.println("ExtAddress: " + getExtAddress());
 			
 			int sizeResults = bing.getResourceSets().get(0).getResources().size();
 			
-			for(int k = 0; k < sizeResults; k++){
+			for(int i = 0; i < sizeResults; i++){
 				
-				bingName = bing.getResourceSets().get(0).getResources().get(k).getName();
+				String bingName = bing.getResourceSets().get(0).getResources().get(i).getName();
 				System.out.println("name: " + bingName);
 				
 				// for-Schlaufe falls mehrere Adressen zurückkommen erstellt ListNewAddressBing
 				// Bing-Adresse erstellen für Alignment -> evt. in Konstruktor QueryBing integrieren?
-				System.out.println("start Methode createListNewAddressBing an der Stelle (k): " + k); //test-code
-				bing.getResourceSets().get(0).getResources().get(k).createListNewAddress();
+				System.out.println("start Methode createListNewAddressBing an der Stelle (i): " + i); //test-code
+				bing.getResourceSets().get(0).getResources().get(i).createListNewAddress(i, bing);
 				
 				//get alle newlistaddress durch mit der methode check NewList
 				//noch nicht getestet aber vermute, dass länge von resourceSets immer 0 ist
-				int sizeNewAddress = bing.getResourceSets().get(0).getResources().get(k).getNewAddress().size();
-				List<String> newAddress = bing.getResourceSets().get(0).getResources().get(k).getNewAddress();
+				int sizeNewAddress = bing.getResourceSets().get(0).getResources().get(i).getNewAddress().size();
+				List<String> newAddress = bing.getResourceSets().get(0).getResources().get(i).getNewAddress();
 				System.out.println("start Methode checkNewList bei Bing"); //test-code
 				Boolean checkList = checkNewList(sizeNewAddress, newAddress);
 				
 				//wenn checkList true ist, wird die Stelle (bing.getResourceSets().get(0).getResources().get(k) -> k) bei newAddressTrue hinzugefügt 
 				//kann evt. zu einer Methode umgewandelt werden. wird aber eher schwierig
 				if(checkList == true){
-					Integer kInteger = new Integer(k);
-					bing.getResourceSets().get(0).getNewAddressTrue().add(kInteger);
-					System.out.println("fügt index bei List NewAddressTrue. index k: " + k + " , address: " + bingName);
+					Integer iInteger = new Integer(i);
+					bing.getResourceSets().get(0).getNewAddressTrue().add(iInteger);
+					System.out.println("fügt index bei List NewAddressTrue. index i: " + i + " , address: " + bingName);
 				}
 				else{
 					System.out.println("nichts wird hinzugefügt -> checkList: " + checkList);
@@ -382,7 +378,6 @@ public class Query {
 		try {
 					
 			response = Unirest.get(finalURL).asJson();
-				
 			String body = response.getBody().toString();
 			System.out.println("response: " + response);
 			System.out.println("response_status: " + response.getStatusText());
@@ -393,32 +388,32 @@ public class Query {
 			
 			int sizeResults = google.getResults().size();
 			
-			String googleName = google.getResults().get(0).getFormatted_address(); //muss noch geändert werden siehe untere for-schlaufe
-			setExtAddress(googleName);
-			System.out.println("ExtAddress: " + getExtAddress());
+			//String googleName = google.getResults().get(0).getFormatted_address(); //muss noch geändert werden siehe untere for-schlaufe
+			//setExtAddress(googleName);
+			//System.out.println("ExtAddress: " + getExtAddress());
 			
-			for(int k = 0; k < sizeResults; k++){
+			for(int i = 0; i < sizeResults; i++){
 				
-				googleName = google.getResults().get(k).getFormatted_address();
+				String googleName = google.getResults().get(i).getFormatted_address();
 				System.out.println("formated_address: " + googleName);
 				
 				// for-Schlaufe falls mehrere Adressen zurückkommen erstellt ListNewAddressGoogle
 				// Google-Adresse erstellen für Alignment -> evt. in Konstruktor QueryGoogle integrieren?
-				System.out.println("start Methode createListNewAddressGoogle an der Stelle (k): " + k); //test-code
-				google.getResults().get(k).createListNewAddress(k); 
+				System.out.println("start Methode createListNewAddressGoogle an der Stelle (i): " + i); //test-code
+				google.getResults().get(i).createListNewAddress(i, google); 
 				
 				//get alle newlistaddress durch mit der methode check NewList
-				int sizeNewAddress = google.getResults().get(k).getNewAddress().size();
-				List<String> newAddress = google.getResults().get(k).getNewAddress();
+				int sizeNewAddress = google.getResults().get(i).getNewAddress().size();
+				List<String> newAddress = google.getResults().get(i).getNewAddress();
 				System.out.println("start Methode checkNewList bei Google"); //test-code
 				Boolean checkList = checkNewList(sizeNewAddress, newAddress);
 				
 				//wenn checkList true ist, wird die Stelle (google.getResults().get(k) -> k) bei newAddressTrue hinzugefügt 
 				//kann evt. zu einer Methode umgewandelt werden. wird aber eher schwierig
 				if(checkList == true){
-					Integer kInteger = new Integer(k);
-					google.getNewAddressTrue().add(kInteger);
-					System.out.println("fügt index bei List NewAddressTrue. index k: " + k + " , address: " + googleName);
+					Integer iInteger = new Integer(i);
+					google.getNewAddressTrue().add(iInteger);
+					System.out.println("fügt index bei List NewAddressTrue. index i: " + i + " , address: " + googleName);
 				}
 				else{
 					System.out.println("nichts wird hinzugefügt -> checkList: " + checkList);
@@ -439,8 +434,7 @@ public class Query {
 			google.setStatusQuery(true); //Boolean für OSM ob anfrage i.O ist
 			System.out.println("statusQuery für Google : " + google.getStatusQuery()); //test-code
 			status = true;
-		}
-				
+		}	
 		return status;
 	}
 	

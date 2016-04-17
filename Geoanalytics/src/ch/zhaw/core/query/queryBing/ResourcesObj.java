@@ -118,7 +118,7 @@ public class ResourcesObj {
 		this.score = score;
 	}
 
-	public void createListNewAddress(){
+	public void createListNewAddress(int i, QueryBing bing){
 		System.out.println(); //test-code
 		System.out.println("Start createListNewAddress() (Bing)"); //test
 		
@@ -134,11 +134,6 @@ public class ResourcesObj {
 		String district = bing.getResourceSets().get(0).getResources().get(k).getAddress().getAdminDistrict(); //evt. nicht nötig
 		String district2 = bing.getResourceSets().get(0).getResources().get(k).getAddress().getAdminDistrict2(); //evt. nicht nötig
 		*/
-		System.out.println("addressLine: " + addressLine);
-		System.out.println("plz: " + plz);
-		System.out.println("locality: " + locality);
-		System.out.println("district: " + district);
-		System.out.println("district2: " + district2);
 		
 		// listNewAddress muss pro Service gleich strukturiert sein!! -> road, nr, plz, ort
 		// Struktur kann noch ergänzt bzw. verändert werden
@@ -171,6 +166,83 @@ public class ResourcesObj {
 			System.out.println("newAddress.add(district2) = " + district2);
 		}
 		*/
+		printJsonResponseBing(i, bing, addressLine, plz, locality, district, district2);
+		
+	}
+	
+	//Strings und Print wird erstellt um testing übersichtlicher zu machen
+	public void printJsonResponseBing(int i, QueryBing bing, String addressLine, String plz, String locality, String district, String district2){
+		System.out.println();
+		System.out.println("Start printJsonResponseBing() : "); //test-code
+		
+		//Strings und Print wird erstellt um testing übersichtlicher zu machen
+		String authenticationResultCode = bing.getAuthenticationResultCode();
+		String statusCode = bing.getStatusCode();
+		String statusDescription = bing.getStatusDescription();
+		String traceID = bing.getTraceId();
+		String estimatedTotal = bing.getResourceSets().get(0).getEstimatedTotal();
+		List<String> point_coordinates = point.getCoordinates();
+		String point_type = point.getType();
+		String countryRegion = address.getCountryRegion();
+		String formattedAddress = address.getFormattedAddress();
+		
+		//Printet alle Elemente, die man als Json erhält:
+		System.out.println("Alle Elemente von Json-Respond von Bing: ");
+		System.out.println();
+		System.out.println("bingName: " + name);
+		System.out.println("authenticationResultCode: " + authenticationResultCode);
+		System.out.println("statusCode: " + statusCode);
+		System.out.println("statusDescription: " + statusDescription);
+		System.out.println("traceID: " + traceID);
+		System.out.println("estimatedTotal: " + estimatedTotal);
+		System.out.println("__type: " + __type);
+		System.out.println("confidence: " + confidence);
+		System.out.println("entityType: " + entityType);
+		System.out.println("addressLine: " + addressLine);
+		System.out.println("locality: " + locality);
+		System.out.println("postalCode: " + plz);
+		System.out.println("adminDistrict: " + district);
+		System.out.println("adminDistrict2: " + district2);
+		System.out.println("countryRegion: " + countryRegion);
+		System.out.println("formattedAddress: " + formattedAddress);
+		System.out.println("point_type: " + point_type);
+		System.out.println();
+		System.out.println("Point_coordinates: ");
+		for(int k = 0; k < point_coordinates.size(); k++){
+			System.out.println(point_coordinates.get(k));
+		}
+		System.out.println();
+		System.out.println("Boundingbox: ");
+		for(int k = 0; k < bbox.size(); k++){
+			System.out.println(bbox.get(k));
+		}
+		System.out.println();
+		System.out.println("MatchCodes: ");
+		for(int k = 0; k < matchCodes.size(); k++){
+			System.out.println(matchCodes.get(k));
+		}
+		System.out.println();
+		System.out.println("GeocodePoints: ");
+		for(int k = 0; k < geocodePoints.size(); k++){
+			System.out.println("geocodePoint: " + k);
+			String geocode_type = geocodePoints.get(k).getType();
+			String geocode_calculationMethod = geocodePoints.get(k).getCalculationMethod();
+			List<String> geocode_coordinates = geocodePoints.get(k).getCoordinates();
+			List<String> geocode_usageTypes = geocodePoints.get(k).getUsageTypes();
+			System.out.println("geocode_type: " + geocode_type);
+			System.out.println("geocode_calculationMethod: " + geocode_calculationMethod);
+			System.out.println();
+			System.out.println("Geocode_coordinates: ");
+			for (int y = 0; y < geocode_coordinates.size(); y++){
+				System.out.println(geocode_coordinates.get(y));
+			}
+			System.out.println();
+			System.out.println("Geocode_usageTypes: ");
+			for (int y = 0; y < geocode_usageTypes.size(); y++){
+				System.out.println(geocode_usageTypes.get(y));
+			}
+		}
+		System.out.println();
 	}
 
 }

@@ -83,7 +83,7 @@ public class Results {
 		this.score = score;
 	}
 
-	public void createListNewAddress(int i){
+	public void createListNewAddress(int i, QueryGoogle google){ //Objekt wegen Methode printJsonResponse() notwendig
 		System.out.println(); //test-code
 		System.out.println("Start createListNewAddress() (Google)"); //test
 		
@@ -95,16 +95,7 @@ public class Results {
 		String sublocalityLevel1 = address_components.get(getIndex("sublocality_level_1", i)).getLong_name();
 		String areaLevel1 = address_components.get(getIndex("administrative_area_level_1", i)).getLong_name(); //evt. nicht nötig
 		String areaLevel2 = address_components.get(getIndex("administrative_area_level_2", i)).getLong_name(); //evt. nicht nötig
-		
-		System.out.println("route: " + route);
-		System.out.println("addressNumber: " + addressNumber);
-		System.out.println("addressLine: " + addressLine);
-		System.out.println("plz: " + plz);
-		System.out.println("locality: " + locality);
-		System.out.println("sublocalityLevel1: " + sublocalityLevel1);
-		System.out.println("areaLevel1: " + areaLevel1);
-		System.out.println("areaLevel2: " + areaLevel2);
-		
+				
 		// listNewAddress muss pro Service gleich strukturiert sein!! -> road, nr, plz, ort
 		// Struktur kann noch ergänzt bzw. verändert werden
 		
@@ -139,6 +130,8 @@ public class Results {
 			System.out.println("newAddress.add(areaLevel2) = " + areaLevel2);
 		}
 		*/
+		
+		printJsonResponseGoogle(i, google, route, addressNumber, plz, locality, sublocalityLevel1, areaLevel1, areaLevel2);
 	}
 	
 	//findet die stelle, wo die gesuchte componente ist (z.B. street_number) falls nichts gefunden wurde gibt es -1 zurück
@@ -173,5 +166,46 @@ public class Results {
 			p++;
 		}
 		return index;
+	}
+	
+	//Strings und Print wird erstellt um testing übersichtlicher zu machen
+	public void printJsonResponseGoogle(int i, QueryGoogle google, String route, String addressNumber, String plz, String locality, String sublocalityLevel1, String areaLevel1, String areaLevel2){
+		System.out.println();
+		System.out.println("Start printJsonResponseGoogle() : "); //test-code
+			
+		String status = google.getStatus();
+		String lat = geometry.getLocation().getLat();
+		String lng = geometry.getLocation().getLng();
+		String location_type = geometry.getLocation_type();
+		String latNortheast = geometry.getViewport().getNortheast().getLat();
+		String lngNortheast = geometry.getViewport().getNortheast().getLng();
+		String latSouthwest = geometry.getViewport().getSouthwest().getLat();
+		String lngSouthwest = geometry.getViewport().getSouthwest().getLat();
+			
+		//Printet alle Elemente, die man als Json erhält:
+		System.out.println("Alle Elemente von Json-Respond von Google: ");
+		System.out.println();
+		System.out.println("status: " + status);
+		System.out.println("formatted_address: " + formatted_address);
+		System.out.println("route: " + route);
+		System.out.println("addressNumber: " + addressNumber);
+		System.out.println("plz: " + plz);
+		System.out.println("locality: " + locality);
+		System.out.println("sublocalityLevel1: " + sublocalityLevel1);
+		System.out.println("areaLevel1: " + areaLevel1);
+		System.out.println("areaLevel2: " + areaLevel2);
+		System.out.println("place_id: " + place_id);
+		System.out.println("lat: " + lat);
+		System.out.println("lng: " + lng);
+		System.out.println("location_type: " + location_type);
+		System.out.println("latNortheast: " + latNortheast);
+		System.out.println("lngNortheast: " + lngNortheast);
+		System.out.println("latSouthwest: " + latSouthwest);
+		System.out.println("lngSouthwest: " + lngSouthwest);
+		System.out.println();
+		System.out.println("Types: ");
+		for(int k = 0; k < types.size(); k++){
+			System.out.println(types.get(k));
+		}
 	}
 }

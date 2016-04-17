@@ -1,39 +1,41 @@
-package ch.zhaw.core;
-import java.io.IOException;
-import java.sql.*; //wird für die Verbindung zur Datenbank benötigt
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner; //für Eingabe in Konsole benötigt
+package ch.zhaw.testing;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mashape.unirest.http.Unirest;
+import static org.junit.Assert.*;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import ch.zhaw.core.Struktur;
 
 
-
-public class Main {
+//beide Testing-Klassen werden wahrscheinlich gar nicht benötigt (siehe To-Do-Liste: 17.04.16)
+public class Systemtest {
 	
-	//USER_AGENT festlegen
-	private final String USER_AGENT = "Mozilla/5.0";
-	
-	// Instanzierung von Name und URL von JDBC driver
+	//Instanzierung von Name und URL von JDBC driver
 	static final String jdbcTreiber = "com.mysql.jdbc.Driver";  
 	static final String url = "jdbc:mysql://160.85.104.27/patstat";
 
 	//  Instanzierung von Einlog-Daten für Datenbank
-	
+		
 	//Für Testzwecke verwenden
-	static final String user = "";
-	static final String password = "";
+	static final String user = "patentdb";
+	static final String password = "tRNSBI7n7VHOPK7n";
 	
 	/*// Code für am Schluss (User muss Passwort eingeben
 	static final String user = getUsername();
 	static final String password = getPassword();
 	*/
-	
+		
 	//Methode um Username einzugeben und in Variable zu speichern
 	public static String getUsername(){
-		
+			
 		//Eingabe von Username und Passwort in Konsole
 		System.out.println("Enter username: ");
 		Scanner sc = new Scanner(System.in);
@@ -41,10 +43,10 @@ public class Main {
 		System.out.println("The username is: " + name);
 		return name;
 	}
-	
+		
 	//Methode um Passwort einzugeben und in Variable zu speichern
 	public static String getPassword(){
-		
+			
 		//Eingabe von Passwort in Konsole
 		System.out.println("Enter password: ");
 		Scanner sc = new Scanner(System.in);
@@ -52,8 +54,9 @@ public class Main {
 		System.out.println("The password is: " + pass);
 		return pass;
 	}
-	
-	public static void main(String[] args) {
+
+	@Before
+	public void setUp() {
 		
 		//Instanzierung von Connection und Statement für Verbindung zur Datenbank
 		Connection conn = null;
@@ -88,17 +91,16 @@ public class Main {
 
 				//Werte anzeigen
 				System.out.println("Person Orig ID: " + personOrigId);
-				System.out.println("Person ID: " + personId);
-				System.out.println("Name Freeform: " + nameFreeform);
-				System.out.println("Adress_1: " + addressOne);
-				System.out.println("Adress_2: " + addressTwo);
+				System.out.println(", Person ID: " + personId);
+				System.out.println(", Name Freeform: " + nameFreeform);
+				System.out.println(", Adress_1: " + addressOne);
+				System.out.println(", Adress_2: " + addressTwo);
 				
 				//Werte Instanzieren in Struktur
 				Struktur f = new Struktur(personOrigId, personId, nameFreeform, addressOne, addressTwo);
 				
-				//Abfrage Initiieren
-				f.mainQuery(f.getRawAddress());
-				
+				test(f);
+			
 			}
 			//ResultSet rs, Statement bereinigen und Verbindung schliessen
 			rs.close();
@@ -126,8 +128,13 @@ public class Main {
 		}//end try
 		System.out.println("DB Connection closed");
 		
-		// Resultat ausgeben	
-		//System.out.println("Resultat: " + f.startAbfrage(f.getAdress()));
-		
 	}
+	
+	@Test
+	public void test(Struktur f) {
+		
+		f.mainQuery(f.getRawAddress());
+		fail("Not yet implemented");
+	}
+
 }

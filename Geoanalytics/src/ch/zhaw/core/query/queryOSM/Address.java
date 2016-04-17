@@ -226,7 +226,7 @@ public class Address {
 		this.score = score;
 	}
 
-	public void createListNewAddress(){
+	public void createListNewAddress(int i, List<QueryOSM> osmList){
 		System.out.println(); //test-code
 		System.out.println("Start createListNewAddress() (OSM)"); //test
 		
@@ -237,6 +237,7 @@ public class Address {
 		String village = getVillage();
 		String town = getTown();
 		String city = getCity();
+		
 		/*
 		String road = osm.get(k).getAddress().getRoad();
 		String addressNumber = osm.get(k).getAddress().getHouse_number();
@@ -283,5 +284,74 @@ public class Address {
 			listNewAddress.add(city);
 			System.out.println("listNewAddress.add(city) = " + city);
 		}
+		//Strings und Print wird erstellt um testing übersichtlicher zu machen
+		printJsonResponseOSM(i, osmList);
+	}
+	
+	//Strings und Print wird erstellt um testing übersichtlicher zu machen
+	public void printJsonResponseOSM(int i, List<QueryOSM> osmList){
+		System.out.println();
+		System.out.println("Start printJsonResponseOSM() : "); //test-code
+		
+		QueryOSM osm = osmList.get(i);
+		
+		String display_name = osm.getDisplay_name();
+		String place_id = osm.getPlace_id();
+		String osm_type = osm.getOsm_type();
+		String osm_id = osm.getOsm_id();
+		String lat = osm.getLat();
+		String lon = osm.getLon();
+		String classe = osm.getClasse();
+		String type = osm.getType();
+		String importance = osm.getImportance();
+		List<String> bbox = osm.getBoundingbox();
+		List<List<String>> polygonpoints = osm.getPolygonpoints();
+		
+		//Printet alle Elemente, die man als Json erhält:
+		System.out.println("Alle Elemente von Json-Respond von OSM: ");
+		System.out.println();
+		System.out.println("Display_name: " + display_name);
+		System.out.println("place_id: " + place_id);
+		System.out.println("osm_type: " + osm_type);
+		System.out.println("osm_id: " + osm_id);
+		System.out.println("lat: " + lat);
+		System.out.println("lon: " + lon);
+		System.out.println("classe: " + classe);
+		System.out.println("type: " + type);
+		System.out.println("importance: " + importance);
+		System.out.println("house_number: " + house_number);
+		System.out.println("road: " + road);
+		System.out.println("village: " + village);
+		System.out.println("county: " + county);
+		System.out.println("state: " + state);
+		System.out.println("postcode: " + postcode);
+		System.out.println("country: " + country);
+		System.out.println("country_code: " + country_code);
+		System.out.println("residential: " + residential);
+		System.out.println("town: " + town);
+		System.out.println("state_district: " + state_district);
+		System.out.println("city: " + city);
+		System.out.println("city_district: " + city_district);
+		System.out.println("construction: " + construction);
+		System.out.println("continent: " + continent);
+		System.out.println("neighbourhood: " + neighbourhood);
+		System.out.println("public_building: " + public_building);
+		System.out.println("suburb: " + suburb);
+		System.out.println("bakery: " + bakery);
+		System.out.println();
+		System.out.println("Boundingbox: ");
+		for(int k = 0; k < bbox.size(); k++){
+			System.out.println(bbox.get(k));
+		}
+		System.out.println();
+		System.out.println("Polygonpoints: ");
+		for(int k = 0; k < polygonpoints.size(); k++){
+			System.out.println("polygonpoint " + k);
+			for (int y = 0; y < polygonpoints.get(k).size(); y++){
+				System.out.println(polygonpoints.get(k).get(y));
+			}
+			System.out.println();
+		}
+		System.out.println();
 	}
 }

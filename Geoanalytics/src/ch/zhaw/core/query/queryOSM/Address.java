@@ -232,11 +232,23 @@ public class Address {
 		
 		String road = getRoad();
 		String addressNumber = getHouse_number();
-		String addressLine = road + " " + addressNumber;
+		//überprüft ob road oder addressNumber null ist. 
+		//Falls die nummer null ist wird nur die strasse bei der addressLine hinzugefügt. Falls die strasse oder beides null ist wird addressLine auf null gesetzt
+		String addressLine = null;
+		if(addressNumber == null){
+			addressLine = road;
+		}
+		else if(road == null){
+			addressLine = null;
+		}
+		else{
+			addressLine = road + " " + addressNumber;
+		}
 		String plz = getPostcode();
 		String village = getVillage();
 		String town = getTown();
 		String city = getCity();
+		String residential = getResidential();
 		
 		/*
 		String road = osm.get(k).getAddress().getRoad();
@@ -245,7 +257,7 @@ public class Address {
 		String village = osm.get(k).getAddress().getVillage();
 		String town = osm.get(k).getAddress().getTown();
 		String city = osm.get(k).getAddress().getCity();
-		*/
+		
 		System.out.println("road: " + road);
 		System.out.println("addressNumber: " + addressNumber);
 		System.out.println("addressLine: " + addressLine);
@@ -253,6 +265,7 @@ public class Address {
 		System.out.println("village: " + village);
 		System.out.println("town: " + town);
 		System.out.println("city: " + city);
+		*/
 		
 		// listNewAddress muss pro Service gleich strukturiert sein!! -> road, nr, plz, ort
 		// Struktur kann noch ergänzt bzw. verändert werden
@@ -276,13 +289,26 @@ public class Address {
 			listNewAddress.add(village);
 			System.out.println("listNewAddress.add(village) = " + village);
 		}
-		if (town != null){
-			listNewAddress.add(town);
-			System.out.println("listNewAddress.add(town) = " + town);
-		}
-		if (city != null){
-			listNewAddress.add(city);
-			System.out.println("listNewAddress.add(city) = " + city);
+		else{
+			if (town != null){
+				listNewAddress.add(town);
+				System.out.println("listNewAddress.add(town) = " + town);
+			}
+			else{
+				if (residential != null){
+					listNewAddress.add(residential);
+					System.out.println("listNewAddress.add(residential) = " + residential);
+				}
+				else{
+					if (city != null){
+						listNewAddress.add(city);
+						System.out.println("listNewAddress.add(city) = " + city);
+					}
+					else{
+						System.out.println("Es wurde keine Ortschaft bei listNewAddress hinzugefügt");
+					}
+				}
+			}
 		}
 		//Strings und Print wird erstellt um testing übersichtlicher zu machen
 		printJsonResponseOSM(i, osmList);

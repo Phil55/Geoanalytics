@@ -132,6 +132,7 @@ public class Query {
 		//OSM Service abfragen und auf Bollean statusOSM setzen, um zu überprüfen ob abfrage vollständig war
 		//überprüfen welche Services bereits genutzt wurden
 		
+		/*
 		//drei Boolean muss hier instanziert werden
 		Boolean statusOSM = null;
 		Boolean statusBing = null;
@@ -159,13 +160,14 @@ public class Query {
 		else{
 			statusGoogle = google.getStatusQuery();
 		}
+		*/
 		 
 		//Code noch nicht vollständig: es wird überprüft ob vorherige abfrage positiv war. 
 		//wenn positiv beginnt Validierung, wenn negativ wird anderer Service aufgerufen
 		if(statusOSM == null){
 			System.out.println("statusOSM null, Query beginnt"); //test-code
 			statusOSM = queryOSM(rawAddress);
-			this.statusOSM = statusOSM;
+			//this.statusOSM = statusOSM;
 			System.out.println("statusOSM neu : " + statusOSM); //test-code
 			//.set weil der Wert an dieser Position ersetzt werden soll
 			statusList.set(0, statusOSM); //statusOSM-wert in statusList hinzufügen. OSM hat den platz 1 bei statusList
@@ -175,7 +177,7 @@ public class Query {
 			if(statusBing == null){
 				System.out.println("statusBing null, Query beginnt"); //test-code
 				statusBing = queryBing(rawAddress);
-				this.statusBing = statusBing;
+				//this.statusBing = statusBing;
 				System.out.println("statusBing neu : " + statusBing); //test-code
 				//.set weil der Wert an dieser Position ersetzt werden soll
 				statusList.set(1, statusBing); //statusBing-wert in statusList hinzufügen. Bing hat den platz 2 bei statusList
@@ -185,7 +187,7 @@ public class Query {
 				if(statusGoogle == null){
 					System.out.println("statusGoogle null, Query beginnt"); //test-code
 					statusGoogle = queryGoogle(rawAddress);
-					this.statusGoogle = statusGoogle;
+					//this.statusGoogle = statusGoogle;
 					System.out.println("statusGoogle neu : " + statusGoogle); //test-code
 					//.set weil der Wert an dieser Position ersetzt werden soll
 					statusList.set(2, statusGoogle); //statusBing-wert in statusList hinzufügen. Bing hat den platz 2 bei statusList
@@ -233,57 +235,67 @@ public class Query {
 			ObjectMapper mapper = new ObjectMapper();
 			osm = mapper.readValue(newBody, new TypeReference<List<QueryOSM>>(){});
 			
-			//achtung nicht vollständig -> get(0) muss noch mit int ersetzt werden sonst wird immer das gleiche aufgerufen
-			//String display_name = osm.get(0).getDisplay_name();
-			//System.out.println("name: " + display_name);
-			//setExtAddress(display_name);
-			
-			int sizeResults = osm.size();
-			
-			for(int i = 0; i < sizeResults; i++){
-				
-
-				String display_name = osm.get(i).getDisplay_name(); //nur für println "fügt index bei List NewAddressTrue. index i:" benötigt
-				
-				// for-Schlaufe falls mehrere Adressen zurückkommen erstellt ListNewAddressBing
-				// OSM-Adresse erstellen für Alignment -> evt. in Konstruktor QueryOSM integrieren?
-				System.out.println("start Methode createListNewAddressOSM an der Stelle (i): " + i); //test-code
-				osm.get(i).getAddress().createListNewAddress(i, osm);
-				
-				//get alle newlistaddress durch mit der methode check NewList
-				int sizeNewAddress = osm.get(i).getAddress().getListNewAddress().size();
-				List<String> newAddress = osm.get(i).getAddress().getListNewAddress();
-				System.out.println("start Methode checkNewList bei OSM"); //test-code
-				Boolean checkList = checkNewList(sizeNewAddress, newAddress);
-				
-				//wenn checkList true ist, wird die Stelle (osm.get(k) -> k) bei newAddressTrue hinzugefügt 
-				//kann evt. zu einer Methode umgewandelt werden. wird aber eher schwierig
-				if(checkList == true){
-					Integer iInteger = new Integer(i);
-					osm.get(i).getNewAddressTrue().add(iInteger);
-					System.out.println("fügt index bei List NewAddressTrue. index i: " + i + " , address: " + display_name);
-				}
-				else{
-					System.out.println("nichts wird hinzugefügt -> checkList: " + checkList);
-				}
-			}
-			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		
-		//wenn newNewAddressTrue leer ist gibt es false zurück, ansonsten true
-		if(osm.get(0).getNewAddressTrue().isEmpty() == true){ // Achtung ! newAddressTrue wird bewusst nur bei stelle 0 erstellt
-			osm.get(0).setStatusQuery(false); //Boolean für OSM ob anfrage i.O ist
-			System.out.println("statusQuery für OSM : " + osm.get(0).getStatusQuery()); //test-code
+		//achtung nicht vollständig -> get(0) muss noch mit int ersetzt werden sonst wird immer das gleiche aufgerufen
+		//String display_name = osm.get(0).getDisplay_name();
+		//System.out.println("name: " + display_name);
+		//setExtAddress(display_name);
+		
+		int sizeResults = osm.size();
+		
+		for(int i = 0; i < sizeResults; i++){
+			
+			String display_name = osm.get(i).getDisplay_name(); //nur für println "fügt index bei List NewAddressTrue. index i:" benötigt
+			
+			// for-Schlaufe falls mehrere Adressen zurückkommen erstellt ListNewAddressBing
+			// OSM-Adresse erstellen für Alignment -> evt. in Konstruktor QueryOSM integrieren?
+			System.out.println("start Methode createListNewAddressOSM an der Stelle (i): " + i); //test-code
+			osm.get(i).getAddress().createListNewAddress(i, osm);
+			
+			//get alle newlistaddress durch mit der methode check NewList
+			int sizeNewAddress = osm.get(i).getAddress().getListNewAddress().size();
+			List<String> newAddress = osm.get(i).getAddress().getListNewAddress();
+			System.out.println("start Methode checkNewList bei OSM"); //test-code
+			Boolean checkList = checkNewList(sizeNewAddress, newAddress);
+			
+			//wenn checkList true ist, wird die Stelle (osm.get(k) -> k) bei newAddressTrue hinzugefügt 
+			//kann evt. zu einer Methode umgewandelt werden. wird aber eher schwierig
+			if(checkList == true){
+				Integer iInteger = new Integer(i);
+				osm.get(0).getNewAddressTrue().add(iInteger);
+				System.out.println("fügt index bei List NewAddressTrue. index : " + i + " , address: " + display_name);
+			}
+			else{
+				System.out.println("nichts wird hinzugefügt -> checkList: " + checkList);
+			}
+		}
+		
+		//print newAddressTrue
+		for(int i = 0; i < osm.get(0).getNewAddressTrue().size(); i++){
+			System.out.println("newAddressTrue an der Stelle " + i + " : " + osm.get(0).getNewAddressTrue().get(i));
+		}
+		
+		//überprüft ob überhaupt ein Resultat von OSM zurückgegeben wurde
+		if(osm.isEmpty() == true){
+			System.out.println("Kein Result bei OSM erhalten"); //test-code
 			status = false;
 		}
 		else{
-			osm.get(0).setStatusQuery(true); //Boolean für OSM ob anfrage i.O ist
-			System.out.println("statusQuery für OSM : " + osm.get(0).getStatusQuery()); //test-code
-			status = true;
+			//wenn newNewAddressTrue leer ist gibt es false zurück, ansonsten true
+			if(osm.get(0).getNewAddressTrue().isEmpty() == true){ // Achtung ! newAddressTrue wird bewusst nur bei stelle 0 erstellt
+				osm.get(0).setStatusQuery(false); //Boolean für OSM ob anfrage i.O ist
+				System.out.println("statusQuery für OSM : " + osm.get(0).getStatusQuery()); //test-code
+				status = false;
+			}
+			else{
+				osm.get(0).setStatusQuery(true); //Boolean für OSM ob anfrage i.O ist
+				System.out.println("statusQuery für OSM : " + osm.get(0).getStatusQuery()); //test-code
+				status = true;
+			}
 		}
-		
 		return status;
 	}
 	
@@ -298,7 +310,7 @@ public class Query {
 		System.out.println("Beginn abfrage bei Bing: urlVar " + urlVar); //test-code
 		Boolean status = true; //Boolean für Bing ob anfrage i.O ist ; wird default-mässig auf true gesetzt weil sonst while-schlaufe nicht funktioniert
 		
-		try {
+		try { //siehe Java Handbuch ab Seite 301 wird Exeption erklärt -> vor allem für GET benötigt
 					
 			response = Unirest.get(finalURL).asJson();
 			String body = response.getBody().toString();
@@ -308,59 +320,66 @@ public class Query {
 
 			ObjectMapper mapper = new ObjectMapper();
 			bing = mapper.readValue(body, QueryBing.class);
-			
-			//achtung nicht vollständig -> get(0) muss noch mit int ersetzt werden sonst wird immer das gleiche aufgerufen
-			//String bingName = bing.getResourceSets().get(0).getResources().get(0).getName();
-			//System.out.println("name: " + bingName);
-			//setExtAddress(bingName);
-			//System.out.println("ExtAddress: " + getExtAddress());
-			
-			int sizeResults = bing.getResourceSets().get(0).getResources().size();
-			
-			for(int i = 0; i < sizeResults; i++){
-				
-				String bingName = bing.getResourceSets().get(0).getResources().get(i).getName();
-				System.out.println("name: " + bingName);
-				
-				// for-Schlaufe falls mehrere Adressen zurückkommen erstellt ListNewAddressBing
-				// Bing-Adresse erstellen für Alignment -> evt. in Konstruktor QueryBing integrieren?
-				System.out.println("start Methode createListNewAddressBing an der Stelle (i): " + i); //test-code
-				bing.getResourceSets().get(0).getResources().get(i).createListNewAddress(i, bing);
-				
-				//get alle newlistaddress durch mit der methode check NewList
-				//noch nicht getestet aber vermute, dass länge von resourceSets immer 0 ist
-				int sizeNewAddress = bing.getResourceSets().get(0).getResources().get(i).getNewAddress().size();
-				List<String> newAddress = bing.getResourceSets().get(0).getResources().get(i).getNewAddress();
-				System.out.println("start Methode checkNewList bei Bing"); //test-code
-				Boolean checkList = checkNewList(sizeNewAddress, newAddress);
-				
-				//wenn checkList true ist, wird die Stelle (bing.getResourceSets().get(0).getResources().get(k) -> k) bei newAddressTrue hinzugefügt 
-				//kann evt. zu einer Methode umgewandelt werden. wird aber eher schwierig
-				if(checkList == true){
-					Integer iInteger = new Integer(i);
-					bing.getResourceSets().get(0).getNewAddressTrue().add(iInteger);
-					System.out.println("fügt index bei List NewAddressTrue. index i: " + i + " , address: " + bingName);
-				}
-				else{
-					System.out.println("nichts wird hinzugefügt -> checkList: " + checkList);
-				}
-			}
 				
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		//wenn newNewAddressTrue leer ist gibt es false zurück, ansonsten true
-		if(bing.getResourceSets().get(0).getNewAddressTrue().isEmpty() == true){ // Achtung ! newAddressTrue wird bewusst nur bei stelle 0 erstellt
-			bing.getResourceSets().get(0).setStatusQuery(false); //Boolean für OSM ob anfrage i.O ist
-			System.out.println("statusQuery für Bing : " + bing.getResourceSets().get(0).getStatusQuery()); //test-code
+		
+		//achtung nicht vollständig -> get(0) muss noch mit int ersetzt werden sonst wird immer das gleiche aufgerufen
+		//String bingName = bing.getResourceSets().get(0).getResources().get(0).getName();
+		//System.out.println("name: " + bingName);
+		//setExtAddress(bingName);
+		//System.out.println("ExtAddress: " + getExtAddress());
+		
+		int sizeResults = bing.getResourceSets().get(0).getResources().size();
+		
+		for(int i = 0; i < sizeResults; i++){
+			
+			String bingName = bing.getResourceSets().get(0).getResources().get(i).getName();
+			System.out.println("name: " + bingName);
+			
+			// for-Schlaufe falls mehrere Adressen zurückkommen erstellt ListNewAddressBing
+			// Bing-Adresse erstellen für Alignment -> evt. in Konstruktor QueryBing integrieren?
+			System.out.println("start Methode createListNewAddressBing an der Stelle (i): " + i); //test-code
+			bing.getResourceSets().get(0).getResources().get(i).createListNewAddress(i, bing);
+			
+			//get alle newlistaddress durch mit der methode check NewList
+			//noch nicht getestet aber vermute, dass länge von resourceSets immer 0 ist
+			int sizeNewAddress = bing.getResourceSets().get(0).getResources().get(i).getNewAddress().size();
+			List<String> newAddress = bing.getResourceSets().get(0).getResources().get(i).getNewAddress();
+			System.out.println("start Methode checkNewList bei Bing"); //test-code
+			Boolean checkList = checkNewList(sizeNewAddress, newAddress);
+			
+			//wenn checkList true ist, wird die Stelle (bing.getResourceSets().get(0).getResources().get(k) -> k) bei newAddressTrue hinzugefügt 
+			//kann evt. zu einer Methode umgewandelt werden. wird aber eher schwierig
+			if(checkList == true){
+				Integer iInteger = new Integer(i);
+				bing.getResourceSets().get(0).getNewAddressTrue().add(iInteger);
+				System.out.println("fügt index bei List NewAddressTrue. index i: " + i + " , address: " + bingName);
+			}
+			else{
+				System.out.println("nichts wird hinzugefügt -> checkList: " + checkList);
+			}
+		}
+		
+		//überprüft ob überhaupt ein Resultat von Bing zurückgegeben wurde
+		if(bing == null){
+			System.out.println("Kein Result bei Bing erhalten"); //test-code
 			status = false;
 		}
 		else{
-			bing.getResourceSets().get(0).setStatusQuery(true); //Boolean für OSM ob anfrage i.O ist
-			System.out.println("statusQuery für Bing : " + bing.getResourceSets().get(0).getStatusQuery()); //test-code
-			status = true;
+			//wenn newNewAddressTrue leer ist gibt es false zurück, ansonsten true
+			if(bing.getResourceSets().get(0).getNewAddressTrue().isEmpty() == true){ // Achtung ! newAddressTrue wird bewusst nur bei stelle 0 erstellt
+				bing.getResourceSets().get(0).setStatusQuery(false); //Boolean für OSM ob anfrage i.O ist
+				System.out.println("statusQuery für Bing : " + bing.getResourceSets().get(0).getStatusQuery()); //test-code
+				status = false;
+			}
+			else{
+				bing.getResourceSets().get(0).setStatusQuery(true); //Boolean für OSM ob anfrage i.O ist
+				System.out.println("statusQuery für Bing : " + bing.getResourceSets().get(0).getStatusQuery()); //test-code
+				status = true;
+			}
 		}
-		
 		return status;
 	}
 	

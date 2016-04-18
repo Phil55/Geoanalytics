@@ -7,6 +7,7 @@ public class Option {
 	private double countFalse; // für Validation benötigt, wegen n-gram muss es double sein
 	private double provScore; // für Validation benötigt, wegen n-gram muss es double sein
 	
+	
 	public Option(){
 		this.countTrue = 0;
 		this.countFalse = 0;

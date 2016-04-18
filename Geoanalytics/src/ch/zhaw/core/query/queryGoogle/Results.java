@@ -7,6 +7,7 @@ public class Results {
 	
 	private String formatted_address;
 	private String place_id;
+	private String partial_match;
 	private List<String> types;
 	private List<AddressComponents> address_components;
 	private Geometry geometry;
@@ -83,18 +84,111 @@ public class Results {
 		this.score = score;
 	}
 
+	public String getPartial_match() {
+		return partial_match;
+	}
+
+	public void setPartial_match(String partial_match) {
+		this.partial_match = partial_match;
+	}
+
 	public void createListNewAddress(int i, QueryGoogle google){ //Objekt wegen Methode printJsonResponse() notwendig
 		System.out.println(); //test-code
 		System.out.println("Start createListNewAddress() (Google)"); //test
 		
+		//Strings werden default-mässig auf null gesetzt
+		String route = null;
+		String addressNumber = null;
+		String plz = null;
+		String locality = null;
+		String sublocalityLevel1 = null;
+		String areaLevel1 = null; //evt. nicht nötig
+		String areaLevel2 = null; //evt. nicht nötig
+		
+		// index wo das gesuchte element bei address_component ist wird als int gespeichert
+		int routeIndex = getIndex("route", i);
+		int addressNumberIndex = getIndex("street_number", i);
+		int plzIndex = getIndex("postal_code", i);
+		int localityIndex = getIndex("locality", i);
+		int sublocalityLevel1Index = getIndex("sublocality_level_1", i);
+		int areaLevel1Index = getIndex("administrative_area_level_1", i);
+		int areaLevel2Index = getIndex("administrative_area_level_2", i);
+		
+		//if-schleifen für alle Strings die ober erstellt wurden, es wird überprüft ob etwas bei address_component gefunden wurde
+		//wenn der index -1 bleibt der String bei null da nichts gefunden wurde, falls etwas gefunden wurde wird dieses Element auf den String übernommen
+		if(routeIndex == -1){
+			//route = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
+			System.out.println("kein address_component gefunden mit -route-, String route wird auf null gesetzt");
+		}
+		else{
+			route = address_components.get(routeIndex).getLong_name();
+		}
+		if(addressNumberIndex == -1){
+			//addressNumber = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
+			System.out.println("kein address_component gefunden mit -street_number-, String addressNumber wird auf null gesetzt");
+		}
+		else{
+			addressNumber = address_components.get(addressNumberIndex).getLong_name();
+		}
+		if(plzIndex == -1){
+			//plz = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
+			System.out.println("kein address_component gefunden mit -postal_code-, String plz wird auf null gesetzt");
+		}
+		else{
+			plz = address_components.get(plzIndex).getLong_name();
+		}
+		if(localityIndex == -1){
+			//locality = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
+			System.out.println("kein address_component gefunden mit -locality-, String locality wird auf null gesetzt");
+		}
+		else{
+			locality = address_components.get(localityIndex).getLong_name();
+		}
+		if(sublocalityLevel1Index == -1){
+			//sublocalityLevel1 = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
+			System.out.println("kein address_component gefunden mit -sublocality_level_1-, String sublocalityLevel1 wird auf null gesetzt");
+		}
+		else{
+			sublocalityLevel1 = address_components.get(sublocalityLevel1Index).getLong_name();
+		}
+		if(areaLevel1Index == -1){
+			//areaLevel1 = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
+			System.out.println("kein address_component gefunden mit -administrative_area_level_1-, String areaLevel1 wird auf null gesetzt");
+		}
+		else{
+			areaLevel1 = address_components.get(areaLevel1Index).getLong_name();
+		}
+		if(areaLevel2Index == -1){
+			//areaLevel2 = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
+			System.out.println("kein address_component gefunden mit -administrative_area_level_2-, String areaLevel2 wird auf null gesetzt");
+		}
+		else{
+			areaLevel2 = address_components.get(areaLevel2Index).getLong_name();
+		}
+		
+		//überprüft ob road oder addressNumber null ist. 
+		//Falls die nummer null ist wird nur die strasse bei der addressLine hinzugefügt. Falls die strasse oder beides null ist wird addressLine auf null gesetzt
+		String addressLine = null;
+		if(addressNumber == null){
+			addressLine = route;
+		}
+		else if(route == null){
+			addressLine = null;
+		}
+		else{
+			addressLine = route + " " + addressNumber;
+		}
+		
+		//String addressLine = route + " " + addressNumber;
+		/*
 		String route = address_components.get(getIndex("route", i)).getLong_name();
 		String addressNumber = address_components.get(getIndex("street_number", i)).getLong_name();
-		String addressLine = route + " " + addressNumber;
 		String plz = address_components.get(getIndex("postal_code", i)).getLong_name();
 		String locality = address_components.get(getIndex("locality", i)).getLong_name();
 		String sublocalityLevel1 = address_components.get(getIndex("sublocality_level_1", i)).getLong_name();
 		String areaLevel1 = address_components.get(getIndex("administrative_area_level_1", i)).getLong_name(); //evt. nicht nötig
 		String areaLevel2 = address_components.get(getIndex("administrative_area_level_2", i)).getLong_name(); //evt. nicht nötig
+		*/
 				
 		// listNewAddress muss pro Service gleich strukturiert sein!! -> road, nr, plz, ort
 		// Struktur kann noch ergänzt bzw. verändert werden
@@ -143,7 +237,7 @@ public class Results {
 		System.out.println("sizeComponent = " + sizeComponent);
 		int p = 0;
 		
-		while(index == -1 ){ // (index == -1 || p < sizeComponent) funktioniert nicht, deshalb rausgenommen
+		while(index == -1 && p < sizeComponent){ // (index == -1 || p < sizeComponent) funktioniert nicht, deshalb rausgenommen, index == -1 && p < sizeComponent funktioniert bis jetzt 
 			System.out.println("p = " + p + " , index = " + index);
 			String long_name = address_components.get(p).getLong_name();
 			String short_name = address_components.get(p).getShort_name();
@@ -195,6 +289,7 @@ public class Results {
 		System.out.println("areaLevel1: " + areaLevel1);
 		System.out.println("areaLevel2: " + areaLevel2);
 		System.out.println("place_id: " + place_id);
+		System.out.println("partial_match: " + partial_match);
 		System.out.println("lat: " + lat);
 		System.out.println("lng: " + lng);
 		System.out.println("location_type: " + location_type);

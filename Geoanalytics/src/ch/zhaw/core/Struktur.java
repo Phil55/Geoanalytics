@@ -162,7 +162,7 @@ public class Struktur {
 				else{
 					check = true;
 					System.out.println("status != null bei i : " + i); //test-code
-					allServices = true;
+					allServices = true; // ACHTUNG: aufpassen muss evt. anders platziert werden!
 				}
 			}
 		}
@@ -253,13 +253,18 @@ public class Struktur {
 		
 		if(checkedQuery == "osm"){
 			System.out.println("checkedQuery == osm"); //test-code
+			
+			for(int i = 0; i < m.getOsm().size(); i++){
+				
+			}
 			//Prüfung der neu gewonnenen Adresse starten
+			//newAddressTrue wird bei OSM bei der stelle 0 gemacht
 			QueryOSM obj = m.getOsm().get(0); // wird nur benötigt um code lesbarer zu machen -> import dafür benötigt
 			List<Integer> newAddressTrue = obj.getNewAddressTrue();
 			List<Double> listScore = obj.getListScore();
 			List<Integer> listScoreTrue = obj.getListScoreTrue();
 			
-			//get mit jedem List<String> die validation durch 
+			//geht mit jedem List<String> die validation durch 
 			for(int i = 0; i < newAddressTrue.size(); i++){
 				int index = newAddressTrue.get(i);
 				Address addressObj = m.getOsm().get(index).getAddress();
@@ -271,7 +276,7 @@ public class Struktur {
 				Double score = addressObj.getScore();
 				Boolean statusAddress = addressObj.getStatus();
 				
-				//überprüft ob berechneter Score gut genut ist. 
+				//überprüft ob berechneter Score gut genug ist. 
 				//wenn true wird er bei listScor hinzugefügt, wenn false wird nächster Service aufgerufen
 				if(statusAddress == true){
 					listScore.add(score); //erhaltener Score wird in der List hinzugefügt
@@ -355,10 +360,10 @@ public class Struktur {
 				
 				//für testzecken eingesetzt um zu sehen was die Listen beinhalten
 				for(int i = 0; i < newAddressTrue.size(); i++){
-					System.out.println("newAddressTrue bei OSM: " + newAddressTrue.get(i)); //test-code
+					System.out.println("newAddressTrue bei Bing: " + newAddressTrue.get(i)); //test-code
 				}
 				for(int i = 0; i < listScoreTrue.size(); i++){
-					System.out.println("listScoreTrue bei OSM:" + listScoreTrue.get(i)); //test-code
+					System.out.println("listScoreTrue bei Bing:" + listScoreTrue.get(i)); //test-code
 				}
 				
 				//es wird überprüft ob newAddressTrue leer ist
@@ -402,7 +407,7 @@ public class Struktur {
 						//wenn true wird er bei listScor hinzugefügt, wenn false wird nächster Service aufgerufen
 						if(statusAddress == true){
 							listScore.add(score); //erhaltener Score wird in der List hinzugefügt
-							listScoreTrue.add(index); //List mit der Stelle wo listScoreBing den Score hat
+							listScoreTrue.add(index); //List mit der Stelle wo listScoreBing den grössten Score hat
 							System.out.println("Validation Google genügend:" + statusAddress + " , Score: " + score + " , bei Stelle index: " + index); //test-code
 						}
 						else{
@@ -418,10 +423,10 @@ public class Struktur {
 					
 					//für testzecken eingesetzt um zu sehen was die Listen beinhalten
 					for(int i = 0; i < newAddressTrue.size(); i++){
-						System.out.println("newAddressTrue bei OSM: " + newAddressTrue.get(i)); //test-code
+						System.out.println("newAddressTrue bei Google: " + newAddressTrue.get(i)); //test-code
 					}
 					for(int i = 0; i < listScoreTrue.size(); i++){
-						System.out.println("listScoreTrue bei OSM:" + listScoreTrue.get(i)); //test-code
+						System.out.println("listScoreTrue bei Google:" + listScoreTrue.get(i)); //test-code
 					}
 					
 					//es wird überprüft ob newAddressTrue leer ist

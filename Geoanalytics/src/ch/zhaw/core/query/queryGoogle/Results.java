@@ -104,6 +104,8 @@ public class Results {
 		String sublocalityLevel1 = null;
 		String areaLevel1 = null; //evt. nicht nötig
 		String areaLevel2 = null; //evt. nicht nötig
+		String country = null;
+		String postalCodeSuffix = null; // ist bei US-Adressen aufgetreten
 		
 		// index wo das gesuchte element bei address_component ist wird als int gespeichert
 		int routeIndex = getIndex("route", i);
@@ -113,6 +115,8 @@ public class Results {
 		int sublocalityLevel1Index = getIndex("sublocality_level_1", i);
 		int areaLevel1Index = getIndex("administrative_area_level_1", i);
 		int areaLevel2Index = getIndex("administrative_area_level_2", i);
+		int countryIndex = getIndex("country", i);
+		int postalCodeSuffixIndex = getIndex("postal_code_suffix", i);
 		
 		//if-schleifen für alle Strings die ober erstellt wurden, es wird überprüft ob etwas bei address_component gefunden wurde
 		//wenn der index -1 bleibt der String bei null da nichts gefunden wurde, falls etwas gefunden wurde wird dieses Element auf den String übernommen
@@ -164,6 +168,20 @@ public class Results {
 		}
 		else{
 			areaLevel2 = address_components.get(areaLevel2Index).getLong_name();
+		}
+		if(countryIndex == -1){
+			//country = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
+			System.out.println("kein address_component gefunden mit -country-, String country wird auf null gesetzt");
+		}
+		else{
+			country = address_components.get(countryIndex).getLong_name();
+		}
+		if(postalCodeSuffixIndex == -1){
+			//postalCodeSuffix = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
+			System.out.println("kein address_component gefunden mit -postalCodeSuffix-, String postalCodeSuffix wird auf null gesetzt");
+		}
+		else{
+			postalCodeSuffix = address_components.get(postalCodeSuffixIndex).getLong_name();
 		}
 		
 		//überprüft ob road oder addressNumber null ist. 
@@ -225,7 +243,7 @@ public class Results {
 		}
 		*/
 		
-		printJsonResponseGoogle(i, google, route, addressNumber, plz, locality, sublocalityLevel1, areaLevel1, areaLevel2);
+		printJsonResponseGoogle(i, google, route, addressNumber, plz, locality, sublocalityLevel1, areaLevel1, areaLevel2, country, postalCodeSuffix);
 	}
 	
 	//findet die stelle, wo die gesuchte componente ist (z.B. street_number) falls nichts gefunden wurde gibt es -1 zurück
@@ -263,7 +281,7 @@ public class Results {
 	}
 	
 	//Strings und Print wird erstellt um testing übersichtlicher zu machen
-	public void printJsonResponseGoogle(int i, QueryGoogle google, String route, String addressNumber, String plz, String locality, String sublocalityLevel1, String areaLevel1, String areaLevel2){
+	public void printJsonResponseGoogle(int i, QueryGoogle google, String route, String addressNumber, String plz, String locality, String sublocalityLevel1, String areaLevel1, String areaLevel2, String country, String postalCodeSuffix){
 		System.out.println();
 		System.out.println("Start printJsonResponseGoogle() : "); //test-code
 			
@@ -271,11 +289,9 @@ public class Results {
 		String lat = geometry.getLocation().getLat();
 		String lng = geometry.getLocation().getLng();
 		String location_type = geometry.getLocation_type();
-		String latNortheast = geometry.getViewport().getNortheast().getLat();
-		String lngNortheast = geometry.getViewport().getNortheast().getLng();
-		String latSouthwest = geometry.getViewport().getSouthwest().getLat();
-		String lngSouthwest = geometry.getViewport().getSouthwest().getLat();
-			
+		Viewport viewport = geometry.getViewport();
+		Bounds bounds = geometry.getBounds();
+
 		//Printet alle Elemente, die man als Json erhält:
 		System.out.println("Alle Elemente von Json-Respond von Google: ");
 		System.out.println();
@@ -288,15 +304,31 @@ public class Results {
 		System.out.println("sublocalityLevel1: " + sublocalityLevel1);
 		System.out.println("areaLevel1: " + areaLevel1);
 		System.out.println("areaLevel2: " + areaLevel2);
+		System.out.println("country: " + country);
+		System.out.println("postalCodeSuffix: " + postalCodeSuffix);
 		System.out.println("place_id: " + place_id);
 		System.out.println("partial_match: " + partial_match);
 		System.out.println("lat: " + lat);
 		System.out.println("lng: " + lng);
 		System.out.println("location_type: " + location_type);
-		System.out.println("latNortheast: " + latNortheast);
-		System.out.println("lngNortheast: " + lngNortheast);
-		System.out.println("latSouthwest: " + latSouthwest);
-		System.out.println("lngSouthwest: " + lngSouthwest);
+		System.out.println();
+		System.out.println("Viewport: ");
+		System.out.println("latNortheast: " + viewport.getNortheast().getLat());
+		System.out.println("lngNortheast: " + viewport.getNortheast().getLng());
+		System.out.println("latSouthwest: " + viewport.getSouthwest().getLat());
+		System.out.println("lngSouthwest: " + viewport.getSouthwest().getLng());
+		System.out.println();
+		//überprüft ob bounds vorhanden ist und gibt es aus falls ja
+		if(bounds == null){
+			System.out.println("kein Bounds-Objekt vorhanden");
+		}
+		else{
+			System.out.println("Bounds (optional): ");
+			System.out.println("latNortheast: " + bounds.getNortheast().getLat());
+			System.out.println("lngNortheast: " + bounds.getNortheast().getLng());
+			System.out.println("latSouthwest: " + bounds.getSouthwest().getLat());
+			System.out.println("lngSouthwest: " + bounds.getSouthwest().getLng());
+		}
 		System.out.println();
 		System.out.println("Types: ");
 		for(int k = 0; k < types.size(); k++){

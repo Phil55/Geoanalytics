@@ -271,12 +271,15 @@ public class Query {
 			else{
 				System.out.println("nichts wird hinzugefügt -> checkList: " + checkList);
 			}
+			
 		}
 		
+		/*
 		//print newAddressTrue
 		for(int i = 0; i < osm.get(0).getNewAddressTrue().size(); i++){
 			System.out.println("newAddressTrue an der Stelle " + i + " : " + osm.get(0).getNewAddressTrue().get(i));
 		}
+		*/
 		
 		//überprüft ob überhaupt ein Resultat von OSM zurückgegeben wurde
 		if(osm.isEmpty() == true){

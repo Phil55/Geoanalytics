@@ -4,6 +4,7 @@ public class Geometry {
 	
 	private Location location;
 	private Viewport viewport;
+	private Bounds bounds;
 	private String location_type;
 	
 	//constructor for objectmapper
@@ -32,6 +33,14 @@ public class Geometry {
 
 	public void setLocation_type(String location_type) {
 		this.location_type = location_type;
+	}
+
+	public Bounds getBounds() {
+		return bounds;
+	}
+
+	public void setBounds(Bounds bounds) {
+		this.bounds = bounds;
 	}
 	
 }

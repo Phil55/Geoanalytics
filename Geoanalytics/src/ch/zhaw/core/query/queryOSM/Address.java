@@ -24,6 +24,11 @@ public class Address {
 	private String public_building;
 	private String suburb;
 	private String bakery;
+	private String locality;
+	private String industrial;
+	private String address29;
+	private String building;
+	private String commercial;
 	private List<String> listNewAddress = new ArrayList<String>(); // Liste erstellen um bei der Validierung strukturiert vorzugehen
 	private Boolean status = null; //für Validation benötigt
 	private Double score; //für Validation benötigt
@@ -226,6 +231,46 @@ public class Address {
 		this.score = score;
 	}
 
+	public String getLocality() {
+		return locality;
+	}
+
+	public void setLocality(String locality) {
+		this.locality = locality;
+	}
+
+	public String getIndustrial() {
+		return industrial;
+	}
+
+	public void setIndustrial(String industrial) {
+		this.industrial = industrial;
+	}
+
+	public String getAddress29() {
+		return address29;
+	}
+
+	public void setAddress29(String address29) {
+		this.address29 = address29;
+	}
+
+	public String getBuilding() {
+		return building;
+	}
+
+	public void setBuilding(String building) {
+		this.building = building;
+	}
+
+	public String getCommercial() {
+		return commercial;
+	}
+
+	public void setCommercial(String commercial) {
+		this.commercial = commercial;
+	}
+
 	public void createListNewAddress(int i, List<QueryOSM> osmList){
 		System.out.println(); //test-code
 		System.out.println("Start createListNewAddress() (OSM)"); //test
@@ -244,11 +289,13 @@ public class Address {
 		else{
 			addressLine = road + " " + addressNumber;
 		}
-		String plz = getPostcode();
-		String village = getVillage();
-		String town = getTown();
-		String city = getCity();
-		String residential = getResidential();
+		//wird wahrscheinlich gar nicht benötigt da die Attribute direkt mit z.b. plz ausgewählt werden kann
+		//String plz = getPostcode();
+		//String village = getVillage();
+		//String town = getTown();
+		//String city = getCity();
+		//String residential = getResidential();
+		//String state = getState();
 		
 		/*
 		String road = osm.get(k).getAddress().getRoad();
@@ -281,8 +328,8 @@ public class Address {
 		*/
 		
 		//plz
-		listNewAddress.add(plz);
-		System.out.println("listNewAddress.add(plz) = " + plz);
+		listNewAddress.add(postcode);
+		System.out.println("listNewAddress.add(postcode) = " + postcode);
 		
 		//Ort
 		if (village != null){
@@ -305,7 +352,13 @@ public class Address {
 						System.out.println("listNewAddress.add(city) = " + city);
 					}
 					else{
+						if(state != null){
+							listNewAddress.add(state);
+							System.out.println("listNewAddress.add(state) = " + state);
+						}
+						else{
 						System.out.println("Es wurde keine Ortschaft bei listNewAddress hinzugefügt");
+						}
 					}
 				}
 			}
@@ -364,19 +417,29 @@ public class Address {
 		System.out.println("public_building: " + public_building);
 		System.out.println("suburb: " + suburb);
 		System.out.println("bakery: " + bakery);
+		System.out.println("locality: " + locality);
+		System.out.println("industrial: " + industrial);
+		System.out.println("address29: " + address29);
+		System.out.println("building: " + building);
+		System.out.println("commercial: " + commercial);
 		System.out.println();
 		System.out.println("Boundingbox: ");
 		for(int k = 0; k < bbox.size(); k++){
 			System.out.println(bbox.get(k));
 		}
 		System.out.println();
-		System.out.println("Polygonpoints: ");
-		for(int k = 0; k < polygonpoints.size(); k++){
-			System.out.println("polygonpoint " + k);
-			for (int y = 0; y < polygonpoints.get(k).size(); y++){
-				System.out.println(polygonpoints.get(k).get(y));
+		if(polygonpoints == null){
+			System.out.println("Polygonpoints: null (es wurden keine Polygonpoints zurückgegeben)");
+		}
+		else{
+			System.out.println("Polygonpoints: ");
+			for(int k = 0; k < polygonpoints.size(); k++){
+				System.out.println("polygonpoint " + k);
+				for (int y = 0; y < polygonpoints.get(k).size(); y++){
+					System.out.println(polygonpoints.get(k).get(y));
+				}
+				System.out.println();
 			}
-			System.out.println();
 		}
 		System.out.println();
 	}

@@ -23,15 +23,17 @@ public class Struktur {
 	private String nameFreeform;
 	private String addressOne;
 	private String addressTwo;
+	private String countryCode;
 	private Boolean allServices; //wird zum überprüfen genutzt ob alle services benutzt wurden
 	
 	
-	public Struktur(int personOrigId, int personId, String nameFreeform, String addressOne, String addressTwo) {
+	public Struktur(int personOrigId, int personId, String nameFreeform, String addressOne, String addressTwo, String countryCode) {
 		this.personOrigId = personOrigId;
 		this.personId = personId;
 		this.nameFreeform = nameFreeform;
 		this.addressOne = addressOne;
 		this.addressTwo = addressTwo;
+		this.countryCode = countryCode;
 		this.allServices = false; //wird defaultmässig auf false gesetzt
 		setRawAddress(createRawAddress(addressOne, addressTwo)); //Instanzierung von String rawAddress
 	}
@@ -82,6 +84,14 @@ public class Struktur {
 
 	public void setAddressTwo(String addressTwo) {
 		this.addressTwo = addressTwo;
+	}
+
+	public String getCountryCode() {
+		return countryCode;
+	}
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
 	}
 
 	public Boolean getAllServices() {

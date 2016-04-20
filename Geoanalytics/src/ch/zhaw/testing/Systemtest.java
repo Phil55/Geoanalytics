@@ -41,6 +41,7 @@ public class Systemtest {
 		Scanner sc = new Scanner(System.in);
 		String name = sc.next();
 		System.out.println("The username is: " + name);
+		sc.close();
 		return name;
 	}
 		
@@ -52,6 +53,7 @@ public class Systemtest {
 		Scanner sc = new Scanner(System.in);
 		String pass = sc.next();
 		System.out.println("The password is: " + pass);
+		sc.close();
 		return pass;
 	}
 
@@ -97,9 +99,9 @@ public class Systemtest {
 				System.out.println(", Adress_2: " + addressTwo);
 				
 				//Werte Instanzieren in Struktur
-				Struktur f = new Struktur(personOrigId, personId, nameFreeform, addressOne, addressTwo);
+				//Struktur f = new Struktur(personOrigId, personId, nameFreeform, addressOne, addressTwo,);
 				
-				test(f);
+				//test(f);
 			
 			}
 			//ResultSet rs, Statement bereinigen und Verbindung schliessen

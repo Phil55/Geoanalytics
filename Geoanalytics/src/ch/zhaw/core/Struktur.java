@@ -221,6 +221,9 @@ public class Struktur {
 					}
 					else{
 						//testCheck wiederholen (schlaufe)
+						//prints wurden eingebaut um zu sehen ob wirklich kein resultat zurückgekommen ist
+						System.out.println("estimatedTotal: " + m.getBing().getResourceSets().get(0).getEstimatedTotal()); //test-code
+						System.out.println("StatusCode : " + m.getBing().getStatusCode()); //test-code
 						check = false;
 					}
 				}

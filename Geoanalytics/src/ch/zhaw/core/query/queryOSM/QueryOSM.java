@@ -46,6 +46,7 @@ public class QueryOSM {
 	private String classe; //JSON request "class"
 	private String type;
 	private String importance;
+	private String icon;
 	private Address address;
 	// für QueryOSM() benötigt
 	private List<Integer> newAddressTrue = new ArrayList<Integer>(); //Listet die Stelle der Adressen auf, die vollständig sind
@@ -228,6 +229,14 @@ public class QueryOSM {
 
 	public void setDefIndex(int defIndex) {
 		this.defIndex = defIndex;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 	
 }

@@ -29,6 +29,10 @@ public class Address {
 	private String address29;
 	private String building;
 	private String commercial;
+	private String region;
+	private String hamlet;
+	private String station;
+	private String river;
 	private List<String> listNewAddress = new ArrayList<String>(); // Liste erstellen um bei der Validierung strukturiert vorzugehen
 	private Boolean status = null; //für Validation benötigt
 	private Double score; //für Validation benötigt
@@ -271,6 +275,38 @@ public class Address {
 		this.commercial = commercial;
 	}
 
+	public String getRegion() {
+		return region;
+	}
+
+	public void setRegion(String region) {
+		this.region = region;
+	}
+
+	public String getHamlet() {
+		return hamlet;
+	}
+
+	public void setHamlet(String hamlet) {
+		this.hamlet = hamlet;
+	}
+
+	public String getStation() {
+		return station;
+	}
+
+	public void setStation(String station) {
+		this.station = station;
+	}
+
+	public String getRiver() {
+		return river;
+	}
+
+	public void setRiver(String river) {
+		this.river = river;
+	}
+
 	public void createListNewAddress(int i, List<QueryOSM> osmList){
 		System.out.println(); //test-code
 		System.out.println("Start createListNewAddress() (OSM)"); //test
@@ -383,6 +419,7 @@ public class Address {
 		String classe = osm.getClasse();
 		String type = osm.getType();
 		String importance = osm.getImportance();
+		String icon = osm.getIcon();
 		List<String> bbox = osm.getBoundingbox();
 		List<List<String>> polygonpoints = osm.getPolygonpoints();
 		
@@ -422,6 +459,11 @@ public class Address {
 		System.out.println("address29: " + address29);
 		System.out.println("building: " + building);
 		System.out.println("commercial: " + commercial);
+		System.out.println("region: " + region);
+		System.out.println("icon: " + icon);
+		System.out.println("hamlet: " + hamlet);
+		System.out.println("station: " + station);
+		System.out.println("river: " + river);
 		System.out.println();
 		System.out.println("Boundingbox: ");
 		for(int k = 0; k < bbox.size(); k++){

@@ -22,7 +22,7 @@ public class Main {
 	static final String jdbcTreiber = "com.mysql.jdbc.Driver";  
 	static final String url = "jdbc:mysql://160.85.104.27/patstat";
 
-	//  Instanzierung von Einlog-Daten für Datenbank
+	// Instanzierung von Einlog-Daten für Datenbank
 	
 	//Für Testzwecke verwenden
 	static final String user = "";
@@ -250,7 +250,6 @@ public class Main {
 		System.out.println("Wenn Sie keine Einschränkung bei countrycode machen möchten geben Sie '-' ein");
 		System.out.println("Enter the countrycode: ");
 		String countryCode = sc.next();
-		System.out.println("String countryCode = sc.next(): " + countryCode);
 		//überprüft ob etwas eingegeben wurde, wenn nicht wird null zurückgegeben ansonsten den eingegebene Wert source
 		//Strings werden mit der Funktion equals() verglichen nicht mit ==
 		if(countryCode.equals("-")){

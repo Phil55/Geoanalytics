@@ -458,8 +458,6 @@ public class Validation {
 		
 	}
 	
-	 
-	
 	public double countScore(){
 		double provScore = 0;
 		for(int i = 0; i < listScore.size(); i++){
@@ -522,9 +520,9 @@ public class Validation {
 		//für Score berechnen für "if contains == true"
 		//Boolean roadCheck = null;
 		//Boolean addNrCheck = null;
-		Boolean addressLineCheck = null;
-		Boolean plzCheck = null;
-		Boolean villageCheck = null;
+		//Boolean addressLineCheck = null;
+		//Boolean plzCheck = null;
+		//Boolean villageCheck = null;
 		Option address_component = provListOldAddress.get(i).getAddress_component().get(x);
 		
 		/*
@@ -542,7 +540,7 @@ public class Validation {
 		}
 		*/
 		if (i == 0){
-			addressLineCheck = true;
+			//addressLineCheck = true;
 			//listCheck.add(addressLineCheck);
 			address_component.setProvScore(100.0);
 			System.out.println("Score :" + address_component.getProvScore());
@@ -551,7 +549,7 @@ public class Validation {
 
 		}
 		else if (i == 1){
-			plzCheck = true;
+			//plzCheck = true;
 			//listCheck.add(plzCheck);
 			address_component.setProvScore(100.0);
 			System.out.println("Score :" + address_component.getProvScore());
@@ -559,7 +557,7 @@ public class Validation {
 			System.out.println("x :" + x);
 		}
 		else if (i == 2){
-			villageCheck = true;
+			//villageCheck = true;
 			//listCheck.add(villageCheck);
 			address_component.setProvScore(100.0);
 			System.out.println("Score :" + address_component.getProvScore());

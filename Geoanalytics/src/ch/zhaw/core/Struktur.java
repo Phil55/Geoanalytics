@@ -3,8 +3,10 @@ package ch.zhaw.core;
 import java.util.List;
 import java.util.ArrayList;
 
+/*
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+*/
 
 import ch.zhaw.core.alignment.Alignment;
 import ch.zhaw.core.query.*;
@@ -114,7 +116,6 @@ public class Struktur {
 		System.out.println("rawAddress: " + rawAddress); //test-code
 		
 		Query m = new Query(getRawAddress()); //Query-klasse instanzieren und rawAddress setzen
-		Alignment l = new Alignment(m.getExtAddress()); //Inittiere Alignment -> evt. nicht hier instanzieren
 		
 		String checkedQuery = null; // für überprüfung bei checkQuery() und checkValidation() nötig,für überprüfung benötigt welche Query gemacht wurde
 		
@@ -137,6 +138,7 @@ public class Struktur {
 			*/
 		}
 		
+		
 		//überprüft ob addresse i.O zum speichern ist und ob alle Services bereits überprüft wurden
 		//Neue Positionierung von startAlignment wahrscheinlich nötig
 		if(complete == true && allServices == true){
@@ -144,10 +146,11 @@ public class Struktur {
 		}
 		else{
 			//Durchführung der Strukturierung der Adresse
-			startAlignment(l, m.getOsm());
-			System.out.println("StructAddress : " + l.getStructAdress()); //test-code
+			startAlignment(checkedQuery, m);
+			
+			//alternative: l.align(();
 		}
-		return m.getExtAddress();
+		return m.getExtAddress(); //evt. muss die SQL-Statements zurückgegeben werden
 	}
 	
 	//überprüfen welche Services bereits genutzt wurden
@@ -506,13 +509,35 @@ public class Struktur {
 		return index;
 	}
 	
-	public void startAlignment(Alignment l, List<QueryOSM> osm){
+	//resultat wird als SQL-Statement vorbereitet für die Abspeicherung in die Datenbank
+	public List<String> startAlignment(String checkedQuery, Query m){
 		System.out.println(); //test-code
 		System.out.println("start startAlignment()"); //test-code
-		l.align(osm.get(0).getDisplay_name());
-		//resultat wird abgespeichert
 		
+		Alignment l = new Alignment(personOrigId); //Inittiere Alignment, person_orig_id wird beim Konstruktor gespeichert
+		List<String> sqlList = new ArrayList <String>(); //Liste Instanzieren wird bei den if-Bedingungen weiter unten gebraucht
+		List<QueryOSM> osm = m.getOsm(); 	// wird als input für Methode alignOSM gebraucht
+		QueryBing bing = m.getBing();		// wird als input für Methode alignBing gebraucht
+		QueryGoogle google = m.getGoogle();	// wird als input für Methode alignGoogle gebraucht
+		
+		//es wird eine Liste erstellt die alle SQL-Statement beinhaltet, 
+		//vorher wird noch geprüft welcher service genutzt wurde und welche adresse abgespeicher werden soll
+		if(checkedQuery == "osm"){
+			sqlList = l.alignOSM(osm);
+		}
+		else{
+			if(checkedQuery == "bing"){	
+				sqlList = l.alignBing(bing);
+			}
+			else{
+				if(checkedQuery == "google"){
+					sqlList = l.alignGoogle(google);
+				}
+				else{
+					
+				}
+			}
+		}
+		return sqlList;
 	}
-	
-	
 }

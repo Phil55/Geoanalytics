@@ -15,6 +15,22 @@ public class Results {
 	private Boolean status = null; //für Validation benötigt
 	private Double score; //für Validation benötigt
 	
+	//wird als Attribut abgespeichert, damit man es bei Alignment wieder benutzen kann ohne nochmals die Such-Methoden verwenden zu müssen
+	// wird default-mässig auf null gesetzt
+	private String route = null;
+	private String addressNumber = null;
+	private String postalCode = null;
+	private String locality = null;
+	private String sublocalityLevel1 = null;
+	private String areaLevel1 = null;
+	private String areaLevel2 = null;
+	private String areaLevel3 = null;
+	private String country_name = null;
+	private String country_code = null;
+	private String neighborhood = null;
+	private String premise = null;
+	private String postalCodeSuffix = null; // ist bei US-Adressen aufgetreten -> obwohl es für die Abspeicherung nicht benötigt wird, wird die Variable hier instanziert
+	
 	
 	//constructor for objectmapper
 	public Results(){	
@@ -92,10 +108,115 @@ public class Results {
 		this.partial_match = partial_match;
 	}
 
+	public String getRoute() {
+		return route;
+	}
+
+	public void setRoute(String route) {
+		this.route = route;
+	}
+
+	public String getAddressNumber() {
+		return addressNumber;
+	}
+
+	public void setAddressNumber(String addressNumber) {
+		this.addressNumber = addressNumber;
+	}
+
+	public String getPostalCode() {
+		return postalCode;
+	}
+
+	public void setPostalCode(String postalCode) {
+		this.postalCode = postalCode;
+	}
+
+	public String getLocality() {
+		return locality;
+	}
+
+	public void setLocality(String locality) {
+		this.locality = locality;
+	}
+
+	public String getSublocalityLevel1() {
+		return sublocalityLevel1;
+	}
+
+	public void setSublocalityLevel1(String sublocalityLevel1) {
+		this.sublocalityLevel1 = sublocalityLevel1;
+	}
+
+	public String getAreaLevel1() {
+		return areaLevel1;
+	}
+
+	public void setAreaLevel1(String areaLevel1) {
+		this.areaLevel1 = areaLevel1;
+	}
+
+	public String getAreaLevel2() {
+		return areaLevel2;
+	}
+
+	public void setAreaLevel2(String areaLevel2) {
+		this.areaLevel2 = areaLevel2;
+	}
+
+	public String getAreaLevel3() {
+		return areaLevel3;
+	}
+
+	public void setAreaLevel3(String areaLevel3) {
+		this.areaLevel3 = areaLevel3;
+	}
+
+	public String getCountry_name() {
+		return country_name;
+	}
+
+	public void setCountry_name(String country_name) {
+		this.country_name = country_name;
+	}
+
+	public String getCountry_code() {
+		return country_code;
+	}
+
+	public void setCountry_code(String country_code) {
+		this.country_code = country_code;
+	}
+
+	public String getPostalCodeSuffix() {
+		return postalCodeSuffix;
+	}
+
+	public void setPostalCodeSuffix(String postalCodeSuffix) {
+		this.postalCodeSuffix = postalCodeSuffix;
+	}
+
+	public String getNeighborhood() {
+		return neighborhood;
+	}
+
+	public void setNeighborhood(String neighborhood) {
+		this.neighborhood = neighborhood;
+	}
+
+	public String getPremise() {
+		return premise;
+	}
+
+	public void setPremise(String premise) {
+		this.premise = premise;
+	}
+
 	public void createListNewAddress(int i, QueryGoogle google){ //Objekt wegen Methode printJsonResponse() notwendig
 		System.out.println(); //test-code
 		System.out.println("Start createListNewAddress() (Google)"); //test
 		
+		/*
 		//Strings werden default-mässig auf null gesetzt
 		String route = null;
 		String addressNumber = null;
@@ -106,16 +227,20 @@ public class Results {
 		String areaLevel2 = null; //evt. nicht nötig
 		String country = null;
 		String postalCodeSuffix = null; // ist bei US-Adressen aufgetreten
+		*/
 		
 		// index wo das gesuchte element bei address_component ist wird als int gespeichert
 		int routeIndex = getIndex("route", i);
 		int addressNumberIndex = getIndex("street_number", i);
-		int plzIndex = getIndex("postal_code", i);
+		int postalCodeIndex = getIndex("postal_code", i);
 		int localityIndex = getIndex("locality", i);
 		int sublocalityLevel1Index = getIndex("sublocality_level_1", i);
 		int areaLevel1Index = getIndex("administrative_area_level_1", i);
 		int areaLevel2Index = getIndex("administrative_area_level_2", i);
-		int countryIndex = getIndex("country", i);
+		int areaLevel3Index = getIndex("administrative_area_level_3", i);
+		int neighborhoodIndex = getIndex("neighborhood", i);
+		int premiseIndex = getIndex ("premise", i);
+		int country_Index = getIndex("country", i); // country_nameIndex kann für country_name und country_code benutzt werden
 		int postalCodeSuffixIndex = getIndex("postal_code_suffix", i);
 		
 		//if-schleifen für alle Strings die ober erstellt wurden, es wird überprüft ob etwas bei address_component gefunden wurde
@@ -134,12 +259,12 @@ public class Results {
 		else{
 			addressNumber = address_components.get(addressNumberIndex).getLong_name();
 		}
-		if(plzIndex == -1){
-			//plz = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
-			System.out.println("kein address_component gefunden mit -postal_code-, String plz wird auf null gesetzt");
+		if(postalCodeIndex == -1){
+			//postalCode = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
+			System.out.println("kein address_component gefunden mit -postal_code-, String postalCode wird auf null gesetzt");
 		}
 		else{
-			plz = address_components.get(plzIndex).getLong_name();
+			postalCode = address_components.get(postalCodeIndex).getLong_name();
 		}
 		if(localityIndex == -1){
 			//locality = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
@@ -169,12 +294,21 @@ public class Results {
 		else{
 			areaLevel2 = address_components.get(areaLevel2Index).getLong_name();
 		}
-		if(countryIndex == -1){
-			//country = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
-			System.out.println("kein address_component gefunden mit -country-, String country wird auf null gesetzt");
+		if(areaLevel3Index == -1){
+			//areaLevel3 = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
+			System.out.println("kein address_component gefunden mit -administrative_area_level_3-, String areaLevel3 wird auf null gesetzt");
 		}
 		else{
-			country = address_components.get(countryIndex).getLong_name();
+			areaLevel3 = address_components.get(areaLevel3Index).getLong_name();
+		}
+		if(country_Index == -1){
+			//country_name = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
+			System.out.println("kein address_component gefunden mit -country-, String country_name wird auf null gesetzt");
+			System.out.println("kein address_component gefunden mit -country-, String country_code wird auf null gesetzt");
+		}
+		else{
+			country_name = address_components.get(country_Index).getLong_name();
+			country_code = address_components.get(country_Index).getShort_name();
 		}
 		if(postalCodeSuffixIndex == -1){
 			//postalCodeSuffix = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
@@ -182,6 +316,20 @@ public class Results {
 		}
 		else{
 			postalCodeSuffix = address_components.get(postalCodeSuffixIndex).getLong_name();
+		}
+		if(neighborhoodIndex == -1){
+			//neighborhood = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
+			System.out.println("kein address_component gefunden mit -neighborhood-, String neighborhood wird auf null gesetzt");
+		}
+		else{
+			neighborhood = address_components.get(neighborhoodIndex).getLong_name();
+		}
+		if(premiseIndex == -1){
+			//premise = null; //wird nicht benötig, da String schon am anfang auf null gesetzt ist
+			System.out.println("kein address_component gefunden mit -premise-, String premise wird auf null gesetzt");
+		}
+		else{
+			premise = address_components.get(premiseIndex).getLong_name();
 		}
 		
 		//überprüft ob road oder addressNumber null ist. 
@@ -222,8 +370,8 @@ public class Results {
 		*/
 		
 		//plz
-		newAddress.add(plz);
-		System.out.println("newAddress.add(plz) = " + plz);
+		newAddress.add(postalCode);
+		System.out.println("newAddress.add(postalCode) = " + postalCode);
 		
 		//Ort
 		if (locality != null){
@@ -243,7 +391,7 @@ public class Results {
 		}
 		*/
 		
-		printJsonResponseGoogle(i, google, route, addressNumber, plz, locality, sublocalityLevel1, areaLevel1, areaLevel2, country, postalCodeSuffix);
+		printJsonResponseGoogle(i, google);
 	}
 	
 	//findet die stelle, wo die gesuchte componente ist (z.B. street_number) falls nichts gefunden wurde gibt es -1 zurück
@@ -281,7 +429,7 @@ public class Results {
 	}
 	
 	//Strings und Print wird erstellt um testing übersichtlicher zu machen
-	public void printJsonResponseGoogle(int i, QueryGoogle google, String route, String addressNumber, String plz, String locality, String sublocalityLevel1, String areaLevel1, String areaLevel2, String country, String postalCodeSuffix){
+	public void printJsonResponseGoogle(int i, QueryGoogle google){
 		System.out.println();
 		System.out.println("Start printJsonResponseGoogle() : "); //test-code
 			
@@ -299,13 +447,17 @@ public class Results {
 		System.out.println("formatted_address: " + formatted_address);
 		System.out.println("route: " + route);
 		System.out.println("addressNumber: " + addressNumber);
-		System.out.println("plz: " + plz);
+		System.out.println("postalCode: " + postalCode);
 		System.out.println("locality: " + locality);
 		System.out.println("sublocalityLevel1: " + sublocalityLevel1);
 		System.out.println("areaLevel1: " + areaLevel1);
 		System.out.println("areaLevel2: " + areaLevel2);
-		System.out.println("country: " + country);
+		System.out.println("areaLevel3: " + areaLevel3);
+		System.out.println("country_name: " + country_name);
+		System.out.println("country_code: " + country_code);
 		System.out.println("postalCodeSuffix: " + postalCodeSuffix);
+		System.out.println("neighborhood: " + neighborhood);
+		System.out.println("premise: " + premise);
 		System.out.println("place_id: " + place_id);
 		System.out.println("partial_match: " + partial_match);
 		System.out.println("lat: " + lat);

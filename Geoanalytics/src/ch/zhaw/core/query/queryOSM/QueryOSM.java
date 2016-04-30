@@ -1,38 +1,9 @@
 package ch.zhaw.core.query.queryOSM;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream; //für inputstream
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import javax.net.ssl.HttpsURLConnection;
-
-
-//import für Unirest
-import org.json.*;
-import org.apache.http.nio.client.*;
-import org.apache.http.client.*;
-import org.apache.http.entity.mime.*;
-import com.mashape.unirest.*;
-import com.mashape.unirest.http.*;
-import com.mashape.unirest.http.HttpResponse;
-
-import org.apache.commons.logging.LogFactory;
-
-
-//Import für Jackson
-import com.fasterxml.jackson.core.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class QueryOSM {
-
-	//private final String USER_AGENT = "Mozilla/5.0"; //für GET und POST
 	
 	private String place_id;
 	private String licence;
@@ -75,7 +46,7 @@ public class QueryOSM {
 		this.address = address;
 	}
 	
-	//test dummy constructor for objectmapper
+	// constructor for objectmapper
 	public QueryOSM(){	
 	}
 

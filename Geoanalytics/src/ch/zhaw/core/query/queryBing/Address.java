@@ -9,6 +9,9 @@ public class Address {
 	private String formattedAddress;
 	private String locality;
 	private String postalCode;
+	private String countryRegionIso2;
+	private String neighborhood;
+	
 	
 	//test dummy constructor for objectmapper
 	public Address(){	
@@ -69,5 +72,22 @@ public class Address {
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
 	}
+
+	public String getCountryRegionIso2() {
+		return countryRegionIso2;
+	}
+
+	public void setCountryRegionIso2(String countryRegionIso2) {
+		this.countryRegionIso2 = countryRegionIso2;
+	}
+
+	public String getNeighborhood() {
+		return neighborhood;
+	}
+
+	public void setNeighborhood(String neighborhood) {
+		this.neighborhood = neighborhood;
+	}
+	
 	
 }

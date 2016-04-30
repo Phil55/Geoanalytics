@@ -1,6 +1,6 @@
 package ch.zhaw.core.query.queryBing;
 
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.List;
 
 public class QueryBing { //Literaturverweis finden um zu begründen wieso Package anstatt innere Klassen

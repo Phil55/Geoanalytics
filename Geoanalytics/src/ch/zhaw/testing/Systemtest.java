@@ -12,7 +12,7 @@ import java.util.Scanner;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.zhaw.core.Struktur;
+import ch.zhaw.core.Scheme;
 
 
 //beide Testing-Klassen werden wahrscheinlich gar nicht benötigt (siehe To-Do-Liste: 17.04.16)
@@ -133,7 +133,7 @@ public class Systemtest {
 	}
 	
 	@Test
-	public void test(Struktur f) {
+	public void test(Scheme f) {
 		
 		f.mainQuery(f.getRawAddress());
 		fail("Not yet implemented");

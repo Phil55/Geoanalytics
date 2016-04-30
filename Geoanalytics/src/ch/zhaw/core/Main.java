@@ -1,15 +1,9 @@
 package ch.zhaw.core;
-import java.io.IOException;
+
 import java.sql.*; //wird für die Verbindung zur Datenbank benötigt
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner; //für Eingabe in Konsole benötigt
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mashape.unirest.http.Unirest;
-
-
 
 public class Main {
 	
@@ -25,8 +19,8 @@ public class Main {
 	// Instanzierung von Einlog-Daten für Datenbank
 	
 	//Für Testzwecke verwenden
-	static final String user = "";
-	static final String password = "";
+	static final String user = "patentdb";
+	static final String password = "tRNSBI7n7VHOPK7n";
 	
 	/*// Code für am Schluss (User muss Passwort eingeben
 	static final String user = getUsername();
@@ -390,11 +384,16 @@ public class Main {
 				System.out.println("countryCode: " + countryCode);
 				
 				//Werte Instanzieren in Struktur
-				Struktur f = new Struktur(personOrigId, personId, nameFreeform, addressOne, addressTwo, countryCode);
+				Scheme f = new Scheme(personOrigId, personId, nameFreeform, addressOne, addressTwo, countryCode);
 				
 				//Abfrage Initiieren
-				f.mainQuery(f.getRawAddress());
+				List<String> sqlList = f.mainQuery(f.getRawAddress());
 				
+				//erhaltene sql-Statements ausführen
+				for(int i = 0; i < sqlList.size(); i++){
+					stmt.executeQuery(sqlList.get(i));
+					System.out.println("stmt.executeQuery(sqlList.get(i)), sql: " + sqlList.get(i));
+				}
 			}
 			//ResultSet rs, Statement bereinigen und Verbindung schliessen
 			rs.close();

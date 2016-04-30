@@ -2,6 +2,7 @@ package ch.zhaw.core;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /*
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -17,7 +18,7 @@ import ch.zhaw.core.query.queryOSM.*;
 import ch.zhaw.core.query.queryOSM.Address;
 import ch.zhaw.core.validation.Validation;
 
-public class Struktur {
+public class Scheme {
 	
 	private String rawAddress;
 	private int personOrigId;
@@ -27,9 +28,10 @@ public class Struktur {
 	private String addressTwo;
 	private String countryCode;
 	private Boolean allServices; //wird zum überprüfen genutzt ob alle services benutzt wurden
+	private List<String> us_state_code; //Abkürzung eines Bundesstaates nach FIPS-Code Reihenfolge wird für die überprüfung von Spezialfällen von US-Adressen gebraucht -> Methode specialCaseUS()
+	private List<String> us_state_name; // Vollständiger Name eines Bundesstaates nach FIPS-Code Reihenfolge
 	
-	
-	public Struktur(int personOrigId, int personId, String nameFreeform, String addressOne, String addressTwo, String countryCode) {
+	public Scheme(int personOrigId, int personId, String nameFreeform, String addressOne, String addressTwo, String countryCode) {
 		this.personOrigId = personOrigId;
 		this.personId = personId;
 		this.nameFreeform = nameFreeform;
@@ -110,10 +112,17 @@ public class Struktur {
 	}
 	
 	//die Abfrage nach einer Adresse wird gestartet
-	public String mainQuery(String rawAddress) {
+	public List<String> mainQuery(String rawAddress) {
 		System.out.println(); //test-code
 		System.out.println("Start mainQuery: "); //test-code
 		System.out.println("rawAddress: " + rawAddress); //test-code
+		
+		//Spezialfälle für US-Adressen
+		//Bundesstaat-name wird falls nötig in kurz-form (code) umgewandelt
+		//Strassenbezeichnungen, die mit One anfangen werden zu 1 umgewandelt
+		if(countryCode.contains("US") == true){ //if(countryCode == "US") funktioniert nicht
+			this.rawAddress = specialCaseUS(rawAddress);
+		}
 		
 		Query m = new Query(getRawAddress()); //Query-klasse instanzieren und rawAddress setzen
 		
@@ -138,7 +147,7 @@ public class Struktur {
 			*/
 		}
 		
-		
+		List<String> sqlList = new ArrayList<String>();
 		//überprüft ob addresse i.O zum speichern ist und ob alle Services bereits überprüft wurden
 		//Neue Positionierung von startAlignment wahrscheinlich nötig
 		if(complete == true && allServices == true){
@@ -146,11 +155,9 @@ public class Struktur {
 		}
 		else{
 			//Durchführung der Strukturierung der Adresse
-			startAlignment(checkedQuery, m);
-			
-			//alternative: l.align(();
+			sqlList = startAlignment(checkedQuery, m);
 		}
-		return m.getExtAddress(); //evt. muss die SQL-Statements zurückgegeben werden
+		return sqlList; //evt. muss die SQL-Statements zurückgegeben werden
 	}
 	
 	//überprüfen welche Services bereits genutzt wurden
@@ -502,8 +509,6 @@ public class Struktur {
 			}
 			else{
 				System.out.println("listScore -> Score ist kleiner als der vorherige Score :" + listScore.get(x));
-				//scoreList.remove(x); 
-				//checkList.remove(x);
 			}
 		}
 		return index;
@@ -516,21 +521,21 @@ public class Struktur {
 		
 		Alignment l = new Alignment(personOrigId); //Inittiere Alignment, person_orig_id wird beim Konstruktor gespeichert
 		List<String> sqlList = new ArrayList <String>(); //Liste Instanzieren wird bei den if-Bedingungen weiter unten gebraucht
-		List<QueryOSM> osm = m.getOsm(); 	// wird als input für Methode alignOSM gebraucht
-		QueryBing bing = m.getBing();		// wird als input für Methode alignBing gebraucht
-		QueryGoogle google = m.getGoogle();	// wird als input für Methode alignGoogle gebraucht
 		
 		//es wird eine Liste erstellt die alle SQL-Statement beinhaltet, 
 		//vorher wird noch geprüft welcher service genutzt wurde und welche adresse abgespeicher werden soll
 		if(checkedQuery == "osm"){
+			List<QueryOSM> osm = m.getOsm(); 	// wird als input für Methode alignOSM gebraucht
 			sqlList = l.alignOSM(osm);
 		}
 		else{
 			if(checkedQuery == "bing"){	
+				QueryBing bing = m.getBing();		// wird als input für Methode alignBing gebraucht
 				sqlList = l.alignBing(bing);
 			}
 			else{
 				if(checkedQuery == "google"){
+					QueryGoogle google = m.getGoogle();	// wird als input für Methode alignGoogle gebraucht
 					sqlList = l.alignGoogle(google);
 				}
 				else{
@@ -539,5 +544,58 @@ public class Struktur {
 			}
 		}
 		return sqlList;
+	}
+	
+	public String specialCaseUS(String rawAddress){
+		System.out.println(); //test-code
+		System.out.println("start specialCaseUS()"); //test-code
+		
+		//Spezialfall: One zu 1 umwandeln -> wichtig dieser Spezialfall sollte als erstes überprüft werden da hier die Gross- und Kleinschreibung von bedeutung für die If-Bedingung ist 
+		//-> einfacher zu überprüfen und weniger fehler, da evt. "one" in einem anderen Element enthalten sein kann
+		if(rawAddress.contains("One") ){
+			rawAddress = rawAddress.replaceFirst("One", "1"); //replaceFirst, da dieser Fall immer als erstes kommt und nur einmal vorkommt
+			System.out.println("One mit 1 ersetzt, rawAddress neu: " + rawAddress); //test-code
+		}
+		
+		//Spezialfall: Bundesstaat-Abkürzung umwandeln
+		// listen erstellen
+		us_state_code = Arrays.asList(
+			"AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", 
+			"NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD","TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "AS", "FM", "GU", "MH", "MP", "PW", "PR", "UM", "VI" 
+		);
+		us_state_name = Arrays.asList(
+			"Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Hawaii", "Idaho", 
+			"Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska",
+			"Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina",
+			"South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming", "American Samoa", "Micronesia", "Guam",
+			"Marshall Islands", "Northern Mariana Islands", "Palau", "Puerto Rico", "Minor Outlying Islands", "Virgin Islands"
+		);
+		
+		/*
+		//prints zu testzwecken
+		System.out.println("us_state_code.size(): " + us_state_code.size()); //test-code
+		System.out.println("us_state_name.size(): " + us_state_name.size()); //test-code
+		for (int i = 0; i < us_state_code.size(); i++){
+			System.out.println("us_state_code.get(i) : " + us_state_code.get(i)); //test-code
+		}
+		for (int i = 0; i < us_state_name.size(); i++){
+			System.out.println("us_state_name.get(i) : " + us_state_name.get(i)); //test-code
+		}
+		*/
+		
+		//Wichtig rawAddress wird als lowerCase zurückgegeben, da die Variable bei Validation sowieso mit lowercase gearbeteitet wird
+		//und rawAddress schlussendlich danach nicht mehr gebraucht wird. Es ist bewusst, dass man es optimaler machen könnte.
+		//der state_code wird später ist zwar hier dann noch in Grossbuchstaben, aber wird später auch zu lowerCase
+		System.out.println("rawAddress vorher : " + rawAddress); //test-code
+		for (int i = 0; i < us_state_name.size(); i++){
+			String name = us_state_name.get(i).toLowerCase();
+			rawAddress = rawAddress.toLowerCase();
+			
+			if(rawAddress.contains(name) == true){
+				rawAddress = rawAddress.replaceAll(name, us_state_code.get(i));
+				System.out.println("rawAddress geändert, neu : " + rawAddress); //test-code
+			}
+		}
+		return rawAddress;
 	}
 }

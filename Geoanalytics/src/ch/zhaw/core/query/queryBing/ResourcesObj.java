@@ -185,6 +185,8 @@ public class ResourcesObj {
 		String point_type = point.getType();
 		String countryRegion = address.getCountryRegion();
 		String formattedAddress = address.getFormattedAddress();
+		String countryCode = address.getCountryRegionIso2();
+		String neighborhood = address.getNeighborhood();		
 		
 		//Printet alle Elemente, die man als Json erhält:
 		System.out.println("Alle Elemente von Json-Respond von Bing: ");
@@ -203,7 +205,9 @@ public class ResourcesObj {
 		System.out.println("postalCode: " + plz);
 		System.out.println("adminDistrict: " + district);
 		System.out.println("adminDistrict2: " + district2);
+		System.out.println("neighborhood: " + neighborhood);
 		System.out.println("countryRegion: " + countryRegion);
+		System.out.println("countryCode: " + countryCode);
 		System.out.println("formattedAddress: " + formattedAddress);
 		System.out.println("point_type: " + point_type);
 		System.out.println();

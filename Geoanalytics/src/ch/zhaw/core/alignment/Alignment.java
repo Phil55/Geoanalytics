@@ -3,16 +3,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 //für Methode align- (-OSM, -Bing und -Google) benötigt
-import ch.zhaw.core.query.queryBing.QueryBing;
-import ch.zhaw.core.query.queryGoogle.QueryGoogle;
+import ch.zhaw.core.query.queryBing.*;
+import ch.zhaw.core.query.queryGoogle.*;
 import ch.zhaw.core.query.queryOSM.*;
 
 public class Alignment {
 
 	//Tabelle Address
 	private int person_orig_id; //PK
-	private int geometry_id;	//FK -> PK bei Geometry
-	private int place_id;
+	//private int geometry_id;	//FK -> PK bei Geometry -> wahrscheinlich nicht gebraucht
+	private String place_id;
 	private String service_source;
 	private String name_freeform;
 	private String address_freeform;
@@ -23,7 +23,7 @@ public class Alignment {
 	private String road;
 	private String road_number;
 	private String locality;
-	private int postal_code;
+	private String postal_code;
 	private String building_description;
 	private String neighborhood;
 	private String area_level1;
@@ -38,14 +38,13 @@ public class Alignment {
 	private double bbox_lng_east;
 	private double bbox_lat_south;
 	private double bbox_lng_west;
-	private int polygonpoints_id;	//FK -> PK bei Polygonpoints
+	//private int polygonpoints_id;	//FK -> PK bei Polygonpoints -> wahrscheinlich nicht gebraucht
 	
 	//Zwischentabelle Polygonpoints
-	private int polygoncoordinates_id; //FK -> PK bei Polygoncoordinates
+	//private int polygoncoordinates_id; //FK -> PK bei Polygoncoordinates -> wahrscheinlich nicht gebraucht
 	
 	//Tabelle Polygoncoordinates
-	private double polygon_lat;
-	private double polygon_lng;
+	private List<List<Double>> polygonpointsList;
 	
 	private List<String> sqlList;
 	
@@ -155,19 +154,11 @@ public class Alignment {
 		this.person_orig_id = person_orig_id;
 	}
 
-	public int getGeometry_id() {
-		return geometry_id;
-	}
-
-	public void setGeometry_id(int geometry_id) {
-		this.geometry_id = geometry_id;
-	}
-
-	public int getPlace_id() {
+	public String getPlace_id() {
 		return place_id;
 	}
 
-	public void setPlace_id(int place_id) {
+	public void setPlace_id(String place_id) {
 		this.place_id = place_id;
 	}
 
@@ -251,11 +242,11 @@ public class Alignment {
 		this.locality = locality;
 	}
 
-	public int getPostal_code() {
+	public String getPostal_code() {
 		return postal_code;
 	}
 
-	public void setPostal_code(int postal_code) {
+	public void setPostal_code(String postal_code) {
 		this.postal_code = postal_code;
 	}
 
@@ -355,6 +346,15 @@ public class Alignment {
 		this.bbox_lng_west = bbox_lng_west;
 	}
 
+	/*
+	public int getGeometry_id() {
+		return geometry_id;
+	}
+
+	public void setGeometry_id(int geometry_id) {
+		this.geometry_id = geometry_id;
+	}
+
 	public int getPolygonpoints_id() {
 		return polygonpoints_id;
 	}
@@ -370,22 +370,7 @@ public class Alignment {
 	public void setPolygoncoordinates_id(int polygoncoordinates_id) {
 		this.polygoncoordinates_id = polygoncoordinates_id;
 	}
-
-	public double getPolygon_lat() {
-		return polygon_lat;
-	}
-
-	public void setPolygon_lat(double polygon_lat) {
-		this.polygon_lat = polygon_lat;
-	}
-
-	public double getPolygon_lng() {
-		return polygon_lng;
-	}
-
-	public void setPolygon_lng(double polygon_lng) {
-		this.polygon_lng = polygon_lng;
-	}
+	*/
 
 	public List<String> getSqlList() {
 		return sqlList;
@@ -394,18 +379,27 @@ public class Alignment {
 	public void setSqlList(List<String> sqlList) {
 		this.sqlList = sqlList;
 	}
+	
+	public List<List<Double>> getPolygonpointsList() {
+		return polygonpointsList;
+	}
+
+	public void setPolygonpointsList(List<List<Double>> polygonpointsList) {
+		this.polygonpointsList = polygonpointsList;
+	}
 
 
-
+	//falls etwas null ist muss bei int 0, und bei String "" gegeben werden gemäss patstat_data_catalog S. 23
 	//strukturiert Adresse
+
 	public List <String> alignOSM(List<QueryOSM> osm){
 		
 		int index = osm.get(0).getDefIndex();
 		QueryOSM obj = osm.get(index);
-		Address addressObj = osm.get(index).getAddress();
+		ch.zhaw.core.query.queryOSM.Address addressObj = osm.get(index).getAddress();
 		
 		//Daten in die Attribute bei Klasse Alignment einfügen
-		place_id = Integer.parseInt(obj.getPlace_id());
+		place_id = obj.getPlace_id();
 		service_source = "OSM";
 		//überprüft ob Industrial oder Address29 vorhanden ist. falls nicht wird null gesetzt
 		if (addressObj.getIndustrial() != null){
@@ -428,12 +422,12 @@ public class Alignment {
 		address_line = road_number + " " + road;
 		//es wird so gemacht, weil sonst die gleichen if-Bedingungen hier nochmals implementiert werden müsste
 		locality = addressObj.getListNewAddress().get(3); //siehe bei Klasse Address Methode createListNewAddress()
-		postal_code = Integer.parseInt(addressObj.getPostcode());
-		building_description = null; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
-		neighborhood = null; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
+		postal_code = addressObj.getPostcode();
+		building_description = ""; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
+		neighborhood = ""; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
 		area_level1 = addressObj.getState();
-		area_level2 = null; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
-		area_level3 = null; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
+		area_level2 = ""; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
+		area_level3 = ""; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
 		geometric_quality = obj.getImportance();
 		point_lat = Double.parseDouble(obj.getLat());
 		point_lng = Double.parseDouble(obj.getLon());
@@ -441,15 +435,82 @@ public class Alignment {
 		bbox_lng_east = Double.parseDouble(obj.getBoundingbox().get(3)); // East Longitude ist an der 4. Stelle -> also 3
 		bbox_lat_south = Double.parseDouble(obj.getBoundingbox().get(0)); // South Latitude ist an der 1. Stelle -> also 0
 		bbox_lng_west = Double.parseDouble(obj.getBoundingbox().get(2)); // West Longitude ist an der 3. Stelle -> also 2
+		polygonpointsList = new ArrayList<List<Double>>();
+		for (int i = 0; i < obj.getPolygonpoints().size(); i++){
+			List<Double> list = new ArrayList<Double>();
+			for(int x = 0; x < obj.getPolygonpoints().get(i).size(); x++){
+				list.add(x, Double.parseDouble(obj.getPolygonpoints().get(i).get(x)));
+			}
+			polygonpointsList.add(i, list); // i weil reihenfolge gleich bleiben sollte
+		}
+		
 		// die frage ist, ob eine neue Klasse für Polygonpoint erstellt werden sollte oder ob es als List<List<String>> abgespeichert werden sollte
 		// schlussendlich stellt sich die frage wie man diie polygonpoints hier speichern möchte -> eher mit List
 		// obj.getPolygonpoints().get(1).get(0);
 		
 		// SQL-Statements erstellen
-		String insertAddress = "INSERT INTO tls326_detailed_address (place_id, service_source, name_freeform, address_freeform, address_type, country_code, country_name, address_line, "
-				+ "house_number, road, locality, postal_code, ";
+		String insertAddress = 
+				"INSERT INTO tls320_enriched_address (" +
+				"person_orig_id, place_id, service_source, name_freeform, address_freeform, address_type, country_code, country_name, address_line, " +
+				"house_number, road, locality, postal_code, building_description, neighborhood, area_level1, area_level2, area_level3" +
+				")" +
+				"VALUES (" + 
+				person_orig_id + place_id + ", " + service_source + ", " + name_freeform + ", " + address_freeform + ", " + address_type + ", " + 
+				country_code + ", " + country_name + ", " + address_line + ", " + road_number + ", " + road + ", " + locality + ", " + postal_code + ", " + 
+				building_description + ", " + neighborhood + ", " + area_level1 + ", " + area_level2 + ", " + area_level3 + 
+				");";
+		sqlList.add(insertAddress);
 		
-		String insertGeometry = "SELECT * FROM patstat.tls206_person WHERE person_id = (SELECT person_id FROM patstat.tls226_person_orig WHERE person_orig_id = 2205);";
+		String insertGeometry =
+			"INSERT INTO tls321_geometry (" +
+				"geometry_id, geometric_quality, point_lat, point_lng, bbox_lat_north, bbox_lng_east, bbox_lat_south, bbox_lng_west" +
+				")" +
+				"VALUES (" + 
+				"(SELECT geometry_id FROM tls320_enriched_address WHERE person_orig_id = " + person_orig_id + ")" + geometric_quality + ", " + 
+				point_lat + ", " + point_lng + ", " + bbox_lat_north + ", " + bbox_lng_east + ", " + bbox_lat_south + ", " + bbox_lng_west +  
+			");";
+		
+		/*
+		String insertGeometry = 
+				"UPDATE tls321_geometry" +
+				"SET " +
+				"geometric_quality=" + geometric_quality + 
+				", point_lat=" + point_lat + 
+				", point_lng=" + point_lng + 
+				", bbox_lat_north=" + bbox_lat_north + 
+				", bbox_lng_east=" + bbox_lng_east + 
+				", bbox_lat_south=" + bbox_lat_south + 
+				", bbox_lng_west=" + bbox_lng_west + 
+				"WHERE geometry_id= " + 
+					"(SELECT geometry_id FROM tls320_enriched_address WHERE person_orig_id = " + person_orig_id + 
+				");";
+		*/
+		sqlList.add(insertGeometry);
+		
+		String insertPolygonpoints =
+				"INSERT INTO tls322_polygon_points (" +
+					"polygonpoints_id" +
+					")" +
+					"VALUES (" + 
+					"(SELECT polygonpoints_id FROM tls321_geometry WHERE geometry_id = " +
+						"(SELECT geometry_id FROM tls320_enriched_address WHERE person_orig_id = " + person_orig_id + ")" +  
+				");";
+		sqlList.add(insertPolygonpoints);
+		
+		for(int i = 0; i < polygonpointsList.size(); i++){
+			String insertPolygonCoordinates = 
+				"UPDATE tls323_polygon_coordinates" +
+				"SET " +
+				"lat=" + polygonpointsList.get(0) + 
+				", lng=" + polygonpointsList.get(1) + 
+				"WHERE polygoncoordinates_id= " + 
+					"(SELECT polygonpoints_id FROM tls322_polygon_points WHERE polygonpoints_id = " +
+						"(SELECT polygonpoints_id FROM tls321_geometry WHERE geometry_id = " +
+							"(SELECT geometry_id FROM tls320_enriched_address WHERE person_orig_id = " + person_orig_id +
+				");";
+			sqlList.add(insertPolygonCoordinates);
+		}
+		
 		
 		/*
 		String[] listextAdr = extAdress.split("\\,", 10);
@@ -493,10 +554,124 @@ public class Alignment {
 	
 	public List <String> alignBing(QueryBing bing){
 		
+		int index = bing.getResourceSets().get(0).getDefIndex();
+		ResourcesObj obj = bing.getResourceSets().get(0).getResources().get(index);
+		//ch.zhaw.core.query.queryBing.Address muss angegeben werden, weil QueryBing und QueryOSM die Klasse Address haben
+		ch.zhaw.core.query.queryBing.Address addressObj = obj.getAddress(); 
+		
+		//Daten in die Attribute bei Klasse Alignment einfügen
+		place_id = ""; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
+		service_source = "Bing";
+		name_freeform = ""; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
+		address_freeform = addressObj.getFormattedAddress();
+		address_type = obj.getEntityType();
+		country_code = addressObj.getCountryRegionIso2();
+		country_name = addressObj.getCountryRegion();
+		road = ""; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
+		road_number = ""; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
+		address_line = addressObj.getAddressLine();
+		locality = addressObj.getLocality();
+		postal_code = addressObj.getPostalCode();
+		building_description = ""; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
+		neighborhood = addressObj.getNeighborhood(); //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
+		area_level1 = addressObj.getAdminDistrict();
+		area_level2 = addressObj.getAdminDistrict2();
+		area_level3 = ""; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
+		geometric_quality = obj.getConfidence();
+		point_lat = Double.parseDouble(obj.getPoint().getCoordinates().get(0));
+		point_lng = Double.parseDouble(obj.getPoint().getCoordinates().get(1));
+		bbox_lat_north = Double.parseDouble(obj.getBbox().get(2)); // North Latitude ist an der 3. Stelle -> also 2
+		bbox_lng_east = Double.parseDouble(obj.getBbox().get(3)); // East Longitude ist an der 4. Stelle -> also 3
+		bbox_lat_south = Double.parseDouble(obj.getBbox().get(0)); // South Latitude ist an der 1. Stelle -> also 0
+		bbox_lng_west = Double.parseDouble(obj.getBbox().get(1)); // West Longitude ist an der 2. Stelle -> also 1
+		polygonpointsList = null; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
+		
+		// SQL-Statements erstellen
+		//INSERT INTO bei Tabelle tls320_enriched_address
+		String insertAddress = 
+				"INSERT INTO tls320_enriched_address (" +
+				"person_orig_id, place_id, service_source, name_freeform, address_freeform, address_type, country_code, country_name, address_line, " +
+				"house_number, road, locality, postal_code, building_description, neighborhood, area_level1, area_level2, area_level3" +
+				")" +
+				"VALUES (" + 
+				person_orig_id + place_id + ", " + service_source + ", " + name_freeform + ", " + address_freeform + ", " + address_type + ", " + 
+				country_code + ", " + country_name + ", " + address_line + ", " + road_number + ", " + road + ", " + locality + ", " + postal_code + ", " + 
+				building_description + ", " + neighborhood + ", " + area_level1 + ", " + area_level2 + ", " + area_level3 + 
+				");";
+		sqlList.add(insertAddress);
+		
+		//INSERT INTO bei Tabelle tls321_geometry
+		String insertGeometry =
+			"INSERT INTO tls321_geometry (" +
+				"geometry_id, geometric_quality, point_lat, point_lng, bbox_lat_north, bbox_lng_east, bbox_lat_south, bbox_lng_west" +
+				")" +
+				"VALUES (" + 
+				"(SELECT geometry_id FROM tls320_enriched_address WHERE person_orig_id = " + person_orig_id + ")" + geometric_quality + ", " + 
+				point_lat + ", " + point_lng + ", " + bbox_lat_north + ", " + bbox_lng_east + ", " + bbox_lat_south + ", " + bbox_lng_west +  
+			");";
+		sqlList.add(insertGeometry);
+		
 		return sqlList;
 	}
 	
 	public List <String> alignGoogle(QueryGoogle google){
+		
+		int index = google.getDefIndex();
+		Results obj = google.getResults().get(index); 
+		//hier wird kein addressObj benötigt, da alle Variablen vorher bei Results also hier obj abgespeichert sind
+		Geometry GeoObj = obj.getGeometry();
+		
+		//Daten in die Attribute bei Klasse Alignment einfügen
+		place_id = obj.getPlace_id(); //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
+		service_source = "Google";
+		name_freeform = ""; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
+		address_freeform = obj.getFormatted_address();
+		address_type = obj.getTypes().get(0); //Achtung hier ist eigentlich eine Liste aber man kann nur eines auswählen für die "Ablage"
+		country_code = obj.getCountry_code();
+		country_name = obj.getCountry_name();
+		road = obj.getRoute();
+		road_number = obj.getAddressNumber(); 
+		address_line = road_number + " " + road;
+		locality = obj.getLocality();
+		postal_code = obj.getPostalCode();
+		building_description = obj.getPremise();
+		neighborhood = obj.getNeighborhood(); 
+		area_level1 = obj.getAreaLevel1();
+		area_level2 = obj.getAreaLevel2();
+		area_level3 = obj.getAreaLevel3();
+		geometric_quality = GeoObj.getLocation_type();
+		point_lat = Double.parseDouble(GeoObj.getLocation().getLat());
+		point_lng = Double.parseDouble(GeoObj.getLocation().getLng());
+		bbox_lat_north = Double.parseDouble(GeoObj.getViewport().getNortheast().getLat()); // North Latitude
+		bbox_lng_east = Double.parseDouble(GeoObj.getViewport().getNortheast().getLng()); // East Longitude
+		bbox_lat_south = Double.parseDouble(GeoObj.getViewport().getSouthwest().getLat()); // South Latitude
+		bbox_lng_west = Double.parseDouble(GeoObj.getViewport().getSouthwest().getLng()); // West Longitude
+		polygonpointsList = null; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
+		
+		// SQL-Statements erstellen
+		//INSERT INTO bei Tabelle tls320_enriched_address
+		String insertAddress = 
+				"INSERT INTO tls320_enriched_address (" +
+				"person_orig_id, place_id, service_source, name_freeform, address_freeform, address_type, country_code, country_name, address_line, " +
+				"house_number, road, locality, postal_code, building_description, neighborhood, area_level1, area_level2, area_level3" +
+				")" +
+				"VALUES (" + 
+				person_orig_id + place_id + ", " + service_source + ", " + name_freeform + ", " + address_freeform + ", " + address_type + ", " + 
+				country_code + ", " + country_name + ", " + address_line + ", " + road_number + ", " + road + ", " + locality + ", " + postal_code + ", " + 
+				building_description + ", " + neighborhood + ", " + area_level1 + ", " + area_level2 + ", " + area_level3 + 
+				");";
+		sqlList.add(insertAddress);
+		
+		//INSERT INTO bei Tabelle tls321_geometry
+		String insertGeometry =
+			"INSERT INTO tls321_geometry (" +
+				"geometry_id, geometric_quality, point_lat, point_lng, bbox_lat_north, bbox_lng_east, bbox_lat_south, bbox_lng_west" +
+				")" +
+				"VALUES (" + 
+				"(SELECT geometry_id FROM tls320_enriched_address WHERE person_orig_id = " + person_orig_id + ")" + geometric_quality + ", " + 
+				point_lat + ", " + point_lng + ", " + bbox_lat_north + ", " + bbox_lng_east + ", " + bbox_lat_south + ", " + bbox_lng_west +  
+			");";
+		sqlList.add(insertGeometry);
 		
 		return sqlList;
 	}

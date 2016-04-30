@@ -126,48 +126,15 @@ public class Query {
 	//Methode gibt vordefinierten String zurück, des aussagt welcher Service aufgerufen wurde (z.B. osm)
 	public String query() {
 		
-		String rawAddress = getRawAddress();
 		System.out.println(); //test-code
 		System.out.println("start query(), rawAddress :" + rawAddress); //test-code
-		//OSM Service abfragen und auf Bollean statusOSM setzen, um zu überprüfen ob abfrage vollständig war
-		//überprüfen welche Services bereits genutzt wurden
 		
-		/*
-		//drei Boolean muss hier instanziert werden
-		Boolean statusOSM = null;
-		Boolean statusBing = null;
-		Boolean statusGoogle = null;
-		
-		//überprüfen ob OSM bereits überprüft wurde wenn nicht, wird null gesetzt, ansonsten false oder true
-		//Überprüfung kann evt. verbessert werden
-		if(osm == null){
-			statusOSM = null;
-		}
-		else{
-			statusOSM = osm.get(0).getStatusQuery();
-		}
-		//überprüfen ob OSM bereits überprüft wurde wenn nicht, wird null gesetzt, ansonsten false oder true
-		if(bing == null){
-			statusBing = null;
-		}
-		else{
-			statusBing = bing.getResourceSets().get(0).getStatusQuery();
-		}
-		//überprüfen ob OSM bereits überprüft wurde wenn nicht, wird null gesetzt, ansonsten false oder true
-		if(google == null){
-			statusGoogle = null;
-		}
-		else{
-			statusGoogle = google.getStatusQuery();
-		}
-		*/
-		 
+		//überprüfen welche Services bereits genutzt wurden 
 		//Code noch nicht vollständig: es wird überprüft ob vorherige abfrage positiv war. 
 		//wenn positiv beginnt Validierung, wenn negativ wird anderer Service aufgerufen
 		if(statusOSM == null){
 			System.out.println("statusOSM null, Query beginnt"); //test-code
 			statusOSM = queryOSM(rawAddress);
-			//this.statusOSM = statusOSM;
 			System.out.println("statusOSM neu : " + statusOSM); //test-code
 			//.set weil der Wert an dieser Position ersetzt werden soll
 			statusList.set(0, statusOSM); //statusOSM-wert in statusList hinzufügen. OSM hat den platz 1 bei statusList
@@ -177,7 +144,6 @@ public class Query {
 			if(statusBing == null){
 				System.out.println("statusBing null, Query beginnt"); //test-code
 				statusBing = queryBing(rawAddress);
-				//this.statusBing = statusBing;
 				System.out.println("statusBing neu : " + statusBing); //test-code
 				//.set weil der Wert an dieser Position ersetzt werden soll
 				statusList.set(1, statusBing); //statusBing-wert in statusList hinzufügen. Bing hat den platz 2 bei statusList
@@ -187,7 +153,6 @@ public class Query {
 				if(statusGoogle == null){
 					System.out.println("statusGoogle null, Query beginnt"); //test-code
 					statusGoogle = queryGoogle(rawAddress);
-					//this.statusGoogle = statusGoogle;
 					System.out.println("statusGoogle neu : " + statusGoogle); //test-code
 					//.set weil der Wert an dieser Position ersetzt werden soll
 					statusList.set(2, statusGoogle); //statusBing-wert in statusList hinzufügen. Bing hat den platz 2 bei statusList
@@ -214,8 +179,6 @@ public class Query {
 		System.out.println("Beginn abfrage bei OSM: urlVar " + urlVar); //test-code
 		Boolean status = null; //Boolean für OSM ob anfrage i.O ist ; wird default-mässig auf true gesetzt weil sonst while-schlaufe nicht funktioniert
 		
-		//DL/Service wird abgefragt und man erhält eine "externe Adresse"
-		
 		try {
 			
 			/*
@@ -239,19 +202,11 @@ public class Query {
 			ex.printStackTrace();
 		}
 		
-		//achtung nicht vollständig -> get(0) muss noch mit int ersetzt werden sonst wird immer das gleiche aufgerufen
-		//String display_name = osm.get(0).getDisplay_name();
-		//System.out.println("name: " + display_name);
-		//setExtAddress(display_name);
-		
 		int sizeResults = osm.size();
-		
+		// for-Schlaufe falls mehrere Adressen zurückkommen erstellt ListNewAddressBing
 		for(int i = 0; i < sizeResults; i++){
 			
 			String display_name = osm.get(i).getDisplay_name(); //nur für println "fügt index bei List NewAddressTrue. index i:" benötigt
-			
-			// for-Schlaufe falls mehrere Adressen zurückkommen erstellt ListNewAddressBing
-			// OSM-Adresse erstellen für Alignment -> evt. in Konstruktor QueryOSM integrieren?
 			System.out.println("start Methode createListNewAddressOSM an der Stelle (i): " + i); //test-code
 			osm.get(i).getAddress().createListNewAddress(i, osm);
 			
@@ -271,11 +226,10 @@ public class Query {
 			else{
 				System.out.println("nichts wird hinzugefügt -> checkList: " + checkList);
 			}
-			
 		}
 		
 		/*
-		//print newAddressTrue
+		//print newAddressTrue für Testzwecke
 		for(int i = 0; i < osm.get(0).getNewAddressTrue().size(); i++){
 			System.out.println("newAddressTrue an der Stelle " + i + " : " + osm.get(0).getNewAddressTrue().get(i));
 		}
@@ -308,7 +262,7 @@ public class Query {
 		System.out.println("rawAddress: " + rawAddress); //test-code
 		String urlVar = rawAddress.replaceAll(" ", "%20");
 		String bingKey = "AoJzcR56eRmy0CW6xaxTkzvkb3cTLjb6UWgMj2fu_4gt87yatP7oTZ1tcs1wIcx3";
-		String finalURL = "http://dev.virtualearth.net/REST/v1/Locations/" + urlVar + "?&key=" + bingKey;
+		String finalURL = "http://dev.virtualearth.net/REST/v1/Locations/" + urlVar + "?&key=" + bingKey +"&include=ciso2&includeNeighborhood=1";
 		System.out.println("URL : " + finalURL); //test-code
 		System.out.println("Beginn abfrage bei Bing: urlVar " + urlVar); //test-code
 		Boolean status = true; //Boolean für Bing ob anfrage i.O ist ; wird default-mässig auf true gesetzt weil sonst while-schlaufe nicht funktioniert
@@ -328,21 +282,12 @@ public class Query {
 			ex.printStackTrace();
 		}
 		
-		//achtung nicht vollständig -> get(0) muss noch mit int ersetzt werden sonst wird immer das gleiche aufgerufen
-		//String bingName = bing.getResourceSets().get(0).getResources().get(0).getName();
-		//System.out.println("name: " + bingName);
-		//setExtAddress(bingName);
-		//System.out.println("ExtAddress: " + getExtAddress());
-		
 		int sizeResults = bing.getResourceSets().get(0).getResources().size();
-		
+		// for-Schlaufe falls mehrere Adressen zurückkommen erstellt ListNewAddressBing
 		for(int i = 0; i < sizeResults; i++){
 			
 			String bingName = bing.getResourceSets().get(0).getResources().get(i).getName();
 			System.out.println("name: " + bingName);
-			
-			// for-Schlaufe falls mehrere Adressen zurückkommen erstellt ListNewAddressBing
-			// Bing-Adresse erstellen für Alignment -> evt. in Konstruktor QueryBing integrieren?
 			System.out.println("start Methode createListNewAddressBing an der Stelle (i): " + i); //test-code
 			bing.getResourceSets().get(0).getResources().get(i).createListNewAddress(i, bing);
 			
@@ -409,18 +354,11 @@ public class Query {
 			google = mapper.readValue(body, QueryGoogle.class);
 			
 			int sizeResults = google.getResults().size();
-			
-			//String googleName = google.getResults().get(0).getFormatted_address(); //muss noch geändert werden siehe untere for-schlaufe
-			//setExtAddress(googleName);
-			//System.out.println("ExtAddress: " + getExtAddress());
-			
+			// for-Schlaufe falls mehrere Adressen zurückkommen erstellt ListNewAddressGoogle
 			for(int i = 0; i < sizeResults; i++){
 				
 				String googleName = google.getResults().get(i).getFormatted_address();
 				System.out.println("formated_address: " + googleName);
-				
-				// for-Schlaufe falls mehrere Adressen zurückkommen erstellt ListNewAddressGoogle
-				// Google-Adresse erstellen für Alignment -> evt. in Konstruktor QueryGoogle integrieren?
 				System.out.println("start Methode createListNewAddressGoogle an der Stelle (i): " + i); //test-code
 				google.getResults().get(i).createListNewAddress(i, google); 
 				

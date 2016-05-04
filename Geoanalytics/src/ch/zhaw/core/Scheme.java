@@ -30,6 +30,7 @@ public class Scheme {
 	private Boolean allServices; //wird zum überprüfen genutzt ob alle services benutzt wurden
 	private List<String> us_state_code; //Abkürzung eines Bundesstaates nach FIPS-Code Reihenfolge wird für die überprüfung von Spezialfällen von US-Adressen gebraucht -> Methode specialCaseUS()
 	private List<String> us_state_name; // Vollständiger Name eines Bundesstaates nach FIPS-Code Reihenfolge
+	private String checkedVal; //wird für die Methode startAlignment gebraucht, da checkedQuery nicht abgespeichert wird
 	
 	public Scheme(int personOrigId, int personId, String nameFreeform, String addressOne, String addressTwo, String countryCode) {
 		this.personOrigId = personOrigId;
@@ -106,6 +107,30 @@ public class Scheme {
 		this.allServices = allServices;
 	}
 
+	public List<String> getUs_state_code() {
+		return us_state_code;
+	}
+
+	public void setUs_state_code(List<String> us_state_code) {
+		this.us_state_code = us_state_code;
+	}
+
+	public List<String> getUs_state_name() {
+		return us_state_name;
+	}
+
+	public void setUs_state_name(List<String> us_state_name) {
+		this.us_state_name = us_state_name;
+	}
+
+	public String getCheckedVal() {
+		return checkedVal;
+	}
+
+	public void setCheckedVal(String checkedVal) {
+		this.checkedVal = checkedVal;
+	}
+
 	public String createRawAddress(String addressOne, String addressTwo){
 		String combinedString = addressOne + " " + addressTwo;
 		return combinedString;
@@ -155,7 +180,8 @@ public class Scheme {
 		}
 		else{
 			//Durchführung der Strukturierung der Adresse
-			sqlList = startAlignment(checkedQuery, m);
+			sqlList = startAlignment(m);
+			System.out.println("sqlList size: " + sqlList.size());
 		}
 		return sqlList; //evt. muss die SQL-Statements zurückgegeben werden
 	}
@@ -335,6 +361,7 @@ public class Scheme {
 				obj.setDefIndex(indexBest);
 				System.out.println("listScoreTrue ist nicht leer, defIndexOSM:" + indexBest + " , Score: " + scoreBest); //test-code
 				check = true; //setzt check auf false oder true nach ergebnis der validierung
+				checkedVal = checkedQuery; //wird für die Methode startAlignment gebraucht, da checkedQuery nicht abgespeichert wird 
 			}
 			else{
 				obj.setStatusValidation(false);
@@ -398,6 +425,7 @@ public class Scheme {
 					obj.setDefIndex(indexBest);
 					System.out.println("newAddressTrue ist nicht leer, defIndexBing:" + indexBest + " , Score: " + scoreBest); //test-code
 					check = true; //setzt check auf false oder true nach ergebnis der validierung
+					checkedVal = checkedQuery; //wird für die Methode startAlignment gebraucht, da checkedQuery nicht abgespeichert wird
 				}
 				else{
 					obj.setStatusValidation(false);
@@ -461,6 +489,7 @@ public class Scheme {
 						obj.setDefIndex(indexBest);
 						System.out.println("newAddressTrue ist nicht leer, defIndexGoogle:" + indexBest + " , Score: " + scoreBest); //test-code
 						check = true; //setzt check auf false oder true nach ergebnis der validierung
+						checkedVal = checkedQuery; //wird für die Methode startAlignment gebraucht, da checkedQuery nicht abgespeichert wird
 					}
 					else{
 						obj.setStatusValidation(false);
@@ -476,7 +505,6 @@ public class Scheme {
 				}
 			}
 		}
-		
 		return check;
 	}
 	
@@ -515,34 +543,37 @@ public class Scheme {
 	}
 	
 	//resultat wird als SQL-Statement vorbereitet für die Abspeicherung in die Datenbank
-	public List<String> startAlignment(String checkedQuery, Query m){
+	public List<String> startAlignment(Query m){
 		System.out.println(); //test-code
 		System.out.println("start startAlignment()"); //test-code
 		
 		Alignment l = new Alignment(personOrigId); //Inittiere Alignment, person_orig_id wird beim Konstruktor gespeichert
 		List<String> sqlList = new ArrayList <String>(); //Liste Instanzieren wird bei den if-Bedingungen weiter unten gebraucht
 		
+		System.out.println("checkedVal : " + checkedVal); //test-code
 		//es wird eine Liste erstellt die alle SQL-Statement beinhaltet, 
 		//vorher wird noch geprüft welcher service genutzt wurde und welche adresse abgespeicher werden soll
-		if(checkedQuery == "osm"){
+		if(checkedVal == "osm"){
 			List<QueryOSM> osm = m.getOsm(); 	// wird als input für Methode alignOSM gebraucht
 			sqlList = l.alignOSM(osm);
 		}
 		else{
-			if(checkedQuery == "bing"){	
+			if(checkedVal == "bing"){	
 				QueryBing bing = m.getBing();		// wird als input für Methode alignBing gebraucht
 				sqlList = l.alignBing(bing);
 			}
 			else{
-				if(checkedQuery == "google"){
+				if(checkedVal == "google"){
 					QueryGoogle google = m.getGoogle();	// wird als input für Methode alignGoogle gebraucht
 					sqlList = l.alignGoogle(google);
 				}
 				else{
-					
+					System.out.println("Fehler es konnte kein Service zugewiesen werden!"); //test-code
+					System.out.println("checkedVal : " + checkedVal); //test-code
 				}
 			}
 		}
+		System.out.println("sqlList size: " + sqlList.size());
 		return sqlList;
 	}
 	

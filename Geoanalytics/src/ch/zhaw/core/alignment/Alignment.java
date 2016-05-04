@@ -410,7 +410,7 @@ public class Alignment {
 				name_freeform = addressObj.getAddress29();
 			}
 			else {
-				name_freeform = null;
+				name_freeform = "";
 			}
 		}
 		address_freeform = obj.getDisplay_name();
@@ -421,7 +421,7 @@ public class Alignment {
 		road_number = addressObj.getHouse_number();
 		address_line = road_number + " " + road;
 		//es wird so gemacht, weil sonst die gleichen if-Bedingungen hier nochmals implementiert werden müsste
-		locality = addressObj.getListNewAddress().get(3); //siehe bei Klasse Address Methode createListNewAddress()
+		locality = addressObj.getListNewAddress().get(2); //siehe bei Klasse Address Methode createListNewAddress()
 		postal_code = addressObj.getPostcode();
 		building_description = ""; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
 		neighborhood = ""; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
@@ -449,66 +449,29 @@ public class Alignment {
 		// obj.getPolygonpoints().get(1).get(0);
 		
 		// SQL-Statements erstellen
-		String insertAddress = 
-				"INSERT INTO tls320_enriched_address (" +
-				"person_orig_id, place_id, service_source, name_freeform, address_freeform, address_type, country_code, country_name, address_line, " +
-				"house_number, road, locality, postal_code, building_description, neighborhood, area_level1, area_level2, area_level3" +
-				")" +
-				"VALUES (" + 
-				person_orig_id + place_id + ", " + service_source + ", " + name_freeform + ", " + address_freeform + ", " + address_type + ", " + 
-				country_code + ", " + country_name + ", " + address_line + ", " + road_number + ", " + road + ", " + locality + ", " + postal_code + ", " + 
-				building_description + ", " + neighborhood + ", " + area_level1 + ", " + area_level2 + ", " + area_level3 + 
-				");";
-		sqlList.add(insertAddress);
+		int sqlIndex = 0; //wird gemacht, um sicherzustellen, dass sie SQL-Statements in korrekter Reihenfolge durchgeführt werden
 		
-		String insertGeometry =
-			"INSERT INTO tls321_geometry (" +
-				"geometry_id, geometric_quality, point_lat, point_lng, bbox_lat_north, bbox_lng_east, bbox_lat_south, bbox_lng_west" +
-				")" +
-				"VALUES (" + 
-				"(SELECT geometry_id FROM tls320_enriched_address WHERE person_orig_id = " + person_orig_id + ")" + geometric_quality + ", " + 
-				point_lat + ", " + point_lng + ", " + bbox_lat_north + ", " + bbox_lng_east + ", " + bbox_lat_south + ", " + bbox_lng_west +  
-			");";
+		//INSERT INTO bei Tabelle tls320_enriched_address
+		String insertAddress = createInsertAddress(sqlIndex);
+		sqlList.add(sqlIndex, insertAddress);
+		sqlIndex++;
 		
-		/*
-		String insertGeometry = 
-				"UPDATE tls321_geometry" +
-				"SET " +
-				"geometric_quality=" + geometric_quality + 
-				", point_lat=" + point_lat + 
-				", point_lng=" + point_lng + 
-				", bbox_lat_north=" + bbox_lat_north + 
-				", bbox_lng_east=" + bbox_lng_east + 
-				", bbox_lat_south=" + bbox_lat_south + 
-				", bbox_lng_west=" + bbox_lng_west + 
-				"WHERE geometry_id= " + 
-					"(SELECT geometry_id FROM tls320_enriched_address WHERE person_orig_id = " + person_orig_id + 
-				");";
-		*/
-		sqlList.add(insertGeometry);
-		
-		String insertPolygonpoints =
-				"INSERT INTO tls322_polygon_points (" +
-					"polygonpoints_id" +
-					")" +
-					"VALUES (" + 
-					"(SELECT polygonpoints_id FROM tls321_geometry WHERE geometry_id = " +
-						"(SELECT geometry_id FROM tls320_enriched_address WHERE person_orig_id = " + person_orig_id + ")" +  
-				");";
-		sqlList.add(insertPolygonpoints);
+		//INSERT INTO bei Tabelle tls321_geometry
+		String insertGeometry = createInsertGeometry(sqlIndex);		
+		sqlList.add(sqlIndex, insertGeometry);
+		sqlIndex++;
 		
 		for(int i = 0; i < polygonpointsList.size(); i++){
-			String insertPolygonCoordinates = 
-				"UPDATE tls323_polygon_coordinates" +
-				"SET " +
-				"lat=" + polygonpointsList.get(0) + 
-				", lng=" + polygonpointsList.get(1) + 
-				"WHERE polygoncoordinates_id= " + 
-					"(SELECT polygonpoints_id FROM tls322_polygon_points WHERE polygonpoints_id = " +
-						"(SELECT polygonpoints_id FROM tls321_geometry WHERE geometry_id = " +
-							"(SELECT geometry_id FROM tls320_enriched_address WHERE person_orig_id = " + person_orig_id +
-				");";
-			sqlList.add(insertPolygonCoordinates);
+			
+			//INSERT INTO bei Tabelle tls322_polygon_points
+			String insertPolygonpoints = createInsertPolygonpoints(sqlIndex, i);
+			sqlList.add(sqlIndex, insertPolygonpoints);
+			sqlIndex++;
+			
+			// INSERT INTO bei Tabelle tls323_polygon_coordinates 
+			String insertPolygonCoordinates = createInsertPolygonCoordinates(sqlIndex, i);
+			sqlList.add(sqlIndex, insertPolygonCoordinates);
+			sqlIndex++;
 		}
 		
 		
@@ -549,6 +512,7 @@ public class Alignment {
 			}
 		}		
 		*/
+		System.out.println("sqlList size: " + sqlList.size());
 		return sqlList;
 	}
 	
@@ -587,29 +551,16 @@ public class Alignment {
 		polygonpointsList = null; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
 		
 		// SQL-Statements erstellen
+		int sqlIndex = 0; //wird gemacht, um sicherzustellen, dass sie SQL-Statements in korrekter Reihenfolge durchgeführt werden
 		//INSERT INTO bei Tabelle tls320_enriched_address
-		String insertAddress = 
-				"INSERT INTO tls320_enriched_address (" +
-				"person_orig_id, place_id, service_source, name_freeform, address_freeform, address_type, country_code, country_name, address_line, " +
-				"house_number, road, locality, postal_code, building_description, neighborhood, area_level1, area_level2, area_level3" +
-				")" +
-				"VALUES (" + 
-				person_orig_id + place_id + ", " + service_source + ", " + name_freeform + ", " + address_freeform + ", " + address_type + ", " + 
-				country_code + ", " + country_name + ", " + address_line + ", " + road_number + ", " + road + ", " + locality + ", " + postal_code + ", " + 
-				building_description + ", " + neighborhood + ", " + area_level1 + ", " + area_level2 + ", " + area_level3 + 
-				");";
-		sqlList.add(insertAddress);
+		String insertAddress = createInsertAddress(sqlIndex);
+		sqlList.add(sqlIndex, insertAddress);
+		sqlIndex++;
 		
 		//INSERT INTO bei Tabelle tls321_geometry
-		String insertGeometry =
-			"INSERT INTO tls321_geometry (" +
-				"geometry_id, geometric_quality, point_lat, point_lng, bbox_lat_north, bbox_lng_east, bbox_lat_south, bbox_lng_west" +
-				")" +
-				"VALUES (" + 
-				"(SELECT geometry_id FROM tls320_enriched_address WHERE person_orig_id = " + person_orig_id + ")" + geometric_quality + ", " + 
-				point_lat + ", " + point_lng + ", " + bbox_lat_north + ", " + bbox_lng_east + ", " + bbox_lat_south + ", " + bbox_lng_west +  
-			");";
-		sqlList.add(insertGeometry);
+		String insertGeometry = createInsertGeometry(sqlIndex);		
+		sqlList.add(sqlIndex, insertGeometry);
+		sqlIndex++;
 		
 		return sqlList;
 	}
@@ -649,32 +600,68 @@ public class Alignment {
 		polygonpointsList = null; //falls nichts gespeichert werden soll kann diese Zeile gelöscht werden
 		
 		// SQL-Statements erstellen
+		int sqlIndex = 0; //wird gemacht, um sicherzustellen, dass sie SQL-Statements in korrekter Reihenfolge durchgeführt werden
 		//INSERT INTO bei Tabelle tls320_enriched_address
-		String insertAddress = 
-				"INSERT INTO tls320_enriched_address (" +
-				"person_orig_id, place_id, service_source, name_freeform, address_freeform, address_type, country_code, country_name, address_line, " +
-				"house_number, road, locality, postal_code, building_description, neighborhood, area_level1, area_level2, area_level3" +
-				")" +
-				"VALUES (" + 
-				person_orig_id + place_id + ", " + service_source + ", " + name_freeform + ", " + address_freeform + ", " + address_type + ", " + 
-				country_code + ", " + country_name + ", " + address_line + ", " + road_number + ", " + road + ", " + locality + ", " + postal_code + ", " + 
-				building_description + ", " + neighborhood + ", " + area_level1 + ", " + area_level2 + ", " + area_level3 + 
-				");";
-		sqlList.add(insertAddress);
+		String insertAddress = createInsertAddress(sqlIndex);
+		sqlList.add(sqlIndex, insertAddress);
+		sqlIndex++;
 		
 		//INSERT INTO bei Tabelle tls321_geometry
-		String insertGeometry =
-			"INSERT INTO tls321_geometry (" +
-				"geometry_id, geometric_quality, point_lat, point_lng, bbox_lat_north, bbox_lng_east, bbox_lat_south, bbox_lng_west" +
-				")" +
-				"VALUES (" + 
-				"(SELECT geometry_id FROM tls320_enriched_address WHERE person_orig_id = " + person_orig_id + ")" + geometric_quality + ", " + 
-				point_lat + ", " + point_lng + ", " + bbox_lat_north + ", " + bbox_lng_east + ", " + bbox_lat_south + ", " + bbox_lng_west +  
-			");";
-		sqlList.add(insertGeometry);
+		String insertGeometry = createInsertGeometry(sqlIndex);	
+		sqlList.add(sqlIndex, insertGeometry);
+		sqlIndex++;
 		
 		return sqlList;
 	}
 	
+	public String createInsertAddress(int sqlIndex){
+		String insertAddress = 
+			"INSERT INTO tls320_enriched_address (" +
+				"person_orig_id, place_id, service_source, name_freeform, address_freeform, address_type, country_code, country_name, address_line, " +
+				"house_number, road, locality, postal_code, building_description, neighborhood, area_level1, area_level2, area_level3" +
+			")" +
+			"VALUES (" + 
+				person_orig_id + ", '" + place_id + "', '" + service_source + "', '" + name_freeform + "', '" + address_freeform + "', '" + address_type + "', '" + 
+				country_code + "', '" + country_name + "', '" + address_line + "', '" + road_number + "', '" + road + "', '" + locality + "', '" + postal_code + "', '" + 
+				building_description + "', '" + neighborhood + "', '" + area_level1 + "', '" + area_level2 + "', '" + area_level3 + 
+			"');";
+		return insertAddress;
+	}
 	
+	public String createInsertGeometry(int sqlIndex){
+		String insertGeometry = 
+			"INSERT INTO tls321_geometry (" +
+				"geometry_id, geometric_quality, point_lat, point_lng, bbox_lat_north, bbox_lng_east, bbox_lat_south, bbox_lng_west" +
+			")" +
+			"VALUES (" + 
+				"(SELECT geometry_id FROM tls320_enriched_address WHERE person_orig_id = " + person_orig_id + "), '" + geometric_quality + "', " + 
+				point_lat + ", " + point_lng + ", " + bbox_lat_north + ", " + bbox_lng_east + ", " + bbox_lat_south + ", " + bbox_lng_west +  
+			");";
+		return insertGeometry;
+	}
+	
+	public String createInsertPolygonpoints(int sqlIndex, int i){
+		String insertPolygonpoints = 
+			"INSERT INTO tls322_polygon_points (" +
+				"polygonpoints_fk, polygoncoordinates_id" +
+				")" +
+			"VALUES (" + 
+				"(SELECT polygonpoints_fk FROM tls321_geometry WHERE geometry_id = " +
+					"(SELECT geometry_id FROM tls320_enriched_address WHERE person_orig_id = " + person_orig_id + "))" + ", CONCAT(polygonpoints_fk, '-" + i +
+			"'));";
+		return insertPolygonpoints;
+	}
+	
+	public String createInsertPolygonCoordinates(int sqlIndex, int i){
+		String insertPolygonCoordinates = 
+			"INSERT INTO tls323_polygon_coordinates (" +
+				"polygoncoordinates_id, lat, lng" +
+			")" +
+			"VALUES (" + 
+				"(SELECT polygoncoordinates_id FROM patstat.tls322_polygon_points WHERE polygoncoordinates_id =" + 
+					"CONCAT((SELECT polygonpoints_fk FROM tls321_geometry WHERE geometry_id = " +
+						"(SELECT geometry_id FROM tls320_enriched_address WHERE person_orig_id = " + person_orig_id + ")), '-" + i + "'))" + ", " + polygonpointsList.get(i).get(0) + ", " + polygonpointsList.get(i).get(1) +
+			");";
+		return insertPolygonCoordinates;
+	}
 }

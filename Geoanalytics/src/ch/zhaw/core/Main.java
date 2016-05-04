@@ -7,6 +7,7 @@ import java.util.Scanner; //für Eingabe in Konsole benötigt
 
 public class Main {
 	
+	private static List<String> sqlList; // für Methode executeSQLStmt() benötigt
 	/*
 	//USER_AGENT festlegen
 	private final String USER_AGENT = "Mozilla/5.0";
@@ -387,13 +388,25 @@ public class Main {
 				Scheme f = new Scheme(personOrigId, personId, nameFreeform, addressOne, addressTwo, countryCode);
 				
 				//Abfrage Initiieren
-				List<String> sqlList = f.mainQuery(f.getRawAddress());
+				//List<String> sqlList = f.mainQuery(f.getRawAddress());
+				sqlList = f.mainQuery(f.getRawAddress());
+				System.out.println("sqlList size: " + sqlList.size());
+				
+				
+				/*
+				//print sql-statements
+				for(int i = 0; i < sqlList.size(); i++){
+					System.out.println("sqlList.get(i), sql: " + sqlList.get(i));
+				}
 				
 				//erhaltene sql-Statements ausführen
+				Statement stmt2 = conn.createStatement();
 				for(int i = 0; i < sqlList.size(); i++){
-					stmt.executeQuery(sqlList.get(i));
+					stmt.executeUpdate(sqlList.get(i));
 					System.out.println("stmt.executeQuery(sqlList.get(i)), sql: " + sqlList.get(i));
 				}
+				stmt2.close();
+				*/
 			}
 			//ResultSet rs, Statement bereinigen und Verbindung schliessen
 			rs.close();
@@ -421,8 +434,57 @@ public class Main {
 		}//end try
 		System.out.println("DB Connection closed");
 		
+		executeSQLStmt();
 		// Resultat ausgeben	
 		//System.out.println("Resultat: " + f.startAbfrage(f.getAdress()));
+		System.out.println("Ende");
 		
+	}
+	
+	public static void executeSQLStmt(){
+		
+		//Instanzierung von Connection und Statement für Verbindung zur Datenbank
+		Connection conn2 = null;
+		Statement stmt2 = null;
+		try{
+			//JDBC Treiber initialisieren
+			Class.forName("com.mysql.jdbc.Driver");
+			//Verbindung zur Datenbank erstellen
+			System.out.println("Connecting to database...");
+			conn2 = DriverManager.getConnection(url,user,password);
+
+			//SQL Query ausführen
+			System.out.println("Creating statement...");
+			stmt2 = conn2.createStatement();
+					
+			for(int i = 0; i < sqlList.size(); i++){
+				stmt2.executeUpdate(sqlList.get(i));
+				System.out.println("stmt.executeQuery(sqlList.get(i)), sql: " + sqlList.get(i));
+			}
+					
+			//Statement bereinigen und Verbindung schliessen
+			stmt2.close();
+			conn2.close();
+		}catch(SQLException se){
+			//Fehler von JDBC behandeln
+			se.printStackTrace();
+		}catch(Exception e){
+			//Fehler von Class.forName behandeln
+			e.printStackTrace();
+		}finally{
+			//finally-Teil benutzen, um Ressourcen zu schliessen
+			try{
+				if(stmt2!=null)
+					stmt2.close();
+			}catch(SQLException se2){
+				}// nothing we can do
+			try{
+				if(conn2!=null)
+					conn2.close();
+				}catch(SQLException se){
+					se.printStackTrace();
+			}//end finally try
+		}//end try
+		System.out.println("DB Connection closed");
 	}
 }

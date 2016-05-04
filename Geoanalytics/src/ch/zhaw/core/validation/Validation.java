@@ -301,7 +301,7 @@ public class Validation {
 		System.out.println("Start getVal()"); //test
 		Boolean val = null;
 		
-		if (getScore() >= 120){
+		if (getScore() >= 70){
 			System.out.println("Score der Adresse ist gleich/grösser 120 : " + getScore()); //test-code
 			val = true;
 		}

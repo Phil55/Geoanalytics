@@ -208,7 +208,7 @@ public class Scheme {
 				else{
 					check = true;
 					System.out.println("status != null bei i : " + i); //test-code
-					allServices = true; // ACHTUNG: aufpassen muss evt. anders platziert werden!
+					// allServices = true; // ACHTUNG: aufpassen muss evt. anders platziert werden! fehler gefunden wegen Test erste 10 Testobjekte, testobjekt 1
 				}
 			}
 		}

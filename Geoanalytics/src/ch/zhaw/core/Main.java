@@ -23,7 +23,7 @@ public class Main {
 	static final String user = "";
 	static final String password = "";
 	
-	/*// Code für am Schluss (User muss Passwort eingeben
+	/*// Code für am Schluss (User muss Username und Passwort eingeben
 	static final String user = getUsername();
 	static final String password = getPassword();
 	*/

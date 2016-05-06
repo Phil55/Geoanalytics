@@ -148,58 +148,6 @@ public class Validation {
 		}
 	}
 	
-	/*
-	// Nur in Methode pruefen anwendbar
-	public void addListOldAddress(String rawAddress, int i){
-		
-		System.out.println("Start der Methode addListOldAddress"); //test
-		
-		int lengthRawAddress = newAddress.get(i).length();
-		int startOld = rawAddress.indexOf(newAddress.get(i));
-		int endOld = rawAddress.indexOf(newAddress.get(i)) + lengthRawAddress;
-		String firstLetter = newAddress.get(i).substring(0, 1); //ersten Buchstaben nehmen
-		int startIndex = rawAddress.indexOf(firstLetter, 0);
-		int endIndex = startIndex + lengthRawAddress;
-		List<String> list = new ArrayList<String>();
-		//ListOption f = new ListOption();
-			
-		System.out.println("StartOld an der Stelle :" + startOld); //test
-		System.out.println("EndOld an der Stelle :" + endOld); //test
-		System.out.println("StartIndex an der Stelle :" + startIndex); //test
-		System.out.println("EndIndex an der Stelle :" + endIndex); //test
-			
-		while (startIndex >= 0 && endIndex <= rawAddress.length()){
-				
-			if (endIndex <= rawAddress.length()){
-				list.add(rawAddress.substring(startIndex, endIndex));
-				System.out.println("add.list on i :" + i); //test
-				System.out.println("list.add :" + rawAddress.substring(startIndex, endIndex)); //test
-				startIndex = rawAddress.indexOf(firstLetter, startIndex + 1);
-				endIndex = startIndex + lengthRawAddress;
-			}
-			else {
-				System.out.println("no more add.list on i :" + i); //test
-			}
-		}
-		setListOldAddress(list);
-		//f.setListOldOption(list);
-		//provListOldAddress.add(f);
-			
-		System.out.println("StartOld an der Stelle :" + startOld);
-		System.out.println("EndOld an der Stelle :" + endOld);
-		System.out.println("StartIndex an der Stelle :" + startIndex); 
-		System.out.println("EndIndex an der Stelle :" + endIndex); 
-		System.out.println("newAddress String get(i) :" + newAddress.get(i));
-		
-		//aktuelle liste printen
-		for (int x = 0; x < listOldAddress.size(); x++){
-			System.out.println("listOldaddress String get(i) :" + listOldAddress.get(x));
-			System.out.println("int x :" + x);
-		}
-		System.out.println("Ende der Methode addListOldAddress"); //test
-	}
-	*/
-
 	public int validate(String rawAddress, List<String> listNewAddress){
 		System.out.println(); //test-code
 		System.out.println("Start validate()"); //test
@@ -214,7 +162,6 @@ public class Validation {
 		setPosibleRawAddress(rawAddress, listNewAddress);
 		
 		setNewAddress(listNewAddress); //Input listNewAddress in Attribut listNewAddress speichern damit Methode addListOldAddress geht
-		//listNewAddress = osm.get(0).getListNewAddressOSM(); //muss evt. geändert werden -> osm.get(0) falls mehrere Addressen vorkommen
 				
 		for (int i = 0; i <listNewAddress.size(); i++){
 			
@@ -302,11 +249,11 @@ public class Validation {
 		Boolean val = null;
 		
 		if (getScore() >= 70){
-			System.out.println("Score der Adresse ist gleich/grösser 120 : " + getScore()); //test-code
+			System.out.println("Score der Adresse ist gleich/grösser 70 : " + getScore()); //test-code
 			val = true;
 		}
 		else {
-			System.out.println("Score der Adresse ist kleiner 120 : " + getScore()); //test-code
+			System.out.println("Score der Adresse ist kleiner 70 : " + getScore()); //test-code
 			val = false;
 		}
 		
@@ -319,16 +266,6 @@ public class Validation {
 		
 		Option address_component = provListOldAddress.get(i).getAddress_component().get(x);
 		
-		/*
-		if (i == 0){
-			provScore = 100;
-			address_component.setProvScore(provScore);
-		}
-		else if (i == 1){
-			provScore = 100;
-			address_component.setProvScore(provScore);
-		}
-		*/
 		if (i == 0){
 			address_component.setProvScore(100.0);
 			System.out.println("Score :" + address_component.getProvScore());

@@ -15,7 +15,7 @@ public class ResourceSetsObj {
 	private List <Integer> listScoreTrue = new ArrayList<Integer>(); //für Validation benötigt
 	private int defIndex; //für Validation benötigt, verweist auf die Stelle, wo die Adresse mit dem besten Score ist
 	
-	//test dummy constructor for objectmapper
+	//Konstruktor für Object Mapper
 	public ResourceSetsObj(){	
 	}
 

@@ -31,8 +31,7 @@ public class Results {
 	private String premise = null;
 	private String postalCodeSuffix = null; // ist bei US-Adressen aufgetreten -> obwohl es für die Abspeicherung nicht benötigt wird, wird die Variable hier instanziert
 	
-	
-	//constructor for objectmapper
+	//Konstruktor für Object Mapper
 	public Results(){	
 	}
 
@@ -216,19 +215,6 @@ public class Results {
 		System.out.println(); //test-code
 		System.out.println("Start createListNewAddress() (Google)"); //test
 		
-		/*
-		//Strings werden default-mässig auf null gesetzt
-		String route = null;
-		String addressNumber = null;
-		String plz = null;
-		String locality = null;
-		String sublocalityLevel1 = null;
-		String areaLevel1 = null; //evt. nicht nötig
-		String areaLevel2 = null; //evt. nicht nötig
-		String country = null;
-		String postalCodeSuffix = null; // ist bei US-Adressen aufgetreten
-		*/
-		
 		// index wo das gesuchte element bei address_component ist wird als int gespeichert
 		int routeIndex = getIndex("route", i);
 		int addressNumberIndex = getIndex("street_number", i);
@@ -344,17 +330,6 @@ public class Results {
 		else{
 			addressLine = route + " " + addressNumber;
 		}
-		
-		//String addressLine = route + " " + addressNumber;
-		/*
-		String route = address_components.get(getIndex("route", i)).getLong_name();
-		String addressNumber = address_components.get(getIndex("street_number", i)).getLong_name();
-		String plz = address_components.get(getIndex("postal_code", i)).getLong_name();
-		String locality = address_components.get(getIndex("locality", i)).getLong_name();
-		String sublocalityLevel1 = address_components.get(getIndex("sublocality_level_1", i)).getLong_name();
-		String areaLevel1 = address_components.get(getIndex("administrative_area_level_1", i)).getLong_name(); //evt. nicht nötig
-		String areaLevel2 = address_components.get(getIndex("administrative_area_level_2", i)).getLong_name(); //evt. nicht nötig
-		*/
 				
 		// listNewAddress muss pro Service gleich strukturiert sein!! -> road, nr, plz, ort
 		// Struktur kann noch ergänzt bzw. verändert werden
@@ -362,12 +337,6 @@ public class Results {
 		//addressline
 		newAddress.add(addressLine);
 		System.out.println("newAddress.add(addressLine) = " + addressLine);
-		
-		/*
-		//nr
-		newAddress.add(addressNumber);
-		System.out.println("newAddress.add(addressNumber) = " + addressNumber);
-		*/
 		
 		//plz
 		newAddress.add(postalCode);
@@ -378,18 +347,6 @@ public class Results {
 			newAddress.add(locality);
 			System.out.println("newAddress.add(locality) = " + locality);
 		}
-		
-		//evt. nicht nötig
-		/*
-		if (areaLevel1 != null){
-			newAddress.add(areaLevel1);
-			System.out.println("newAddress.add(areaLevel1) = " + areaLevel1);
-		}
-		if (areaLevel2 != null){
-			newAddress.add(areaLevel2);
-			System.out.println("newAddress.add(areaLevel2) = " + areaLevel2);
-		}
-		*/
 		
 		printJsonResponseGoogle(i, google);
 	}

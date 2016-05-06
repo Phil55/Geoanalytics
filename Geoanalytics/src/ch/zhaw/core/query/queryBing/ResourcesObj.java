@@ -18,7 +18,7 @@ public class ResourcesObj {
 	private Boolean status = null; //für Validation benötigt
 	private Double score; //für Validation benötigt
 	
-	//test dummy constructor for objectmapper
+	//Konstruktor für Object Mapper
 	public ResourcesObj(){	
 	}
 
@@ -127,13 +127,6 @@ public class ResourcesObj {
 		String locality = address.getLocality();
 		String district = address.getAdminDistrict(); //evt. nicht nötig
 		String district2 = address.getAdminDistrict2(); //evt. nicht nötig
-		/*
-		String addressLine = bing.getResourceSets().get(0).getResources().get(k).getAddress().getAddressLine();
-		String plz = bing.getResourceSets().get(0).getResources().get(k).getAddress().getPostalCode();
-		String locality = bing.getResourceSets().get(0).getResources().get(k).getAddress().getLocality();
-		String district = bing.getResourceSets().get(0).getResources().get(k).getAddress().getAdminDistrict(); //evt. nicht nötig
-		String district2 = bing.getResourceSets().get(0).getResources().get(k).getAddress().getAdminDistrict2(); //evt. nicht nötig
-		*/
 		
 		// listNewAddress muss pro Service gleich strukturiert sein!! -> road, nr, plz, ort
 		// Struktur kann noch ergänzt bzw. verändert werden
@@ -141,11 +134,6 @@ public class ResourcesObj {
 		//addressline
 		newAddress.add(addressLine);
 		System.out.println("newAddress.add(addressLine) = " + addressLine);
-		/*
-		//nr
-		newAddress.add(addressNumber);
-		System.out.println("newAddress.add(addressNumber) = " + addressNumber);
-		*/
 		//plz
 		newAddress.add(plz);
 		System.out.println("newAddress.add(plz) = " + plz);
@@ -155,19 +143,7 @@ public class ResourcesObj {
 			System.out.println("newAddress.add(locality) = " + locality);
 		}
 		
-		//evt. nicht nötig
-		/*
-		if (district != null){
-			newAddress.add(district);
-			System.out.println("newAddress.add(district) = " + district);
-		}
-		if (district2 != null){
-			newAddress.add(district2);
-			System.out.println("newAddress.add(district2) = " + district2);
-		}
-		*/
 		printJsonResponseBing(i, bing, addressLine, plz, locality, district, district2);
-		
 	}
 	
 	//Strings und Print wird erstellt um testing übersichtlicher zu machen

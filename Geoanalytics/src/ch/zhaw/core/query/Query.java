@@ -16,7 +16,6 @@ import ch.zhaw.core.query.queryGoogle.*;
 public class Query {
 
 	private String rawAddress;
-	private String extAddress; //evt. Array
 	private List<QueryOSM> osm;
 	private QueryBing bing;
 	private QueryGoogle google;
@@ -27,12 +26,8 @@ public class Query {
 	private Boolean statusGoogle; // ersetzt statusQuery da es bei den Abfragen zu problemen kommt und so der einfachere weg ist
 	
 	public Query(String rawAddress) {
-		//super();
 		this.rawAddress = rawAddress;
 		this.statusList = new ArrayList<Boolean>();
-		//this.osm = new ArrayList<QueryOSM>();
-		//this.bing = new QueryBing();
-		//this.google = new QueryGoogle();
 		//folgende Reihenfolge wird bei statusList festgelegt:
 		//1 -> osm, 2 -> bing
 		for(int i = 0; i < 3; i++){ //zahl 3 repräsentiert die anzahl Services, die es gibt
@@ -46,14 +41,6 @@ public class Query {
 
 	public void setRawAddress(String rawAddress) {
 		this.rawAddress = rawAddress;
-	}
-
-	public String getExtAddress() {
-		return extAddress;
-	}
-
-	public void setExtAddress(String extAddress) {
-		this.extAddress = extAddress;
 	}
 	
 	public List<QueryOSM> getOsm() {

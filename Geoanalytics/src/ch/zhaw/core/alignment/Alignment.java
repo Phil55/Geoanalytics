@@ -9,9 +9,8 @@ import ch.zhaw.core.query.queryOSM.*;
 
 public class Alignment {
 
-	//Tabelle Address
-	private int person_orig_id; //PK
-	//private int geometry_id;	//FK -> PK bei Geometry -> wahrscheinlich nicht gebraucht
+	//Tabelle Address -> FK werden automatisch generiert keine Attribute benötigt
+	private int person_orig_id;
 	private String place_id;
 	private String service_source;
 	private String name_freeform;
@@ -38,113 +37,16 @@ public class Alignment {
 	private double bbox_lng_east;
 	private double bbox_lat_south;
 	private double bbox_lng_west;
-	//private int polygonpoints_id;	//FK -> PK bei Polygonpoints -> wahrscheinlich nicht gebraucht
-	
-	//Zwischentabelle Polygonpoints
-	//private int polygoncoordinates_id; //FK -> PK bei Polygoncoordinates -> wahrscheinlich nicht gebraucht
 	
 	//Tabelle Polygoncoordinates
 	private List<List<Double>> polygonpointsList;
 	
 	private List<String> sqlList;
 	
-	/*
-	private String extAdressHarm;
-	private String adressName;
-	private String adressNummer; //string wegen split
-	private String adressOrt;
-	private String adressPLZ; //string wegen split
-	private String adressLand;
-	private String coordinateLat;
-	private String coordinateLong;
-	private ArrayList <String> structAdress;
-	
-	
-	public Alignment(String extAdress) {
-		this.extAdressHarm = extAdress;
-		this.structAdress = new ArrayList<String>();
-	}
-	*/
 	public Alignment(int personOrigId) {
 		this.person_orig_id = personOrigId; //id wird über Klasse Struktur bei der Initialisierung zum Konstruktor weitergegeben, damit es nicht zur Methode align weitergegeben werden muss
 		this.sqlList = new ArrayList<String>();
 	}
-	
-	
-	
-	/*
-	public String getExtAdressHarm() {
-		return extAdressHarm;
-	}
-
-	public void setExtAdressHarm(String extAdressHarm) {
-		this.extAdressHarm = extAdressHarm;
-	}
-
-	public String getAdressName() {
-		return adressName;
-	}
-
-	public void setAdressName(String adressName) {
-		this.adressName = adressName;
-	}
-
-	public String getAdressNummer() {
-		return adressNummer;
-	}
-
-	public void setAdressNummer(String adressNummer) {
-		this.adressNummer = adressNummer;
-	}
-
-	public String getAdressOrt() {
-		return adressOrt;
-	}
-
-	public void setAdressOrt(String adressOrt) {
-		this.adressOrt = adressOrt;
-	}
-
-	public String getAdressPLZ() {
-		return adressPLZ;
-	}
-
-	public void setAdressPLZ(String adressPLZ) {
-		this.adressPLZ = adressPLZ;
-	}
-
-	public String getAdressLand() {
-		return adressLand;
-	}
-
-	public void setAdressLand(String adressLand) {
-		this.adressLand = adressLand;
-	}
-
-	public String getCoordinateLat() {
-		return coordinateLat;
-	}
-
-	public void setCoordinateLat(String coordinateLat) {
-		this.coordinateLat = coordinateLat;
-	}
-
-	public String getCoordinateLong() {
-		return coordinateLong;
-	}
-
-	public void setCoordinateLong(String coordinateLong) {
-		this.coordinateLong = coordinateLong;
-	}
-	
-	public ArrayList<String> getStructAdress() {
-		return structAdress;
-	}
-
-	public void setStructAdress(ArrayList<String> structAdress) {
-		this.structAdress = structAdress;
-	}
-	*/
 	
 	public int getPerson_orig_id() {
 		return person_orig_id;
@@ -346,32 +248,6 @@ public class Alignment {
 		this.bbox_lng_west = bbox_lng_west;
 	}
 
-	/*
-	public int getGeometry_id() {
-		return geometry_id;
-	}
-
-	public void setGeometry_id(int geometry_id) {
-		this.geometry_id = geometry_id;
-	}
-
-	public int getPolygonpoints_id() {
-		return polygonpoints_id;
-	}
-
-	public void setPolygonpoints_id(int polygonpoints_id) {
-		this.polygonpoints_id = polygonpoints_id;
-	}
-
-	public int getPolygoncoordinates_id() {
-		return polygoncoordinates_id;
-	}
-
-	public void setPolygoncoordinates_id(int polygoncoordinates_id) {
-		this.polygoncoordinates_id = polygoncoordinates_id;
-	}
-	*/
-
 	public List<String> getSqlList() {
 		return sqlList;
 	}
@@ -387,7 +263,6 @@ public class Alignment {
 	public void setPolygonpointsList(List<List<Double>> polygonpointsList) {
 		this.polygonpointsList = polygonpointsList;
 	}
-
 
 	//falls etwas null ist muss bei int 0, und bei String "" gegeben werden gemäss patstat_data_catalog S. 23
 	//strukturiert Adresse
@@ -474,44 +349,6 @@ public class Alignment {
 			sqlIndex++;
 		}
 		
-		
-		/*
-		String[] listextAdr = extAdress.split("\\,", 10);
-		
-		for (String i: listextAdr){
-			if (adressName == null){
-				setAdressName(i);
-				structAdress.add(i);
-			}
-			else if (adressNummer == null){
-				setAdressNummer(i);
-				structAdress.add(i);
-			}
-			else if (adressOrt == null){
-				setAdressOrt(i);
-				structAdress.add(i);
-			}
-			else if (adressPLZ == null){
-				setAdressPLZ(i);
-				structAdress.add(i);
-			}
-			else if (adressLand == null){
-				setAdressLand(i);
-				structAdress.add(i);
-			}
-			else if (coordinateLat == null){
-				setCoordinateLat(i);
-				structAdress.add(i);
-			}
-			else if (coordinateLong == null){
-				setCoordinateLong(i);
-				structAdress.add(i);
-			}
-			else {
-				structAdress.add(i);
-			}
-		}		
-		*/
 		System.out.println("sqlList size: " + sqlList.size());
 		return sqlList;
 	}

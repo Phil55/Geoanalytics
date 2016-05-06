@@ -5,7 +5,7 @@ public class Location {
 	private String lat;
 	private String lng;
 	
-	//constructor for objectmapper
+	//Konstruktor für Object Mapper
 	public Location(){	
 	}
 

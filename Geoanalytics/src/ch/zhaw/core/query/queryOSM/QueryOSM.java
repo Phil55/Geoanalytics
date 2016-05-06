@@ -26,27 +26,8 @@ public class QueryOSM {
 	private List <Double> listScore = new ArrayList<Double>(); //für Validation benötigt
 	private List <Integer> listScoreTrue = new ArrayList<Integer>(); //für Validation benötigt
 	private int defIndex; //für Validation benötigt, verweist auf die Stelle, wo die Adresse mit dem besten Score ist
-	
-	public QueryOSM(String place_id, String licence, String osm_type, String osm_id, List<String> boundingbox,
-			List<List<String>> polygonpoints, String lat, String lon, String display_name, String classe, String type,
-			String importance, Address address) {
-		super();
-		this.place_id = place_id;
-		this.licence = licence;
-		this.osm_type = osm_type;
-		this.osm_id = osm_id;
-		this.boundingbox = boundingbox;
-		this.polygonpoints = polygonpoints;
-		this.lat = lat;
-		this.lon = lon;
-		this.display_name = display_name;
-		this.classe = classe;
-		this.type = type;
-		this.importance = importance;
-		this.address = address;
-	}
-	
-	// constructor for objectmapper
+		
+	//Konstruktor für Object Mapper
 	public QueryOSM(){	
 	}
 

@@ -9,7 +9,7 @@ public class GeocodePointsObj {
 	private List<String> coordinates;
 	private List<String> usageTypes;
 	
-	//test dummy constructor for objectmapper
+	//Konstruktor für Object Mapper
 	public GeocodePointsObj(){	
 	}
 

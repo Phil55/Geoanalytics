@@ -13,7 +13,7 @@ public class QueryBing { //Literaturverweis finden um zu begründen wieso Package
 	private String traceId;
 	private List<ResourceSetsObj> resourceSets;
 	
-	//test dummy constructor for objectmapper
+	//Konstruktor für Object Mapper
 	public QueryBing(){	
 	}
 

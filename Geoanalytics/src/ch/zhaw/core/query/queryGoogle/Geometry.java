@@ -7,7 +7,7 @@ public class Geometry {
 	private Bounds bounds;
 	private String location_type;
 	
-	//constructor for objectmapper
+	//Konstruktor für Object Mapper
 	public Geometry(){	
 	}
 

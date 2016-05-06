@@ -37,25 +37,7 @@ public class Address {
 	private Boolean status = null; //für Validation benötigt
 	private Double score; //für Validation benötigt
 	
-	/* für individuelle erstellung der Addresse möglich
-	public Address(String house_number, String road, String village, String county, String state, String postcode,
-			String country, String country_code, String residential, String town, String state_district) {
-		//super();
-		this.house_number = house_number;
-		this.road = road;
-		this.village = village;
-		this.county = county;
-		this.state = state;
-		this.postcode = postcode;
-		this.country = country;
-		this.country_code = country_code;
-		this.residential = residential;
-		this.town = town;
-		this.state_district = state_district;
-	}
-	*/
-	
-	//test dummy constructor for Objectmapper
+	//Konstruktor für Object Mapper
 	public Address(){
 	}
 
@@ -325,30 +307,6 @@ public class Address {
 		else{
 			addressLine = road + " " + addressNumber;
 		}
-		//wird wahrscheinlich gar nicht benötigt da die Attribute direkt mit z.b. plz ausgewählt werden kann
-		//String plz = getPostcode();
-		//String village = getVillage();
-		//String town = getTown();
-		//String city = getCity();
-		//String residential = getResidential();
-		//String state = getState();
-		
-		/*
-		String road = osm.get(k).getAddress().getRoad();
-		String addressNumber = osm.get(k).getAddress().getHouse_number();
-		String plz = osm.get(k).getAddress().getPostcode();
-		String village = osm.get(k).getAddress().getVillage();
-		String town = osm.get(k).getAddress().getTown();
-		String city = osm.get(k).getAddress().getCity();
-		
-		System.out.println("road: " + road);
-		System.out.println("addressNumber: " + addressNumber);
-		System.out.println("addressLine: " + addressLine);
-		System.out.println("plz: " + plz);
-		System.out.println("village: " + village);
-		System.out.println("town: " + town);
-		System.out.println("city: " + city);
-		*/
 		
 		// listNewAddress muss pro Service gleich strukturiert sein!! -> road, nr, plz, ort
 		// Struktur kann noch ergänzt bzw. verändert werden
@@ -356,12 +314,6 @@ public class Address {
 		//addressLine
 		listNewAddress.add(addressLine);
 		System.out.println("listNewAddress.add(addressLine) = " + addressLine);
-		
-		/*
-		//nr
-		listNewAddressOSM.add(addressNumber);
-		System.out.println("listNewAddress.add(addressNumber) = " + addressNumber);
-		*/
 		
 		//plz
 		listNewAddress.add(postcode);

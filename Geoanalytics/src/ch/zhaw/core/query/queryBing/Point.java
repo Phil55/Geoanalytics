@@ -7,7 +7,7 @@ public class Point {
 	private String type;
 	private List<String> coordinates;
 	
-	//test dummy constructor for objectmapper
+	//Konstruktor für Object Mapper
 	public Point(){	
 	}
 

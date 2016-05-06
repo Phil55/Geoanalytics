@@ -392,21 +392,6 @@ public class Main {
 				sqlList = f.mainQuery(f.getRawAddress());
 				System.out.println("sqlList size: " + sqlList.size());
 				
-				
-				/*
-				//print sql-statements
-				for(int i = 0; i < sqlList.size(); i++){
-					System.out.println("sqlList.get(i), sql: " + sqlList.get(i));
-				}
-				
-				//erhaltene sql-Statements ausführen
-				Statement stmt2 = conn.createStatement();
-				for(int i = 0; i < sqlList.size(); i++){
-					stmt.executeUpdate(sqlList.get(i));
-					System.out.println("stmt.executeQuery(sqlList.get(i)), sql: " + sqlList.get(i));
-				}
-				stmt2.close();
-				*/
 			}
 			//ResultSet rs, Statement bereinigen und Verbindung schliessen
 			rs.close();
@@ -434,11 +419,14 @@ public class Main {
 		}//end try
 		System.out.println("DB Connection closed");
 		
-		executeSQLStmt();
-		// Resultat ausgeben	
-		//System.out.println("Resultat: " + f.startAbfrage(f.getAdress()));
+		if(sqlList.size() != 0 || sqlList == null){
+			System.out.println("Adresse wird in DB abgespeichert");
+			executeSQLStmt();
+		}
+		else{
+			System.out.println("Es wurde keine SQL-Statement-Liste zurückgegeben. D.h. keine Adresse wird in DB abgespeichert");
+		}
 		System.out.println("Ende");
-		
 	}
 	
 	public static void executeSQLStmt(){

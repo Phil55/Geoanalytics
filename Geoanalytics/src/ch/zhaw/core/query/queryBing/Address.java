@@ -12,8 +12,7 @@ public class Address {
 	private String countryRegionIso2;
 	private String neighborhood;
 	
-	
-	//test dummy constructor for objectmapper
+	//Konstruktor für Object Mapper
 	public Address(){	
 	}
 
@@ -88,6 +87,4 @@ public class Address {
 	public void setNeighborhood(String neighborhood) {
 		this.neighborhood = neighborhood;
 	}
-	
-	
 }

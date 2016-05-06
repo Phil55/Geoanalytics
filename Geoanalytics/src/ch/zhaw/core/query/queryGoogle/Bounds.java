@@ -5,7 +5,7 @@ public class Bounds {
 	private Northeast northeast;
 	private Southwest southwest;
 	
-	//constructor for objectmapper
+	//Konstruktor für Object Mapper
 	public Bounds(){	
 	}
 

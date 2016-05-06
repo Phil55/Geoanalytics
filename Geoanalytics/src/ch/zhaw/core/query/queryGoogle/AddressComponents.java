@@ -8,7 +8,7 @@ public class AddressComponents {
 	private String short_name;
 	private List<String> types;
 	
-	//constructor for objectmapper
+	//Konstruktor für Object Mapper
 	public AddressComponents(){	
 	}
 

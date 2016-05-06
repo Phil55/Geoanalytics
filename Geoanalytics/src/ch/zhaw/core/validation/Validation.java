@@ -6,17 +6,16 @@ import java.util.List;
 public class Validation {
 
 	private double score; //double wegen ngram
-	private String rawAdressVal;
+	private String rawAddressVal;
 	private List<String> newAddress = new ArrayList<String>();
 	private List<String> oldAddress = new ArrayList<String>(); //wenn das beste Element aus listOption gefunden wurde kann es hier gespeichert werden
-	private ListOption listOption;
 	private List<ListOption> provListOldAddress = new ArrayList<ListOption>();
 	//wird nicht benötigt da nur die anzahl der Elemente, die überprüft werden gezählt werden muss Boolean ist nicht notwendig, da der Score erst später bewertet wird
 	//die länge von listScore ist als zähler genügend
 	private List<Double> listScore = new ArrayList<Double>();//um den finalscore überprüfen zu können muss eine ScoreList erstellt werden die den Score von allen newAddress-Elementen auflistet 
 	
-	public Validation(String rawAdress) {
-		this.rawAdressVal = rawAdress;
+	public Validation(String rawAddress) {
+		this.rawAddressVal = rawAddress;
 	}
 
 	public double getScore() {
@@ -27,12 +26,12 @@ public class Validation {
 		this.score = score;
 	}
 
-	public String getRawAdressVal() {
-		return rawAdressVal;
+	public String getRawAddressVal() {
+		return rawAddressVal;
 	}
 
-	public void setRawAdressVal(String rawAdressVal) {
-		this.rawAdressVal = rawAdressVal;
+	public void setRawAddressVal(String rawAddressVal) {
+		this.rawAddressVal = rawAddressVal;
 	}
 	
 	public List<String> getNewAddress() {
@@ -59,14 +58,6 @@ public class Validation {
 
 	public void setProvListOldAddress(List<ListOption> provListOldAddress) {
 		this.provListOldAddress = provListOldAddress;
-	}
-
-	public ListOption getListOption() {
-		return listOption;
-	}
-
-	public void setListOption(ListOption listOption) {
-		this.listOption = listOption;
 	}
 
 	public List<Double> getListScore() {

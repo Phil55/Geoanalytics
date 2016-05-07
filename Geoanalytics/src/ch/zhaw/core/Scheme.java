@@ -215,7 +215,6 @@ public class Scheme {
 		return check;
 	}
 	
-	//Output noch nicht ganz sicher (Boolean?)
 	//überprüfen welche Services bereits genutzt wurden und startet query. wenn alle Services genutzt wurden, geht man auf mainQuery zurück
 	//danach wird überprüft, ob query vollständig ist und falls ja wird validation gestartet, wenn false wird nächster service abgefragt
 	public Boolean checkQuery (Query m, String checkedQuery){
@@ -568,7 +567,7 @@ public class Scheme {
 					sqlList = l.alignGoogle(google);
 				}
 				else{
-					System.out.println("Fehler es konnte kein Service zugewiesen werden!"); //test-code
+					System.out.println("Fehler: Es konnte kein Service zugewiesen werden!"); //test-code
 					System.out.println("checkedVal : " + checkedVal); //test-code
 				}
 			}

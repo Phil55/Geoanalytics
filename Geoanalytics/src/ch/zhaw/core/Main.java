@@ -7,13 +7,12 @@ import java.util.Scanner; //für Eingabe in Konsole benötigt
 
 public class Main {
 	
-	private static List<String> sqlList; // für Methode executeSQLStmt() benötigt
 	/*
 	//USER_AGENT festlegen
 	private final String USER_AGENT = "Mozilla/5.0";
 	*/
 	
-	// Instanzierung von Name und URL von JDBC driver
+	// Instanzierung von Name und URL von JDBC Treiber
 	static final String jdbcTreiber = "com.mysql.jdbc.Driver";  
 	static final String url = "jdbc:mysql://160.85.104.27/patstat";
 
@@ -58,7 +57,7 @@ public class Main {
 		//Bei so einer grossen Anzahl an Datensätzen wäre die Gefahr grosse, dass man zu viel Datensätze selektiert und dadurch der Prozess extrem lange geht
 		System.out.println();
 		System.out.println("SQL-Bedingung Limit:");
-		System.out.println("Eingabe von Limit ist zwingend!");
+		System.out.println("Bitte geben Sie eine Zahl an. Eingabe von Limit ist zwingend!");
 		System.out.println("Enter the Limit of Output: ");
 		String limit = sc.next();
 		System.out.println("The Limit of Output is: " + limit);
@@ -91,7 +90,7 @@ public class Main {
 		System.out.println("SQL-Bedingung enthält (LIKE) bei Name (name_freeform):");
 		System.out.println("Wenn Sie keine Einschränkung bei Name machen möchten geben Sie '-' ein");
 		System.out.println("Syntax bei LIKE / NOT LIKE:");
-		System.out.println("'_' steht für ein beliebiges einzelnes Zeichen, das an der betreffenden Stelle vorkommen kann");
+		System.out.println("'_' steht für ein beliebiges einzelnes Zeichen, das an der betroffenden Stelle vorkommen kann");
 		System.out.println("'%' steht für eine beliebige Zeichenkette mit 0 oder mehr Zeichen");
 		System.out.println("Beispiel1: 'Nokia%' alles was mit Nokia anfängt, Inhalt dahinter ist beliebig");
 		System.out.println("Beispiel2: '%Nokia%' alles was Nokia enthält, Inhalt davor und dahinter ist beliebig");
@@ -115,7 +114,7 @@ public class Main {
 		System.out.println("SQL-Bedingung enthält (NOT LIKE) bei Name (name_freeform):");
 		System.out.println("Wenn Sie keine Einschränkung bei Name machen möchten geben Sie '-' ein");
 		System.out.println("Syntax bei LIKE / NOT LIKE:");
-		System.out.println("'_' steht für ein beliebiges einzelnes Zeichen, das an der betreffenden Stelle vorkommen kann");
+		System.out.println("'_' steht für ein beliebiges einzelnes Zeichen, das an der betroffenden Stelle vorkommen kann");
 		System.out.println("'%' steht für eine beliebige Zeichenkette mit 0 oder mehr Zeichen");
 		System.out.println("Beispiel1: 'Nokia%' alles was mit Nokia anfängt, Inhalt dahinter ist beliebig");
 		System.out.println("Beispiel2: '%Nokia%' alles was Nokia enthält, Inhalt davor und dahinter ist beliebig");
@@ -139,7 +138,7 @@ public class Main {
 		System.out.println("SQL-Bedingung enthält (LIKE) bei Adresse (address_freeform):");
 		System.out.println("Wenn Sie keine Einschränkung bei Adresse machen möchten geben Sie '-' ein");
 		System.out.println("Syntax bei LIKE / NOT LIKE:");
-		System.out.println("'_' steht für ein beliebiges einzelnes Zeichen, das an der betreffenden Stelle vorkommen kann");
+		System.out.println("'_' steht für ein beliebiges einzelnes Zeichen, das an der betroffenden Stelle vorkommen kann");
 		System.out.println("'%' steht für eine beliebige Zeichenkette mit 0 oder mehr Zeichen");
 		System.out.println("Beispiel1: 'Bach%' alles was mit Nokia anfängt, Inhalt dahinter ist beliebig");
 		System.out.println("Beispiel2: '%strasse%' alles was Nokia enthält, Inhalt davor und dahinter ist beliebig");
@@ -163,7 +162,7 @@ public class Main {
 		System.out.println("SQL-Bedingung enthält (NOT LIKE) bei Adresse (address_freeform):");
 		System.out.println("Wenn Sie keine Einschränkung bei Adresse machen möchten geben Sie '-' ein");
 		System.out.println("Syntax bei LIKE / NOT LIKE:");
-		System.out.println("'_' steht für ein beliebiges einzelnes Zeichen, das an der betreffenden Stelle vorkommen kann");
+		System.out.println("'_' steht für ein beliebiges einzelnes Zeichen, das an der betroffenden Stelle vorkommen kann");
 		System.out.println("'%' steht für eine beliebige Zeichenkette mit 0 oder mehr Zeichen");
 		System.out.println("Beispiel1: 'Bach%' alles was mit Nokia anfängt, Inhalt dahinter ist beliebig");
 		System.out.println("Beispiel2: '%strasse%' alles was Nokia enthält, Inhalt davor und dahinter ist beliebig");
@@ -288,6 +287,7 @@ public class Main {
 		
 		//Filterliste instanzieren für die nächsten schritte
 		List<String> filterList = new ArrayList<String>();
+		List<String> sqlList = new ArrayList<String>(); // für Methode executeSQLStmt() benötigt
 		
 		//Filter-Elemente hinzufügen falls sie nicht null sind. limit wird immer hinzugefügt
 		//Limit ist immer zuletzt und wird nicht in die liste hinzugefügt sondern in sql eingefügt, da es zwingend ist
@@ -421,7 +421,7 @@ public class Main {
 		
 		if(sqlList.size() != 0 || sqlList == null){
 			System.out.println("Adresse wird in DB abgespeichert");
-			executeSQLStmt();
+			executeSQLStmt(sqlList);
 		}
 		else{
 			System.out.println("Es wurde keine SQL-Statement-Liste zurückgegeben. D.h. keine Adresse wird in DB abgespeichert");
@@ -429,7 +429,7 @@ public class Main {
 		System.out.println("Ende");
 	}
 	
-	public static void executeSQLStmt(){
+	public static void executeSQLStmt(List<String> sqlList){
 		
 		//Instanzierung von Connection und Statement für Verbindung zur Datenbank
 		Connection conn2 = null;

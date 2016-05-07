@@ -20,7 +20,7 @@ public class Query {
 	private QueryBing bing;
 	private QueryGoogle google;
 	private HttpResponse<JsonNode> response;
-	private List<Boolean> statusList; // für überprüfung bei Struktur nötig
+	private List<Boolean> statusList; // für überprüfung bei Scheme nötig (checkUsedQuery und mainQuery)
 	private Boolean statusOSM; // ersetzt statusQuery da es bei den Abfragen zu problemen kommt und so der einfachere weg ist
 	private Boolean statusBing; // ersetzt statusQuery da es bei den Abfragen zu problemen kommt und so der einfachere weg ist
 	private Boolean statusGoogle; // ersetzt statusQuery da es bei den Abfragen zu problemen kommt und so der einfachere weg ist

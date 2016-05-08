@@ -19,9 +19,7 @@ public class QueryOSM {
 	private String importance;
 	private String icon;
 	private Address address;
-	// für QueryOSM() benötigt
 	private List<Integer> newAddressTrue = new ArrayList<Integer>(); //Listet die Stelle der Adressen auf, die vollständig sind
-	private Boolean statusQuery = null; //für Query benötigt, auf null gesetzt damit Bedingung simpler abzufragen ist
 	private Boolean statusValidation = null; //für Validation benötigt
 	private List <Double> listScore = new ArrayList<Double>(); //für Validation benötigt
 	private List <Integer> listScoreTrue = new ArrayList<Integer>(); //für Validation benötigt
@@ -149,14 +147,6 @@ public class QueryOSM {
 
 	public void setStatusValidation(Boolean statusValidation) {
 		this.statusValidation = statusValidation;
-	}
-
-	public Boolean getStatusQuery() {
-		return statusQuery;
-	}
-
-	public void setStatusQuery(Boolean statusQuery) {
-		this.statusQuery = statusQuery;
 	}
 
 	public List<Double> getListScore() {

@@ -276,7 +276,7 @@ public class Alignment {
 		//Daten in die Attribute bei Klasse Alignment einfügen
 		place_id = obj.getPlace_id();
 		service_source = "OSM";
-		//überprüft ob Industrial oder Address29 vorhanden ist. falls nicht wird null gesetzt
+		//überprüft ob Industrial oder Address29 vorhanden ist. falls nicht wird "" gesetzt
 		if (addressObj.getIndustrial() != null){
 			name_freeform = addressObj.getIndustrial();
 		}
@@ -327,24 +327,24 @@ public class Alignment {
 		int sqlIndex = 0; //wird gemacht, um sicherzustellen, dass sie SQL-Statements in korrekter Reihenfolge durchgeführt werden
 		
 		//INSERT INTO bei Tabelle tls320_enriched_address
-		String insertAddress = createInsertAddress(sqlIndex);
+		String insertAddress = createInsertAddress();
 		sqlList.add(sqlIndex, insertAddress);
 		sqlIndex++;
 		
 		//INSERT INTO bei Tabelle tls321_geometry
-		String insertGeometry = createInsertGeometry(sqlIndex);		
+		String insertGeometry = createInsertGeometry();		
 		sqlList.add(sqlIndex, insertGeometry);
 		sqlIndex++;
 		
 		for(int i = 0; i < polygonpointsList.size(); i++){
 			
 			//INSERT INTO bei Tabelle tls322_polygon_points
-			String insertPolygonpoints = createInsertPolygonpoints(sqlIndex, i);
+			String insertPolygonpoints = createInsertPolygonpoints(i);
 			sqlList.add(sqlIndex, insertPolygonpoints);
 			sqlIndex++;
 			
 			// INSERT INTO bei Tabelle tls323_polygon_coordinates 
-			String insertPolygonCoordinates = createInsertPolygonCoordinates(sqlIndex, i);
+			String insertPolygonCoordinates = createInsertPolygonCoordinates(i);
 			sqlList.add(sqlIndex, insertPolygonCoordinates);
 			sqlIndex++;
 		}
@@ -390,12 +390,12 @@ public class Alignment {
 		// SQL-Statements erstellen
 		int sqlIndex = 0; //wird gemacht, um sicherzustellen, dass sie SQL-Statements in korrekter Reihenfolge durchgeführt werden
 		//INSERT INTO bei Tabelle tls320_enriched_address
-		String insertAddress = createInsertAddress(sqlIndex);
+		String insertAddress = createInsertAddress();
 		sqlList.add(sqlIndex, insertAddress);
 		sqlIndex++;
 		
 		//INSERT INTO bei Tabelle tls321_geometry
-		String insertGeometry = createInsertGeometry(sqlIndex);		
+		String insertGeometry = createInsertGeometry();		
 		sqlList.add(sqlIndex, insertGeometry);
 		sqlIndex++;
 		
@@ -439,19 +439,19 @@ public class Alignment {
 		// SQL-Statements erstellen
 		int sqlIndex = 0; //wird gemacht, um sicherzustellen, dass sie SQL-Statements in korrekter Reihenfolge durchgeführt werden
 		//INSERT INTO bei Tabelle tls320_enriched_address
-		String insertAddress = createInsertAddress(sqlIndex);
+		String insertAddress = createInsertAddress();
 		sqlList.add(sqlIndex, insertAddress);
 		sqlIndex++;
 		
 		//INSERT INTO bei Tabelle tls321_geometry
-		String insertGeometry = createInsertGeometry(sqlIndex);	
+		String insertGeometry = createInsertGeometry();	
 		sqlList.add(sqlIndex, insertGeometry);
 		sqlIndex++;
 		
 		return sqlList;
 	}
 	
-	public String createInsertAddress(int sqlIndex){
+	public String createInsertAddress(){
 		String insertAddress = 
 			"INSERT INTO tls320_enriched_address (" +
 				"person_orig_id, place_id, service_source, name_freeform, address_freeform, address_type, country_code, country_name, address_line, " +
@@ -465,7 +465,7 @@ public class Alignment {
 		return insertAddress;
 	}
 	
-	public String createInsertGeometry(int sqlIndex){
+	public String createInsertGeometry(){
 		String insertGeometry = 
 			"INSERT INTO tls321_geometry (" +
 				"geometry_id, geometric_quality, point_lat, point_lng, bbox_lat_north, bbox_lng_east, bbox_lat_south, bbox_lng_west" +
@@ -477,7 +477,7 @@ public class Alignment {
 		return insertGeometry;
 	}
 	
-	public String createInsertPolygonpoints(int sqlIndex, int i){
+	public String createInsertPolygonpoints(int i){
 		String insertPolygonpoints = 
 			"INSERT INTO tls322_polygon_points (" +
 				"polygonpoints_fk, polygoncoordinates_id" +
@@ -489,7 +489,7 @@ public class Alignment {
 		return insertPolygonpoints;
 	}
 	
-	public String createInsertPolygonCoordinates(int sqlIndex, int i){
+	public String createInsertPolygonCoordinates(int i){
 		String insertPolygonCoordinates = 
 			"INSERT INTO tls323_polygon_coordinates (" +
 				"polygoncoordinates_id, lat, lng" +

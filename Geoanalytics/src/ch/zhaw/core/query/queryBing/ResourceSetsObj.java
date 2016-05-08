@@ -7,10 +7,8 @@ public class ResourceSetsObj {
 	
 	private String estimatedTotal;
 	private List<ResourcesObj> resources;
-	// für QueryBing() benötigt
 	private List<Integer> newAddressTrue = new ArrayList<Integer>(); //Listet die Stelle der Adressen auf, die vollständig sind
 	private Boolean statusValidation = null; //für Validation benötigt
-	private Boolean statusQuery = null; //für Query benötigt, auf null gesetzt damit Bedingung simpler abzufragen ist
 	private List <Double> listScore = new ArrayList<Double>(); //für Validation benötigt
 	private List <Integer> listScoreTrue = new ArrayList<Integer>(); //für Validation benötigt
 	private int defIndex; //für Validation benötigt, verweist auf die Stelle, wo die Adresse mit dem besten Score ist
@@ -49,14 +47,6 @@ public class ResourceSetsObj {
 
 	public void setStatusValidation(Boolean statusValidation) {
 		this.statusValidation = statusValidation;
-	}
-
-	public Boolean getStatusQuery() {
-		return statusQuery;
-	}
-
-	public void setStatusQuery(Boolean statusQuery) {
-		this.statusQuery = statusQuery;
 	}
 
 	public List<Double> getListScore() {

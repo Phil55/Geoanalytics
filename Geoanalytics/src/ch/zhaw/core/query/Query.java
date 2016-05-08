@@ -29,7 +29,7 @@ public class Query {
 		this.rawAddress = rawAddress;
 		this.statusList = new ArrayList<Boolean>();
 		//folgende Reihenfolge wird bei statusList festgelegt:
-		//1 -> osm, 2 -> bing
+		//1 -> osm, 2 -> bing, 3 -> google
 		for(int i = 0; i < 3; i++){ //zahl 3 repräsentiert die anzahl Services, die es gibt
 			statusList.add(null);
 		}
@@ -108,9 +108,7 @@ public class Query {
 	}
 
 	//je nach Gegebenheit der Adresse werden jeweils andere Services angefragt
-	//Reihenfolge und Bedingungen können sich noch ändern
 	//Methode überprüft welche Services bereits überprüft wurden und ruft dann die Methode für den entsprechenden Service der als nächster kommt auf
-	//Methode gibt vordefinierten String zurück, des aussagt welcher Service aufgerufen wurde (z.B. osm)
 	public String query() {
 		
 		System.out.println(); //test-code
@@ -230,13 +228,9 @@ public class Query {
 		else{
 			//wenn newNewAddressTrue leer ist gibt es false zurück, ansonsten true
 			if(osm.get(0).getNewAddressTrue().isEmpty() == true){ // Achtung ! newAddressTrue wird bewusst nur bei stelle 0 erstellt
-				osm.get(0).setStatusQuery(false); //Boolean für OSM ob anfrage i.O ist
-				System.out.println("statusQuery für OSM : " + osm.get(0).getStatusQuery()); //test-code
 				status = false;
 			}
 			else{
-				osm.get(0).setStatusQuery(true); //Boolean für OSM ob anfrage i.O ist
-				System.out.println("statusQuery für OSM : " + osm.get(0).getStatusQuery()); //test-code
 				status = true;
 			}
 		}
@@ -305,13 +299,9 @@ public class Query {
 		else{
 			//wenn newNewAddressTrue leer ist gibt es false zurück, ansonsten true
 			if(bing.getResourceSets().get(0).getNewAddressTrue().isEmpty() == true){ // Achtung ! newAddressTrue wird bewusst nur bei stelle 0 erstellt
-				bing.getResourceSets().get(0).setStatusQuery(false); //Boolean für OSM ob anfrage i.O ist
-				System.out.println("statusQuery für Bing : " + bing.getResourceSets().get(0).getStatusQuery()); //test-code
 				status = false;
 			}
 			else{
-				bing.getResourceSets().get(0).setStatusQuery(true); //Boolean für OSM ob anfrage i.O ist
-				System.out.println("statusQuery für Bing : " + bing.getResourceSets().get(0).getStatusQuery()); //test-code
 				status = true;
 			}
 		}
@@ -373,13 +363,9 @@ public class Query {
 		
 		//wenn newNewAddressTrue leer ist gibt es false zurück, ansonsten true
 		if(google.getNewAddressTrue().isEmpty() == true){ // Achtung ! newAddressTrue wird bewusst nur bei stelle 0 erstellt
-			google.setStatusQuery(false); //Boolean für OSM ob anfrage i.O ist
-			System.out.println("statusQuery für Google : " + google.getStatusQuery()); //test-code
 			status = false;
 		}
 		else{
-			google.setStatusQuery(true); //Boolean für OSM ob anfrage i.O ist
-			System.out.println("statusQuery für Google : " + google.getStatusQuery()); //test-code
 			status = true;
 		}	
 		return status;

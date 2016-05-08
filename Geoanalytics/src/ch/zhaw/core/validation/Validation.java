@@ -102,7 +102,7 @@ public class Validation {
 					status = true;
 				}
 				else{
-					if (endIndex <= rawAddress.length()){ //if-Schlaufe unnötig!!
+					if (endIndex <= rawAddress.length()){ 
 						Option option = new Option ();
 						provListOldAddress.get(i).getAddress_component().add(x, option);
 						provListOldAddress.get(i).getAddress_component().get(x).setComponent(rawAddress.substring(startIndex, endIndex));
@@ -186,12 +186,12 @@ public class Validation {
 						if (oldOption.contains(listNewAddress.get(i)) == true){ //zu testzwecken: == mit != ersetzt
 							System.out.println("rawAddress.contains(listNewAddress.get(i)) == true");
 							//starte Methode valContains() und fügt eine Punktzahl bei provScore hinzu
-							valContains( i, x);
+							valContains(i, x);
 						}
 						else {
 							System.out.println("rawAddress.contains(listNewAddress.get(i)) == false");
 							//starte Methode valNgram() und fügt eine Punktzahl bei provScore hinzu
-							valNgram(rawAddress, listNewAddress, i, x);
+							valNgram(listNewAddress, i, x);
 						}
 					}
 				}
@@ -203,7 +203,7 @@ public class Validation {
 			}
 		}
 		
-		//Score überprüfen
+		//Score berechnen
 		double provScore = countScore();
 		score = calculateFinalScore(provScore, listScore.size());
 		System.out.println("Ende pruefen: score " + score); //test-code
@@ -257,31 +257,13 @@ public class Validation {
 		
 		Option address_component = provListOldAddress.get(i).getAddress_component().get(x);
 		
-		if (i == 0){
-			address_component.setProvScore(100.0);
-			System.out.println("Score :" + address_component.getProvScore());
-			System.out.println("i :" + i);
-			System.out.println("x :" + x);
-
-		}
-		else if (i == 1){
-			address_component.setProvScore(100.0);
-			System.out.println("Score :" + address_component.getProvScore());
-			System.out.println("i :" + i);
-			System.out.println("x :" + x);
-		}
-		else if (i == 2){
-			address_component.setProvScore(100.0);
-			System.out.println("Score :" + address_component.getProvScore());
-			System.out.println("i :" + i);
-			System.out.println("x :" + x);
-		}
-		else {
-			System.out.println("True-Wert kann nicht zugeordnet werden bei List-Stelle :" + i);
-		}
+		address_component.setProvScore(100.0);
+		System.out.println("Score :" + address_component.getProvScore());
+		System.out.println("i :" + i);
+		System.out.println("x :" + x);
 	}
 	
-	public void valNgram(String rawAddress, List<String> listNewAddress, int i, int x){
+	public void valNgram(List<String> listNewAddress, int i, int x){
 		System.out.println(); //test-code
 		System.out.println("Start valNgram()"); //test
 		System.out.println("rawAddress.contains(listNewAddress.get(i)) == false");

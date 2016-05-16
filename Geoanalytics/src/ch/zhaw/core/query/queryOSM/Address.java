@@ -33,9 +33,9 @@ public class Address {
 	private String hamlet;
 	private String station;
 	private String river;
-	private List<String> listNewAddress = new ArrayList<String>(); // Liste erstellen um bei der Validierung strukturiert vorzugehen
-	private Boolean status = null; //für Validation benötigt
-	private Double score; //für Validation benötigt
+	private List<String> listNewAddress = new ArrayList<String>(); 
+	private Boolean status = null; 
+	private Double score; 
 	
 	//Konstruktor für Object Mapper
 	public Address(){
@@ -290,13 +290,12 @@ public class Address {
 	}
 
 	public void createListNewAddress(int i, List<QueryOSM> osmList){
-		System.out.println(); //test-code
-		System.out.println("Start createListNewAddress() (OSM)"); //test
+		System.out.println();
+		System.out.println("Start createListNewAddress() (OSM)");
 		
 		String road = getRoad();
 		String addressNumber = getHouse_number();
-		//überprüft ob road oder addressNumber null ist. 
-		//Falls die nummer null ist wird nur die strasse bei der addressLine hinzugefügt. Falls die strasse oder beides null ist wird addressLine auf null gesetzt
+		//überprüft ob road oder addressNumber null ist
 		String addressLine = null;
 		if(addressNumber == null){
 			addressLine = road;
@@ -308,18 +307,15 @@ public class Address {
 			addressLine = road + " " + addressNumber;
 		}
 		
-		// listNewAddress muss pro Service gleich strukturiert sein!! -> road, nr, plz, ort
-		// Struktur kann noch ergänzt bzw. verändert werden
-		
-		//addressLine
+		//AddressLine
 		listNewAddress.add(addressLine);
 		System.out.println("listNewAddress.add(addressLine) = " + addressLine);
 		
-		//plz
+		//Postal Code
 		listNewAddress.add(postcode);
 		System.out.println("listNewAddress.add(postcode) = " + postcode);
 		
-		//Ort
+		//Locality
 		if (village != null){
 			listNewAddress.add(village);
 			System.out.println("listNewAddress.add(village) = " + village);
@@ -351,14 +347,13 @@ public class Address {
 				}
 			}
 		}
-		//Strings und Print wird erstellt um testing übersichtlicher zu machen
 		printJsonResponseOSM(i, osmList);
 	}
 	
 	//Strings und Print wird erstellt um testing übersichtlicher zu machen
 	public void printJsonResponseOSM(int i, List<QueryOSM> osmList){
 		System.out.println();
-		System.out.println("Start printJsonResponseOSM() : "); //test-code
+		System.out.println("Start printJsonResponseOSM() : ");
 		
 		QueryOSM osm = osmList.get(i);
 		

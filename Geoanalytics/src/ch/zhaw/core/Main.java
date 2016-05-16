@@ -1,35 +1,22 @@
 package ch.zhaw.core;
 
-import java.sql.*; //wird für die Verbindung zur Datenbank benötigt
+import java.sql.*; 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner; //für Eingabe in Konsole benötigt
+import java.util.Scanner; 
 
 public class Main {
-	
-	/*
-	//USER_AGENT festlegen
-	private final String USER_AGENT = "Mozilla/5.0";
-	*/
 	
 	// Instanzierung von Name und URL von JDBC Treiber
 	static final String jdbcTreiber = "com.mysql.jdbc.Driver";  
 	static final String url = "jdbc:mysql://160.85.104.27/patstat";
 
 	// Instanzierung von Einlog-Daten für Datenbank
-	
-	//Für Testzwecke verwenden
-	static final String user = "";
-	static final String password = "";
-	
-	/*// Code für am Schluss (User muss Username und Passwort eingeben
 	static final String user = getUsername();
 	static final String password = getPassword();
-	*/
 	
 	//Methode um Username einzugeben und in Variable zu speichern
 	public static String getUsername(){
-		
 		//Eingabe von Username und Passwort in Konsole
 		System.out.println("Enter username: ");
 		Scanner sc = new Scanner(System.in);
@@ -41,7 +28,6 @@ public class Main {
 	
 	//Methode um Passwort einzugeben und in Variable zu speichern
 	public static String getPassword(){
-		
 		//Eingabe von Passwort in Konsole
 		System.out.println("Enter password: ");
 		Scanner sc = new Scanner(System.in);
@@ -53,8 +39,7 @@ public class Main {
 	
 	public static String getLimit(Scanner sc){
 		//Eingabe des Limits der SQL-Abfrage in Konsole
-		//Ein Limit muss eingegeben werden. 
-		//Bei so einer grossen Anzahl an Datensätzen wäre die Gefahr grosse, dass man zu viel Datensätze selektiert und dadurch der Prozess extrem lange geht
+		//Ein Limit muss eingegeben werden.
 		System.out.println();
 		System.out.println("SQL-Bedingung Limit:");
 		System.out.println("Bitte geben Sie eine Zahl an. Eingabe von Limit ist zwingend!");
@@ -73,7 +58,6 @@ public class Main {
 		System.out.println("Enter the source: ");
 		String source = sc.next();
 		//überprüft ob etwas eingegeben wurde, wenn nicht wird null zurückgegeben ansonsten den eingegebene Wert source
-		//Strings werden mit der Funktion equals() verglichen nicht mit ==
 		if(source.equals("-")){
 			return null;
 		}
@@ -97,7 +81,6 @@ public class Main {
 		System.out.println("Enter the name (LIKE): ");
 		String nameLike = sc.next();
 		//überprüft ob etwas eingegeben wurde, wenn nicht wird null zurückgegeben ansonsten den eingegebene Wert source
-		//Strings werden mit der Funktion equals() verglichen nicht mit ==
 		if(nameLike.equals("-")){
 			return null;
 		}
@@ -121,7 +104,6 @@ public class Main {
 		System.out.println("Enter the name (NOT LIKE): ");
 		String nameNotLike = sc.next();
 		//überprüft ob etwas eingegeben wurde, wenn nicht wird null zurückgegeben ansonsten den eingegebene Wert source
-		//Strings werden mit der Funktion equals() verglichen nicht mit ==
 		if(nameNotLike.equals("-")){
 			return null;
 		}
@@ -145,7 +127,6 @@ public class Main {
 		System.out.println("Enter the address (LIKE): ");
 		String addressLike = sc.next();
 		//überprüft ob etwas eingegeben wurde, wenn nicht wird null zurückgegeben ansonsten den eingegebene Wert source
-		//Strings werden mit der Funktion equals() verglichen nicht mit ==
 		if(addressLike.equals("-")){
 			return null;
 		}
@@ -169,7 +150,6 @@ public class Main {
 		System.out.println("Enter the address (NOT LIKE): ");
 		String addressNotLike = sc.next();
 		//überprüft ob etwas eingegeben wurde, wenn nicht wird null zurückgegeben ansonsten den eingegebene Wert source
-		//Strings werden mit der Funktion equals() verglichen nicht mit ==
 		if(addressNotLike.equals("-")){
 			return null;
 		}
@@ -194,12 +174,11 @@ public class Main {
 		System.out.println("Enter the PersonID (BETWEEN): ");
 		String personId = sc.next();
 		//überprüft ob etwas eingegeben wurde, wenn nicht wird null zurückgegeben ansonsten den eingegebene Wert source
-		//Strings werden mit der Funktion equals() verglichen nicht mit ==
 		if(personId.equals("-")){
 			return null;
 		}
 		else{
-			//splitet den String in zwei String (anfangs- und schlussID)
+			//teilt den String in zwei Strings auf (Anfangs- und SchlussID)
 			String[] inputs = personId.split("-", 2);
 			String anfangsID = inputs[0];
 			String schlussID = inputs[1];
@@ -222,12 +201,11 @@ public class Main {
 		System.out.println("Enter the PersonOrigId (BETWEEN): ");
 		String personOrigId = sc.next();
 		//überprüft ob etwas eingegeben wurde, wenn nicht wird null zurückgegeben ansonsten den eingegebene Wert source
-		//Strings werden mit der Funktion equals() verglichen nicht mit ==
 		if(personOrigId.equals("-")){
 			return null;
 		}
 		else{
-			//splitet den String in zwei String (anfangs- und schlussID)
+			//teilt den String in zwei Strings auf (Anfangs- und SchlussID)
 			String[] inputs = personOrigId.split("-", 2);
 			String anfangsID = inputs[0];
 			String schlussID = inputs[1];
@@ -245,7 +223,6 @@ public class Main {
 		System.out.println("Enter the countrycode: ");
 		String countryCode = sc.next();
 		//überprüft ob etwas eingegeben wurde, wenn nicht wird null zurückgegeben ansonsten den eingegebene Wert source
-		//Strings werden mit der Funktion equals() verglichen nicht mit ==
 		if(countryCode.equals("-")){
 			return null;
 		}
@@ -260,7 +237,7 @@ public class Main {
 		
 		Scanner sc = new Scanner(System.in);
 		
-		//filter-Elemente beim User abfragen und in String abspeichern
+		//Filterelemente beim User abfragen und in String abspeichern
 		String limit = getLimit(sc);
 		String source = getSource(sc);
 		String ctryCode = getCountryCode(sc);
@@ -271,10 +248,11 @@ public class Main {
 		String personIdBetween = getPersonId(sc);
 		String personOrigIdBetween = getPersonOrigId(sc);
 		
-		//Scanner wird geschlossen sonst wird eine Warnung aufkommen
+		//Scanner wird geschlossen
 		sc.close();
 		
-		//zu testzwecken wird das geprintet
+		/*
+		//Print aus Testzwecken
 		System.out.println("SQL-Element source: " + source);
 		System.out.println("SQL-Element ctryCode: " + ctryCode);
 		System.out.println("SQL-Element nameLike: " + nameLike);
@@ -284,10 +262,11 @@ public class Main {
 		System.out.println("SQL-Element personIdBetween: " + personIdBetween);
 		System.out.println("SQL-Element personOrigIdBetween: " + personOrigIdBetween);
 		System.out.println("SQL-Element limit: " + limit);
+		*/
 		
 		//Filterliste instanzieren für die nächsten schritte
 		List<String> filterList = new ArrayList<String>();
-		List<String> sqlList = new ArrayList<String>(); // für Methode executeSQLStmt() benötigt
+		List<String> sqlList = new ArrayList<String>();
 		
 		//Filter-Elemente hinzufügen falls sie nicht null sind. limit wird immer hinzugefügt
 		//Limit ist immer zuletzt und wird nicht in die liste hinzugefügt sondern in sql eingefügt, da es zwingend ist
@@ -328,7 +307,7 @@ public class Main {
 		Connection conn = null;
 		Statement stmt = null;
 		try{
-			//JDBC Treiber initialisieren
+			//JDBC Treiber initiialisieren
 			Class.forName("com.mysql.jdbc.Driver");
 
 			//Verbindung zur Datenbank erstellen
@@ -359,14 +338,10 @@ public class Main {
 				sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2, person_ctry_code FROM tls226_person_orig" + filterElements + limit + ";";
 			}
 			System.out.println("SQL-Statement : " + sql);
-			//sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 426;";
-			//sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 450;";
-			//sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 500;";
-			//sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2 FROM tls226_person_orig WHERE person_orig_id = 412;";
-			//sql = "SELECT person_orig_id, person_id, name_freeform, address_1, address_2, person_ctry_code FROM tls226_person_orig " + limit + ";";
+			
 			ResultSet rs = stmt.executeQuery(sql);
 
-			//Daten von result set in Variablen extrahieren
+			//Daten von rs in Variablen extrahieren
 			while(rs.next()){
 				//Daten pro Spalte erhalten (Reihenfolge gemäss SQL Query)
 				int personOrigId  = rs.getInt("person_orig_id");
@@ -388,12 +363,11 @@ public class Main {
 				Scheme f = new Scheme(personOrigId, personId, nameFreeform, addressOne, addressTwo, countryCode);
 				
 				//Abfrage Initiieren
-				//List<String> sqlList = f.mainQuery(f.getRawAddress());
 				sqlList = f.mainQuery(f.getRawAddress());
 				System.out.println("sqlList size: " + sqlList.size());
 				
 			}
-			//ResultSet rs, Statement bereinigen und Verbindung schliessen
+			//ResultSet, Statement und Connection bereinigen und schliessen
 			rs.close();
 			stmt.close();
 			conn.close();

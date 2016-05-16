@@ -1,9 +1,8 @@
 package ch.zhaw.core.query.queryBing;
 
-//import java.util.ArrayList;
 import java.util.List;
 
-public class QueryBing { //Literaturverweis finden um zu begründen wieso Package anstatt innere Klassen
+public class QueryBing {
 	
 	private String authenticationResultCode;
 	private String brandLogoUri;
@@ -71,6 +70,5 @@ public class QueryBing { //Literaturverweis finden um zu begründen wieso Package
 
 	public void setResourceSets(List<ResourceSetsObj> resourceSets) {
 		this.resourceSets = resourceSets;
-	}
-	
+	}	
 }

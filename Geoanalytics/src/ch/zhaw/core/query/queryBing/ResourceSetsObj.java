@@ -7,11 +7,11 @@ public class ResourceSetsObj {
 	
 	private String estimatedTotal;
 	private List<ResourcesObj> resources;
-	private List<Integer> newAddressTrue = new ArrayList<Integer>(); //Listet die Stelle der Adressen auf, die vollständig sind
-	private Boolean statusValidation = null; //für Validation benötigt
-	private List <Double> listScore = new ArrayList<Double>(); //für Validation benötigt
-	private List <Integer> listScoreTrue = new ArrayList<Integer>(); //für Validation benötigt
-	private int defIndex; //für Validation benötigt, verweist auf die Stelle, wo die Adresse mit dem besten Score ist
+	private List<Integer> newAddressTrue = new ArrayList<Integer>(); 
+	private Boolean statusValidation = null; 
+	private List <Double> listScore = new ArrayList<Double>(); 
+	private List <Integer> listScoreTrue = new ArrayList<Integer>(); 
+	private int defIndex;
 	
 	//Konstruktor für Object Mapper
 	public ResourceSetsObj(){	

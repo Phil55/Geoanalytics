@@ -14,9 +14,9 @@ public class ResourcesObj {
 	private Point point;
 	private Address address;
 	private List<GeocodePointsObj> geocodePoints;
-	private List<String> newAddress = new ArrayList<String>(); // Liste erstellen um bei der Validierung strukturiert vorzugehen
-	private Boolean status = null; //für Validation benötigt
-	private Double score; //für Validation benötigt
+	private List<String> newAddress = new ArrayList<String>(); 
+	private Boolean status = null; 
+	private Double score; 
 	
 	//Konstruktor für Object Mapper
 	public ResourcesObj(){	
@@ -119,25 +119,23 @@ public class ResourcesObj {
 	}
 
 	public void createListNewAddress(int i, QueryBing bing){
-		System.out.println(); //test-code
-		System.out.println("Start createListNewAddress() (Bing)"); //test
+		System.out.println();
+		System.out.println("Start createListNewAddress() (Bing)");
 		
 		String addressLine = address.getAddressLine();
 		String plz = address.getPostalCode();
 		String locality = address.getLocality();
-		String district = address.getAdminDistrict(); //evt. nicht nötig
-		String district2 = address.getAdminDistrict2(); //evt. nicht nötig
+		String district = address.getAdminDistrict(); 
+		String district2 = address.getAdminDistrict2(); 
 		
-		// listNewAddress muss pro Service gleich strukturiert sein!! -> road, nr, plz, ort
-		// Struktur kann noch ergänzt bzw. verändert werden
 		
-		//addressline
+		//AddressLine
 		newAddress.add(addressLine);
 		System.out.println("newAddress.add(addressLine) = " + addressLine);
-		//plz
+		//Postal Code
 		newAddress.add(plz);
 		System.out.println("newAddress.add(plz) = " + plz);
-		//Ort
+		//Locality
 		if (locality != null){
 			newAddress.add(locality);
 			System.out.println("newAddress.add(locality) = " + locality);
@@ -149,9 +147,8 @@ public class ResourcesObj {
 	//Strings und Print wird erstellt um testing übersichtlicher zu machen
 	public void printJsonResponseBing(int i, QueryBing bing, String addressLine, String plz, String locality, String district, String district2){
 		System.out.println();
-		System.out.println("Start printJsonResponseBing() : "); //test-code
+		System.out.println("Start printJsonResponseBing() : ");
 		
-		//Strings und Print wird erstellt um testing übersichtlicher zu machen
 		String authenticationResultCode = bing.getAuthenticationResultCode();
 		String statusCode = bing.getStatusCode();
 		String statusDescription = bing.getStatusDescription();

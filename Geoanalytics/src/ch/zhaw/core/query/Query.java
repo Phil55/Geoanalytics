@@ -2,13 +2,11 @@ package ch.zhaw.core.query;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
-
 import ch.zhaw.core.query.queryOSM.*;
 import ch.zhaw.core.query.queryBing.*;
 import ch.zhaw.core.query.queryGoogle.*;
@@ -20,17 +18,20 @@ public class Query {
 	private QueryBing bing;
 	private QueryGoogle google;
 	private HttpResponse<JsonNode> response;
-	private List<Boolean> statusList; // für überprüfung bei Scheme nötig (checkUsedQuery und mainQuery)
-	private Boolean statusOSM; // ersetzt statusQuery da es bei den Abfragen zu problemen kommt und so der einfachere weg ist
-	private Boolean statusBing; // ersetzt statusQuery da es bei den Abfragen zu problemen kommt und so der einfachere weg ist
-	private Boolean statusGoogle; // ersetzt statusQuery da es bei den Abfragen zu problemen kommt und so der einfachere weg ist
+	private List<Boolean> statusList; 
+	private Boolean statusOSM; 
+	private Boolean statusBing; 
+	private Boolean statusGoogle; 
 	
 	public Query(String rawAddress) {
 		this.rawAddress = rawAddress;
 		this.statusList = new ArrayList<Boolean>();
-		//folgende Reihenfolge wird bei statusList festgelegt:
-		//1 -> osm, 2 -> bing, 3 -> google
-		for(int i = 0; i < 3; i++){ //zahl 3 repräsentiert die anzahl Services, die es gibt
+		/*
+		Folgende Reihenfolge wird bei statusList festgelegt:
+		1 -> osm, 2 -> bing, 3 -> google
+		Die Länge von statusList repräsentiert die Anzahl Services
+		*/
+		for(int i = 0; i < 3; i++){
 			statusList.add(null);
 		}
 	}
@@ -107,79 +108,55 @@ public class Query {
 		this.statusGoogle = statusGoogle;
 	}
 
-	//je nach Gegebenheit der Adresse werden jeweils andere Services angefragt
-	//Methode überprüft welche Services bereits überprüft wurden und ruft dann die Methode für den entsprechenden Service der als nächster kommt auf
+	//Methode überprüft welche Services bereits genutzt wurden
 	public String query() {
 		
-		System.out.println(); //test-code
-		System.out.println("start query(), rawAddress :" + rawAddress); //test-code
+		System.out.println(); 
+		System.out.println("start query(), rawAddress :" + rawAddress);
 		
 		//überprüfen welche Services bereits genutzt wurden 
-		//Code noch nicht vollständig: es wird überprüft ob vorherige abfrage positiv war. 
-		//wenn positiv beginnt Validierung, wenn negativ wird anderer Service aufgerufen
 		if(statusOSM == null){
-			System.out.println("statusOSM null, Query beginnt"); //test-code
 			statusOSM = queryOSM(rawAddress);
-			System.out.println("statusOSM neu : " + statusOSM); //test-code
-			//.set weil der Wert an dieser Position ersetzt werden soll
-			statusList.set(0, statusOSM); //statusOSM-wert in statusList hinzufügen. OSM hat den platz 1 bei statusList
+			statusList.set(0, statusOSM);
 			return "osm";
 		}
 		else{
 			if(statusBing == null){
-				System.out.println("statusBing null, Query beginnt"); //test-code
 				statusBing = queryBing(rawAddress);
-				System.out.println("statusBing neu : " + statusBing); //test-code
-				//.set weil der Wert an dieser Position ersetzt werden soll
-				statusList.set(1, statusBing); //statusBing-wert in statusList hinzufügen. Bing hat den platz 2 bei statusList
+				statusList.set(1, statusBing);
 				return "bing";
 			}
 			else{
 				if(statusGoogle == null){
-					System.out.println("statusGoogle null, Query beginnt"); //test-code
 					statusGoogle = queryGoogle(rawAddress);
-					System.out.println("statusGoogle neu : " + statusGoogle); //test-code
-					//.set weil der Wert an dieser Position ersetzt werden soll
-					statusList.set(2, statusGoogle); //statusBing-wert in statusList hinzufügen. Bing hat den platz 2 bei statusList
+					statusList.set(2, statusGoogle);
 					return "google";
 				}
 				else{
-					//anderer Service aufrufen
-					System.out.println("Query: anderer Service aufrufen -> Prozess sollte nicht bis hierher kommen "); //test-code
+					System.out.println("Query: anderer Service aufrufen -> Prozess sollte nicht bis hierher kommen "); 
 				}
 			}
 		}
-	System.out.println("return error -> kein vordefinierter service konnte ausgewählt werden "); //test-code
+	System.out.println("return error -> kein vordefinierter service konnte ausgewählt werden ");
 	return "error";
 	}
 
-	//Methode erhält eine externe Adresse (extAddress) und gibt Boolean zurück Wenn True war Abfrage Erfolgreich und vollständig, ansonsten false
 	public Boolean queryOSM(String rawAddress){
-		System.out.println(); //test-code
-		System.out.println("start queryOSM()"); //test-code
-		System.out.println("rawAddress: " + rawAddress); //test-code
+		System.out.println(); 
+		System.out.println("start queryOSM()"); 
+		System.out.println("rawAddress: " + rawAddress);
 		String urlVar = rawAddress.replaceAll(" ", "+");
 		String finalURL = "http://nominatim.openstreetmap.org/search?q=" + urlVar + "&format=json&polygon=1&addressdetails=1";
-		System.out.println("URL : " + finalURL); //test-code
-		System.out.println("Beginn abfrage bei OSM: urlVar " + urlVar); //test-code
-		Boolean status = null; //Boolean für OSM ob anfrage i.O ist ; wird default-mässig auf true gesetzt weil sonst while-schlaufe nicht funktioniert
+		System.out.println("URL : " + finalURL);
+		Boolean status = null; 
 		
 		try {
 			
-			/*
-			response = Unirest.get("http://nominatim.openstreetmap.org/search?q={address}&format=json&polygon=1&addressdetails=1").
-					routeParam("address", urlVar). //routeParam will so nicht funktionieren. Fehler noch nicht gefunden
-					asJson();
-			*/
 			response = Unirest.get(finalURL).asJson();
 			String body = response.getBody().toString();
-			System.out.println("response: " + response);
 			System.out.println("response_status: " + response.getStatusText());
-			System.out.println("bodyReal: " + body);
 			//String class in classe umbenennen
 			String newBody = body.replaceAll("class", "classe");
-			System.out.println("bodyNew: " + newBody);
-				
 			ObjectMapper mapper = new ObjectMapper();
 			osm = mapper.readValue(newBody, new TypeReference<List<QueryOSM>>(){});
 			
@@ -188,21 +165,15 @@ public class Query {
 		}
 		
 		int sizeResults = osm.size();
-		// for-Schlaufe falls mehrere Adressen zurückkommen erstellt ListNewAddressBing
+		
 		for(int i = 0; i < sizeResults; i++){
-			
-			String display_name = osm.get(i).getDisplay_name(); //nur für println "fügt index bei List NewAddressTrue. index i:" benötigt
-			System.out.println("start Methode createListNewAddressOSM an der Stelle (i): " + i); //test-code
+			String display_name = osm.get(i).getDisplay_name();
 			osm.get(i).getAddress().createListNewAddress(i, osm);
-			
-			//get alle newlistaddress durch mit der methode check NewList
 			int sizeNewAddress = osm.get(i).getAddress().getListNewAddress().size();
 			List<String> newAddress = osm.get(i).getAddress().getListNewAddress();
-			System.out.println("start Methode checkNewList bei OSM"); //test-code
 			Boolean checkList = checkNewList(sizeNewAddress, newAddress);
 			
-			//wenn checkList true ist, wird die Stelle (osm.get(k) -> k) bei newAddressTrue hinzugefügt 
-			//kann evt. zu einer Methode umgewandelt werden. wird aber eher schwierig
+			//Wenn checkList true ist, wird die Stelle (osm.get(k) -> k) bei newAddressTrue hinzugefügt 
 			if(checkList == true){
 				Integer iInteger = new Integer(i);
 				osm.get(0).getNewAddressTrue().add(iInteger);
@@ -222,12 +193,11 @@ public class Query {
 		
 		//überprüft ob überhaupt ein Resultat von OSM zurückgegeben wurde
 		if(osm.isEmpty() == true){
-			System.out.println("Kein Result bei OSM erhalten"); //test-code
+			System.out.println("Kein Result bei OSM erhalten");
 			status = false;
 		}
 		else{
-			//wenn newNewAddressTrue leer ist gibt es false zurück, ansonsten true
-			if(osm.get(0).getNewAddressTrue().isEmpty() == true){ // Achtung ! newAddressTrue wird bewusst nur bei stelle 0 erstellt
+			if(osm.get(0).getNewAddressTrue().isEmpty() == true){ 
 				status = false;
 			}
 			else{
@@ -238,24 +208,20 @@ public class Query {
 	}
 	
 	public Boolean queryBing(String rawAddress){
-		System.out.println(); //test-code
-		System.out.println("start queryBing()"); //test-code
-		System.out.println("rawAddress: " + rawAddress); //test-code
+		System.out.println();
+		System.out.println("start queryBing()"); 
+		System.out.println("rawAddress: " + rawAddress); 
 		String urlVar = rawAddress.replaceAll(" ", "%20");
 		String bingKey = "AoJzcR56eRmy0CW6xaxTkzvkb3cTLjb6UWgMj2fu_4gt87yatP7oTZ1tcs1wIcx3";
 		String finalURL = "http://dev.virtualearth.net/REST/v1/Locations/" + urlVar + "?&key=" + bingKey +"&include=ciso2&includeNeighborhood=1";
 		System.out.println("URL : " + finalURL); //test-code
-		System.out.println("Beginn abfrage bei Bing: urlVar " + urlVar); //test-code
-		Boolean status = true; //Boolean für Bing ob anfrage i.O ist ; wird default-mässig auf true gesetzt weil sonst while-schlaufe nicht funktioniert
+		Boolean status = true;
 		
-		try { //siehe Java Handbuch ab Seite 301 wird Exeption erklärt -> vor allem für GET benötigt
-					
+		try {	
+			
 			response = Unirest.get(finalURL).asJson();
 			String body = response.getBody().toString();
-			System.out.println("response: " + response);
 			System.out.println("response_status: " + response.getStatusText());
-			System.out.println("bodyReal: " + body);
-
 			ObjectMapper mapper = new ObjectMapper();
 			bing = mapper.readValue(body, QueryBing.class);
 				
@@ -264,23 +230,16 @@ public class Query {
 		}
 		
 		int sizeResults = bing.getResourceSets().get(0).getResources().size();
-		// for-Schlaufe falls mehrere Adressen zurückkommen erstellt ListNewAddressBing
+		
 		for(int i = 0; i < sizeResults; i++){
 			
 			String bingName = bing.getResourceSets().get(0).getResources().get(i).getName();
-			System.out.println("name: " + bingName);
-			System.out.println("start Methode createListNewAddressBing an der Stelle (i): " + i); //test-code
 			bing.getResourceSets().get(0).getResources().get(i).createListNewAddress(i, bing);
-			
-			//get alle newlistaddress durch mit der methode check NewList
-			//noch nicht getestet aber vermute, dass länge von resourceSets immer 0 ist
 			int sizeNewAddress = bing.getResourceSets().get(0).getResources().get(i).getNewAddress().size();
 			List<String> newAddress = bing.getResourceSets().get(0).getResources().get(i).getNewAddress();
-			System.out.println("start Methode checkNewList bei Bing"); //test-code
 			Boolean checkList = checkNewList(sizeNewAddress, newAddress);
 			
-			//wenn checkList true ist, wird die Stelle (bing.getResourceSets().get(0).getResources().get(k) -> k) bei newAddressTrue hinzugefügt 
-			//kann evt. zu einer Methode umgewandelt werden. wird aber eher schwierig
+			//Wenn checkList true ist, wird die Stelle (bing.getResourceSets().get(0).getResources().get(k) -> k) bei newAddressTrue hinzugefügt 
 			if(checkList == true){
 				Integer iInteger = new Integer(i);
 				bing.getResourceSets().get(0).getNewAddressTrue().add(iInteger);
@@ -293,12 +252,11 @@ public class Query {
 		
 		//überprüft ob überhaupt ein Resultat von Bing zurückgegeben wurde
 		if(bing == null){
-			System.out.println("Kein Result bei Bing erhalten"); //test-code
+			System.out.println("Kein Result bei Bing erhalten");
 			status = false;
 		}
 		else{
-			//wenn newNewAddressTrue leer ist gibt es false zurück, ansonsten true
-			if(bing.getResourceSets().get(0).getNewAddressTrue().isEmpty() == true){ // Achtung ! newAddressTrue wird bewusst nur bei stelle 0 erstellt
+			if(bing.getResourceSets().get(0).getNewAddressTrue().isEmpty() == true){
 				status = false;
 			}
 			else{
@@ -309,44 +267,33 @@ public class Query {
 	}
 	
 	public Boolean queryGoogle(String rawAddress){
-		System.out.println(); //test-code
-		System.out.println("start queryGoogle()"); //test-code
-		System.out.println("rawAddress: " + rawAddress); //test-code
+		System.out.println(); 
+		System.out.println("start queryGoogle()"); 
+		System.out.println("rawAddress: " + rawAddress);
 		String urlVar = rawAddress.replaceAll(" ", "+");
 		String googleKey = "AIzaSyAzpsj4yxTE4bQ8R3WysueyAHUNmJ9Chzw";
 		String finalURL = "https://maps.googleapis.com/maps/api/geocode/json?address=" + urlVar + "&key=" + googleKey;
-		System.out.println("URL : " + finalURL); //test-code
-		System.out.println("Beginn abfrage bei Google: urlVar " + urlVar); //test-code
-		Boolean status = true; //Boolean für Google ob anfrage i.O ist ; wird default-mässig auf true gesetzt weil sonst while-schlaufe nicht funktioniert
+		System.out.println("URL : " + finalURL);
+		Boolean status = true;
 		
 		try {
 					
 			response = Unirest.get(finalURL).asJson();
 			String body = response.getBody().toString();
-			System.out.println("response: " + response);
 			System.out.println("response_status: " + response.getStatusText());
-			System.out.println("bodyReal: " + body);
-
 			ObjectMapper mapper = new ObjectMapper();
 			google = mapper.readValue(body, QueryGoogle.class);
 			
 			int sizeResults = google.getResults().size();
-			// for-Schlaufe falls mehrere Adressen zurückkommen erstellt ListNewAddressGoogle
+			
 			for(int i = 0; i < sizeResults; i++){
-				
 				String googleName = google.getResults().get(i).getFormatted_address();
-				System.out.println("formated_address: " + googleName);
-				System.out.println("start Methode createListNewAddressGoogle an der Stelle (i): " + i); //test-code
 				google.getResults().get(i).createListNewAddress(i, google); 
-				
-				//get alle newlistaddress durch mit der methode check NewList
 				int sizeNewAddress = google.getResults().get(i).getNewAddress().size();
 				List<String> newAddress = google.getResults().get(i).getNewAddress();
-				System.out.println("start Methode checkNewList bei Google"); //test-code
 				Boolean checkList = checkNewList(sizeNewAddress, newAddress);
 				
 				//wenn checkList true ist, wird die Stelle (google.getResults().get(k) -> k) bei newAddressTrue hinzugefügt 
-				//kann evt. zu einer Methode umgewandelt werden. wird aber eher schwierig
 				if(checkList == true){
 					Integer iInteger = new Integer(i);
 					google.getNewAddressTrue().add(iInteger);
@@ -361,8 +308,7 @@ public class Query {
 			ex.printStackTrace();
 		}
 		
-		//wenn newNewAddressTrue leer ist gibt es false zurück, ansonsten true
-		if(google.getNewAddressTrue().isEmpty() == true){ // Achtung ! newAddressTrue wird bewusst nur bei stelle 0 erstellt
+		if(google.getNewAddressTrue().isEmpty() == true){ 
 			status = false;
 		}
 		else{
@@ -371,19 +317,15 @@ public class Query {
 		return status;
 	}
 	
-	//überprüfen ob newlistaddress vollständig ist
-	public Boolean checkNewList(int sizeNewAddress, List<String> newAddress){ //List<String> weil get(i) innerhalb der while-Methode sein muss
-		System.out.println(); //test-code
-		System.out.println("Start checkNewList() : "); //test-code
+	//Methode überprüft, ob newListAddress vollständig ist
+	public Boolean checkNewList(int sizeNewAddress, List<String> newAddress){ 
+		System.out.println(); 
+		System.out.println("Start checkNewList() : "); 
 		Boolean status = true;
 		int i = 0;
 		
-		//wenn position != null wird ein true zurückgegeben, ansonsten ein false und die schlaufe wird verlassen
 		while(i < sizeNewAddress && status == true){
 			String address = newAddress.get(i);
-			System.out.println("sizeNewAddress : " + sizeNewAddress); //test-code
-			System.out.println("int i : " + i); //test-code
-			System.out.println("address : " + address); //test-code
 			if( address != null){
 				status = true;
 				i++;
@@ -395,5 +337,3 @@ public class Query {
 		return status;
 	}
 }
-
-

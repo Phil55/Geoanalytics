@@ -2,17 +2,14 @@ package ch.zhaw.core.validation;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Validation {
 
-	private double score; //double wegen ngram
+	private double score; 
 	private String rawAddressVal;
 	private List<String> newAddress = new ArrayList<String>();
-	private List<String> oldAddress = new ArrayList<String>(); //wenn das beste Element aus listOption gefunden wurde kann es hier gespeichert werden
+	private List<String> oldAddress = new ArrayList<String>(); 
 	private List<ListOption> provListOldAddress = new ArrayList<ListOption>();
-	//wird nicht benötigt da nur die anzahl der Elemente, die überprüft werden gezählt werden muss Boolean ist nicht notwendig, da der Score erst später bewertet wird
-	//die länge von listScore ist als zähler genügend
-	private List<Double> listScore = new ArrayList<Double>();//um den finalscore überprüfen zu können muss eine ScoreList erstellt werden die den Score von allen newAddress-Elementen auflistet 
+	private List<Double> listScore = new ArrayList<Double>();
 	
 	public Validation(String rawAddress) {
 		this.rawAddressVal = rawAddress;
@@ -69,36 +66,36 @@ public class Validation {
 	}
 
 	public void setPosibleRawAddress(String rawAddress, List<String> newAddress){
-		System.out.println(); //test-code
-		System.out.println("Start setPosibleRawAddress()"); //test
+		System.out.println(); 
+		System.out.println("Start setPosibleRawAddress()"); 
 		
 		for(int i = 0; i < newAddress.size(); i++){
 			int lengthComponent = newAddress.get(i).length();
-			int startOld = rawAddress.indexOf(newAddress.get(i));
-			int endOld = rawAddress.indexOf(newAddress.get(i)) + lengthComponent;
-			String firstLetter = newAddress.get(i).substring(0, 1); //ersten Buchstaben nehmen
+			String firstLetter = newAddress.get(i).substring(0, 1); 
 			int startIndex = rawAddress.indexOf(firstLetter, 0);
 			int endIndex = startIndex + lengthComponent;
-			//List<String> list = new ArrayList<String>();
 			ListOption l = new ListOption();
 			provListOldAddress.add(i, l);
 			
+			/*
+			// print zu Testzwecken
+			int startOld = rawAddress.indexOf(newAddress.get(i));
+			int endOld = rawAddress.indexOf(newAddress.get(i)) + lengthComponent;
 			System.out.println("StartOld an der Stelle :" + startOld); //test
 			System.out.println("EndOld an der Stelle :" + endOld); //test
 			System.out.println("StartIndex an der Stelle :" + startIndex); //test
 			System.out.println("EndIndex an der Stelle :" + endIndex); //test
+			*/
 			
 			Boolean status = false;
 			int x = 0;
 			while (status == false){
-			//while (startIndex >= 0 && endIndex <= rawAddress.length() || status == false){
-				//falls firstLetter im rawAddress nicht drin ist wird der score auf 0 gesetzt
 				if(startIndex == -1){
 					Option option = new Option ();
 					provListOldAddress.get(i).getAddress_component().add(x, option);
 					provListOldAddress.get(i).getAddress_component().get(x).setComponent(null);
 					provListOldAddress.get(i).getAddress_component().get(x).setProvScore(0.0);
-					System.out.println("Bei rawAddress gibt es kein Buchstaben " + firstLetter + ". Es wird für diesen component einen Score 0.0 gegeben"); //test
+					System.out.println("Bei rawAddress gibt es kein Buchstaben " + firstLetter + ". Es wird für diesen component einen Score 0.0 gegeben");
 					status = true;
 				}
 				else{
@@ -106,22 +103,15 @@ public class Validation {
 						Option option = new Option ();
 						provListOldAddress.get(i).getAddress_component().add(x, option);
 						provListOldAddress.get(i).getAddress_component().get(x).setComponent(rawAddress.substring(startIndex, endIndex));
-						//list.add(rawAddress.substring(startIndex, endIndex));
-						System.out.println("add.list on i :" + i); //test
-						System.out.println("list.add :" + rawAddress.substring(startIndex, endIndex)); //test
 						startIndex = rawAddress.indexOf(firstLetter, startIndex + 1);
 						endIndex = startIndex + lengthComponent;
-						System.out.println("StartIndex neu :" + startIndex); //test
-						System.out.println("EndIndex neu :" + endIndex); //test
 						x++;
 					}
 					else {
 						Option option = new Option ();
 						provListOldAddress.get(i).getAddress_component().add(x, option);
-						provListOldAddress.get(i).getAddress_component().get(x).setComponent(null); //score wird später bei Methode validate() auf 0 gesetzt
-						System.out.println("Wert ist grösser als das Element von der DB und endIndex ist grüsser als die länge von rawAddress -> Wert wird auf null gesetzt"); //test
-						System.out.println("provListOldAddress.get(i).getAddress_component().get(x).setComponent(null) :"); //test
-						System.out.println("i :" + i); //test
+						provListOldAddress.get(i).getAddress_component().get(x).setComponent(null); 
+						System.out.println("Wert ist grösser als das Element von der DB und endIndex ist grösser als die länge von rawAddress -> Wert wird auf null gesetzt");
 						status = true;
 					}
 					if(startIndex == -1){
@@ -129,45 +119,31 @@ public class Validation {
 					}
 				}
 			}
-			
-			//Liste printen an der Stelle i
+			/*
+			//Liste printen an der Stelle i zu Testzwecken
 			for(int y = 0; y < provListOldAddress.get(i).getAddress_component().size(); y++){
 				System.out.println("provListOldAddress.get(i).getAddress_component().get(y).getComponent():" + provListOldAddress.get(i).getAddress_component().get(y).getComponent());
 				System.out.println("i :" + i); 
 				System.out.println("y :" + y);
 			}
+			*/
 		}
 	}
 	
 	public int validate(String rawAddress, List<String> listNewAddress){
-		System.out.println(); //test-code
-		System.out.println("Start validate()"); //test
+		System.out.println(); 
+		System.out.println("Start validate()");
 		System.out.println("oldAddress: " + rawAddress);
 		
-		//erstellt liste rawAddress mit allen möglichkeiten pro liste
-		/*
-		z.B. rawAddress = Türkenstrasse 89 8789 lasten
-		listNewAddress = Türkenstrasse 89 / 8789 / lasten
-		listOldAddress = Türkenstrasse 89, trasse 89 8789 l / 8987, 8789, 89 l / lasten 
-		 */
 		setPosibleRawAddress(rawAddress, listNewAddress);
-		
-		setNewAddress(listNewAddress); //Input listNewAddress in Attribut listNewAddress speichern damit Methode addListOldAddress geht
+		setNewAddress(listNewAddress); 
 				
 		for (int i = 0; i <listNewAddress.size(); i++){
-			
-			System.out.println("listNewAddress :" + listNewAddress.get(i) + " bei i :" + i);
-			
 			// überprüfen, ob ein Wert null ist
-			// falls sinnvoll evt. Bedingung festlegen welche Werte zwingend != null sein müssen
-			// dies wird eigentlich schon früher geprüft, aber wird zur sicherheit dringelassen
 			if(listNewAddress.get(i) == null){
-				System.out.println("listNewAddress.get(i) == null -> keine Punkte vergeben (Score = 0 für diesen Wert) oder anderer Service wird abgefragt");
-				//provScore = 0; // falls null wird im Moment 0 punkte gegeben d.h. kein Code nötig
-				//System.out.println("provScore :" + provScore);
+				System.out.println("Liste listNewAddress ist leer");
 			}
 			else{
-			
 				System.out.println();
 				System.out.println("rawAddresslowerCase :" + rawAddress);
 				System.out.println("newAddresslowerCase :" + listNewAddress.get(i));
@@ -175,30 +151,20 @@ public class Validation {
 				// alle Möglichkeiten von rawAddress überprüfen und die Komponente auswählen, die den besten Score hat
 				for(int x = 0; x < provListOldAddress.get(i).getAddress_component().size(); x++){
 					String oldOption = provListOldAddress.get(i).getAddress_component().get(x).getComponent();
-					System.out.println("provListOldAddress(oldOption) on i = " + i + " on x = " + x + " " + oldOption);
-					
-					//hier if-Schleife einfügen dass wenn address_component == null wird score auf 0 gesetzt
+					System.out.println("provListOldAddress(oldOption) on i = " + i + ", on x = " + x + ", " + oldOption);
 					if(oldOption == null){
 						provListOldAddress.get(i).getAddress_component().get(x).setProvScore(0.0);
 						System.out.println("oldOption == null -> keine Punkte vergeben (Score = 0 für diesen Wert)");
 					}
 					else{
-						if (oldOption.contains(listNewAddress.get(i)) == true){ //zu testzwecken: == mit != ersetzt
-							System.out.println("rawAddress.contains(listNewAddress.get(i)) == true");
-							//starte Methode valContains() und fügt eine Punktzahl bei provScore hinzu
+						if (oldOption.contains(listNewAddress.get(i)) == true){ 
 							valContains(i, x);
 						}
 						else {
-							System.out.println("rawAddress.contains(listNewAddress.get(i)) == false");
-							//starte Methode valNgram() und fügt eine Punktzahl bei provScore hinzu
 							valNgram(listNewAddress, i, x);
 						}
 					}
 				}
-				//Component mit dem besten Score wird bei oldAddress hinzugefügt
-				//System.out.println("i vor addOldAddress: " + i);
-				//System.out.println("wert bei x == 0: " + provListOldAddress.get(i).getAddress_component().get(0).getComponent()); //ausgabe verwirrt
-				//System.out.println("score bei x == 0: " + provListOldAddress.get(i).getAddress_component().get(0).getProvScore()); //ausgabe verwirrt
 				addOldAddress(i);
 			}
 		}
@@ -206,8 +172,7 @@ public class Validation {
 		//Score berechnen
 		double provScore = countScore();
 		score = calculateFinalScore(provScore, listScore.size());
-		System.out.println("Ende pruefen: score " + score); //test-code
-		Double scoreRound = Math.ceil(score); //double in Double umwandeln, evt. überall in Double übernehmen
+		Double scoreRound = Math.ceil(score);
 		int scoreRoundInt = scoreRound.intValue();
 		return scoreRoundInt;
 	}
@@ -220,31 +185,28 @@ public class Validation {
 		return provScore;
 	}
 	
-	//berechnet den Score anhand der gezählten True's und False's und gibt das ergebnis als int zurück
+	//berechnet den Score anhand der gezählten True's und False's und gibt das Ergebnis zurück
 	public double calculateFinalScore(double provScore, int sizeListScore){
-		System.out.println(); //test-code
-		System.out.println("Start calculateScore()"); //test
-		System.out.println("int provScore vor Berechnung :" + provScore);
-		System.out.println("sizeListScore: " + sizeListScore);
+		System.out.println(); 
+		System.out.println("Start calculateScore()"); 
 		provScore = provScore/sizeListScore;
-		System.out.println("provScore provScore/sizeListScore :" + provScore);
-		System.out.println("int provScore neu :" + provScore);
+		System.out.println("provScore :" + provScore);
 		setScore(provScore);
 		return provScore;
 	}
 	
-	// überprüft ob addresse valide ist anhand des scores
+	// überprüft ob Adresse valide ist anhand des scores
 	public Boolean getVal(){
-		System.out.println(); //test-code
-		System.out.println("Start getVal()"); //test
+		System.out.println();
+		System.out.println("Start getVal()");
 		Boolean val = null;
 		
 		if (getScore() >= 70){
-			System.out.println("Score der Adresse ist gleich/grösser 70 : " + getScore()); //test-code
+			System.out.println("Score der Adresse ist gleich/grösser 70 : " + getScore()); 
 			val = true;
 		}
 		else {
-			System.out.println("Score der Adresse ist kleiner 70 : " + getScore()); //test-code
+			System.out.println("Score der Adresse ist kleiner 70 : " + getScore());
 			val = false;
 		}
 		
@@ -252,11 +214,10 @@ public class Validation {
 	}
 	
 	public void valContains(int i, int x){
-		System.out.println(); //test-code
-		System.out.println("Start valContains()"); //test
+		System.out.println(); 
+		System.out.println("Start valContains()"); 
 		
 		Option address_component = provListOldAddress.get(i).getAddress_component().get(x);
-		
 		address_component.setProvScore(100.0);
 		System.out.println("Score :" + address_component.getProvScore());
 		System.out.println("i :" + i);
@@ -264,9 +225,8 @@ public class Validation {
 	}
 	
 	public void valNgram(List<String> listNewAddress, int i, int x){
-		System.out.println(); //test-code
-		System.out.println("Start valNgram()"); //test
-		System.out.println("rawAddress.contains(listNewAddress.get(i)) == false");
+		System.out.println(); 
+		System.out.println("Start valNgram()");
 
 		int nStartIndex = 0;
 		int nEndIndex = 2;
@@ -283,40 +243,41 @@ public class Validation {
 		double totalCheck = 0;
 		List<Double> checkList = new ArrayList<Double>();
 			
-		//n-gram test
 		for (int a = 0; a < listNewAddress.get(i).length(); a++){
 			while(nEndIndex <= listNewAddress.get(i).length()){
-						
 				oldComponentN = oldComponent.substring(nStartIndex, nEndIndex);
 				newComponentN = newComponent.substring(nStartIndex, nEndIndex);
-				
+				/*
+				//Print zu Testzwecken
 				System.out.println("oldComponentN :" + oldComponentN);
 				System.out.println("newComponentN :" + newComponentN);
 				System.out.println("nStartIndex :" + nStartIndex);
 				System.out.println("nStartIndex :" + nEndIndex);
+				*/
 				if (oldComponentN.equals(newComponentN) == true) {
 					nStartIndex++;
 					nEndIndex++;
 					nScoreTrue++;
-					System.out.println("nScoreTrue :" + nScoreTrue);
+					//Print zu Testzwecken
+					//System.out.println("nScoreTrue :" + nScoreTrue);
 				}
 				else {
 					nStartIndex++;
 					nEndIndex++;
 					nScoreFalse++;
-					System.out.println("nScoreFalse :" + nScoreFalse);
+					//Print zu Testzwecken
+					//System.out.println("nScoreFalse :" + nScoreFalse);
 				}
 			}			
 		}
 
-		//Listen erstellen für bestimmung des besten Strings
+		//Liste erstellen für Bestimmung des besten Strings
 		totalCheck = nScoreFalse + nScoreTrue;
 		checkList.add(totalCheck);
 		provScore = nScoreTrue/totalCheck*100;
 		address_component.setProvScore(provScore);
-
 		/*
-		//println für testzwecken
+		//Print für testzwecken
 		System.out.println("nScoreTrue finaly :" + nScoreTrue);
 		System.out.println("nScoreFalse finaly :" + nScoreFalse);
 		System.out.println("nScore Total (True+False) :" + totalCheck);
@@ -325,9 +286,8 @@ public class Validation {
 	}
 	
 	public void addOldAddress(int i){
-		System.out.println(); //test-code
-		System.out.println("Start addOldAddress()"); //test
-		System.out.println("addressComponent.size(): " + provListOldAddress.get(i).getAddress_component().size()); //test
+		System.out.println();
+		System.out.println("Start addOldAddress()"); 
 		
 		List<Option> addressComponent = provListOldAddress.get(i).getAddress_component();
 		List<Double> scoreList = new ArrayList<Double>();

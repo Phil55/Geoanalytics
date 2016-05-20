@@ -165,7 +165,7 @@ public class Scheme {
 	
 	//überprüft, welche Services bereits genutzt wurden
 	public Boolean checkUsedQueries(List<Boolean> statusList){
-		System.out.println(); //test-code
+		System.out.println(); 
 		System.out.println("Start checkUsedQueries()");
 		Boolean check = null;
 		

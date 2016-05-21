@@ -296,13 +296,13 @@ public class Validation {
 		if (addressComponent.size() == 1){
 			oldAddress.add(addressComponent.get(0).getComponent());
 			listScore.add(addressComponent.get(0).getProvScore());
-			System.out.println("scoreList on 0: " + addressComponent.get(0).getProvScore()); //test
+			System.out.println("scoreList on 0: " + addressComponent.get(0).getProvScore());
 		}
 		else {
 			//scoreList erstellen
 			for(int x = 0; x < addressComponent.size(); x++){
 				scoreList.add(addressComponent.get(x).getProvScore());
-				System.out.println("scoreList on x: " + x + " , Score: " + addressComponent.get(x).getProvScore()); //test
+				System.out.println("scoreList on x: " + x + " , Score: " + addressComponent.get(x).getProvScore());
 			}
 			//scoreList überprüfen
 			double max = 0;

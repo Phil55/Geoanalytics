@@ -214,7 +214,7 @@ public class Query {
 		String urlVar = rawAddress.replaceAll(" ", "%20");
 		String bingKey = "AoJzcR56eRmy0CW6xaxTkzvkb3cTLjb6UWgMj2fu_4gt87yatP7oTZ1tcs1wIcx3";
 		String finalURL = "http://dev.virtualearth.net/REST/v1/Locations/" + urlVar + "?&key=" + bingKey +"&include=ciso2&includeNeighborhood=1";
-		System.out.println("URL : " + finalURL); //test-code
+		System.out.println("URL : " + finalURL);
 		Boolean status = true;
 		
 		try {	
